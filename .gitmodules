@@ -1,0 +1,3 @@
+[submodule "ext/wprecord"]
+	path = ext/wprecord
+	url = https://github.com/limikael/wprecord

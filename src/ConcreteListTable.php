@@ -5,12 +5,21 @@ if(!class_exists('WP_List_Table'))
 
 class ConcreteListTable extends WP_List_Table {
 	var $columns;
+	var $filters;
 
 	function __construct() {
 		parent::__construct();
 
 		$this->columns=array();
+		$this->filters=array();
 	}
+
+	function addFilter($filterSpec) {
+		if (!$filterSpec["key"])
+			$filterSpec["key"]="_".sizeof($this->filters);
+
+		$this->filters[$filterSpec["key"]]=$filterSpec;
+	} 
 
 	function addFieldColumn($title, $field) {
 		$index=sizeof($this->columns);
@@ -21,6 +30,47 @@ class ConcreteListTable extends WP_List_Table {
 			"title"=>$title,
 			"field"=>$field
 		);
+	}
+
+	// Overridden in order to get rid of _wp_nounce and _wp_http_referer
+	protected function display_tablenav($which) {
+		?>
+		<div class="tablenav <?php echo esc_attr( $which ); ?>">
+			<?php if ( $this->has_items() ) : ?>
+			<div class="alignleft actions bulkactions">
+				<?php $this->bulk_actions( $which ); ?>
+			</div>
+			<?php
+				endif;
+				$this->extra_tablenav( $which );
+				$this->pagination( $which );
+			?>
+			<br class="clear" />
+		</div>
+		<?php
+	}
+	function extra_tablenav($which) {
+		switch ($which) {
+			case "top":
+				if ($this->filters) {
+					echo "<div class='alignleft actions'>";
+
+					foreach ($this->filters as $filterSpec) {
+						echo "<select name='$filterSpec[key]'>";
+						echo "<option value=''>".htmlspecialchars($filterSpec["allLabel"])."</option>";
+						echo "<option></option>";
+						render_select_options($filterSpec["options"],$_REQUEST[$filterSpec["key"]]);
+						echo "</select>";
+					}
+
+					echo "<input type='submit' class='button' value='Filter'>";
+					echo "</div>";
+				}
+
+/*				echo "<select><option>test</option></select>";
+				echo "<input type='submit' class='button' value='Filter'>";*/
+				break;
+		}
 	}
 
 	function addFuncColumn($title, $func) {
@@ -71,5 +121,18 @@ class ConcreteListTable extends WP_List_Table {
         $this->_column_headers = array($columns, $hidden, $sortable);
 
         //$this->process_bulk_action();
+		$this->set_pagination_args(array(
+			'total_items' => sizeof($this->items),
+			'per_page'    => sizeof($this->items),
+			'total_pages' => 1,
+		));
+    }
+
+    function display() {
+    	$adiminUrl=get_admin_url(NULL,"admin.php");
+    	echo "<form action='$adminUrl' method='get'>";
+    	echo "<input type='hidden' name='page' value='$_REQUEST[page]'/>";
+    	parent::display();
+    	echo "</form>";
     }
 }

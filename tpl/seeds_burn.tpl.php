@@ -1,5 +1,5 @@
 <div class="wrap">
-	<h1 class="wp-heading-inline">Create New Seeds</h1>
+	<h1 class="wp-heading-inline">Burn Seeds</h1>
 
 	<?php if ($errorMessage) { ?>
 		<div class="settings-error error">
@@ -8,17 +8,17 @@
 	<?php } ?>
 
 	<p>
-		Create brand new seeds.
+		Burn seeds and take them out of circulation.
 	</p>
 
 	<p>
-		This is a very powerful thing to do! It is the equivalent of printing new money and putting them
-		into cicrulation. Before you do this, make sure this is actually what you want. Maybe what you actually
+		This is a very powerful thing to do! It is the equivalent of removing money from the
+		cicrulation. Before you do this, make sure this is actually what you want. Maybe what you actually
 		want to do, is to make a transaction from one account to another? 
 	</p>
 
 	<p>
-		If you have decided that you actually want to create new seeds, the power is yours!
+		If you have decided that you actually want to burn existing seeds, the power is yours!
 	</p>
 
 	<form method="post" class="form-table" action="<?php echo $action; ?>">
@@ -31,7 +31,7 @@
 					<input type="text" class="regular-text" name="amount"
 						value="<?php echo htmlspecialchars($amount); ?>"/>
 					<p class="description">
-						How many seeds do you want to create?
+						How many seeds do you want to burn?
 					</p>
 				</td>
 			</tr>
@@ -52,13 +52,13 @@
 						<?php } ?>
 					</select>
 					<p class="description">
-						Where should these new seeds be deposited?
+						Where should these seeds be taken from?
 					</p>
 				</td>
 			</tr>
 		</table>
 		<p class="submit">
-			<input type="submit" class="button button-primary" value="Create New Seeds"/>
+			<input type="submit" class="button button-primary" value="Burn Seeds"/>
 		</p>
 	</form>
 </div>
