@@ -24,7 +24,6 @@ function seeds_accounts_page() {
 	$listTable->addFieldColumn("Balance","balance");
 	$listTable->addFieldColumn("Transactions","transactions");
 
-
 	$tableName=SeedsTransaction::getFullTableName();
 	$sent=$wpdb->get_results(
 		"SELECT    from_user_id, COUNT(from_user_id) as cnt ".
@@ -268,9 +267,21 @@ function seeds_new_transaction_page() {
 }
 
 function seeds_options_page() {
-	// check here: http://qnimate.com/wordpress-settings-api-a-comprehensive-developers-guide/
+	$vars=array();
 
-	render_template(__DIR__."/tpl/seeds_options.tpl.php");
+	$vars["noticeMessage"]="";
+	if (array_key_exists("saved",$_REQUEST))
+		$vars["noticeMessage"]="Settings saved.";
+
+	$vars["actionUrl"]=get_admin_url("NULL","options-general.php?page=seeds_options");
+	$vars["mintingOptions"]=array(
+		0=>"Don't Show These Pages",
+		1=>"Show These Pages"
+	);
+
+	$vars["seeds_show_minting"]=get_option("seeds_show_minting");
+
+	render_template(__DIR__."/tpl/seeds_options.tpl.php",$vars);
 }
 
 function seeds_admin_menu() {
@@ -287,11 +298,13 @@ function seeds_admin_menu() {
 	add_submenu_page("seeds_accounts","New Seed Transaction","New Transaction",
 		"manage_options","seeds_new_transaction","seeds_new_transaction_page");
 
-	add_submenu_page("seeds_accounts","Create Seeds","Create Seeds",
-		"manage_options","seeds_create","seeds_create_page");
+	if (get_option("seeds_show_minting")) {
+		add_submenu_page("seeds_accounts","Create Seeds","Create Seeds",
+			"manage_options","seeds_create","seeds_create_page");
 
-	add_submenu_page("seeds_accounts","Burn Seeds","Burn Seeds",
-		"manage_options","seeds_burn","seeds_burn_page");
+		add_submenu_page("seeds_accounts","Burn Seeds","Burn Seeds",
+			"manage_options","seeds_burn","seeds_burn_page");
+	}
 
 	add_options_page( 
 		'Seeds Settings',
@@ -302,10 +315,20 @@ function seeds_admin_menu() {
 	);
 }
 
-add_action("admin_menu","seeds_admin_menu");
-
 function seeds_activate() {
 	SeedsTransaction::install();
 }
 
+function seeds_admin_init() {
+	if (array_key_exists("seeds_save_options",$_REQUEST)
+			&& $_REQUEST["seeds_save_options"]) {
+		error_log("saving settings...");
+		update_option("seeds_show_minting",$_REQUEST["seeds_show_minting"]);
+		wp_redirect(get_admin_url("NULL","options-general.php?page=seeds_options&saved=1"));
+	}
+}
+
+// Register WordPress hooks.
+add_action("admin_init","seeds_admin_init");
+add_action("admin_menu","seeds_admin_menu");
 register_activation_hook(__FILE__,"seeds_activate");
