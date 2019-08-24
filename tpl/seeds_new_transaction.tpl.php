@@ -21,7 +21,7 @@
 					<select name="fromUserId">
 						<option value="">Select User Account</option>
 						<option></option>
-						<?php render_select_options($userAccounts,$fromUserId); ?>
+						<?php display_select_options($userAccounts,$fromUserId); ?>
 					</select>
 					<p class="description">
 						From account.
@@ -36,7 +36,7 @@
 					<select name="toUserId">
 						<option value="">Select User Account</option>
 						<option></option>
-						<?php render_select_options($userAccounts,$toUserId); ?>
+						<?php display_select_options($userAccounts,$toUserId); ?>
 					</select>
 					<p class="description">
 						To account.

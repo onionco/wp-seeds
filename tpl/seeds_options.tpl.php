@@ -14,7 +14,7 @@
 				<th scope="row">Create And Burn Pages</th>
 				<td>
 					<select name="seeds_show_minting">
-						<?php render_select_options($mintingOptions,$seeds_show_minting); ?>
+						<?php display_select_options($mintingOptions,$seeds_show_minting); ?>
 					</select>
 					<p class="description">
 						If this option is enabled, it will be possible to create new seeds

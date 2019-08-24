@@ -1,10 +1,16 @@
 <?php
 
-function render_template($fn, $vars=array()) {
+function display_template($fn, $vars=array()) {
 	foreach ($vars as $key=>$value)
 		$$key=$value;
 
 	require $fn;
+}
+
+function render_template($fn, $vars=array()) {
+	ob_start();
+	display_template($fn,$vars);
+	return ob_get_clean();
 }
 
 function rand_chars($num) {
@@ -16,7 +22,7 @@ function rand_chars($num) {
 	return $s;
 }
 
-function render_select_options($options, $current) {
+function display_select_options($options, $current=NULL) {
 	foreach ($options as $key=>$label) {
 		$keyHtml=htmlspecialchars($key);
 		$labelHtml=htmlspecialchars($label);

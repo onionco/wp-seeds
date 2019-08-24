@@ -58,7 +58,7 @@ function seeds_accounts_page() {
 	$listTable->setData($users);
 	$vars["table"]=$listTable;
 
-	render_template(__DIR__."/tpl/seeds_accounts.tpl.php",$vars);
+	display_template(__DIR__."/tpl/seeds_accounts.tpl.php",$vars);
 }
 
 function seeds_create_page() {
@@ -81,7 +81,7 @@ function seeds_create_page() {
 			$balance+=intval($_REQUEST["amount"]);
 			update_user_meta($user->ID,"seeds_balance",$balance);
 
-			render_template(__DIR__."/tpl/seeds_create_done.tpl.php",$vars);
+			display_template(__DIR__."/tpl/seeds_create_done.tpl.php",$vars);
 			return;
 		}
 
@@ -98,7 +98,7 @@ function seeds_create_page() {
 		);
 	}
 
-	render_template(__DIR__."/tpl/seeds_create.tpl.php",$vars);
+	display_template(__DIR__."/tpl/seeds_create.tpl.php",$vars);
 }
 
 function seeds_burn_page() {
@@ -126,7 +126,7 @@ function seeds_burn_page() {
 				$balance-=intval($_REQUEST["amount"]);
 				update_user_meta($user->ID,"seeds_balance",$balance);
 
-				render_template(__DIR__."/tpl/seeds_burn_done.tpl.php",$vars);
+				display_template(__DIR__."/tpl/seeds_burn_done.tpl.php",$vars);
 				return;
 			}
 		}
@@ -144,7 +144,7 @@ function seeds_burn_page() {
 		);
 	}
 
-	render_template(__DIR__."/tpl/seeds_burn.tpl.php",$vars);
+	display_template(__DIR__."/tpl/seeds_burn.tpl.php",$vars);
 }
 
 function seeds_transaction_detail_page($transactionId) {
@@ -152,7 +152,7 @@ function seeds_transaction_detail_page($transactionId) {
 
 	$vars["transaction"]=SeedsTransaction::findOne($transactionId);
 
-	render_template(__DIR__."/tpl/seeds_transaction_details.tpl.php",$vars);
+	display_template(__DIR__."/tpl/seeds_transaction_details.tpl.php",$vars);
 }
 
 function seeds_transactions_page() {
@@ -218,7 +218,7 @@ function seeds_transactions_page() {
 	foreach (get_users() as $user)
 		$vars["userAccounts"][$user->ID]=SeedsTransaction::formatUser($user);
 
-	render_template(__DIR__."/tpl/seeds_transactions.tpl.php",$vars);
+	display_template(__DIR__."/tpl/seeds_transactions.tpl.php",$vars);
 }
 
 function seeds_new_transaction_page() {
@@ -262,7 +262,7 @@ function seeds_new_transaction_page() {
 	foreach (get_users() as $user)
 		$vars["userAccounts"][$user->ID]=SeedsTransaction::formatUser($user);
 
-	render_template(__DIR__."/tpl/seeds_new_transaction.tpl.php",$vars);
+	display_template(__DIR__."/tpl/seeds_new_transaction.tpl.php",$vars);
 
 }
 
@@ -281,7 +281,7 @@ function seeds_options_page() {
 
 	$vars["seeds_show_minting"]=get_option("seeds_show_minting");
 
-	render_template(__DIR__."/tpl/seeds_options.tpl.php",$vars);
+	display_template(__DIR__."/tpl/seeds_options.tpl.php",$vars);
 }
 
 function seeds_admin_menu() {
@@ -328,7 +328,88 @@ function seeds_admin_init() {
 	}
 }
 
+function seeds_balance_sc($args) {
+	$user=wp_get_current_user();
+	if (!$user)
+		return render_template(__DIR__."/tpl/seeds_not_loggedin.tpl.php");
+
+	$vars=array();
+
+	$vars["balance"]=intval(get_user_meta($user->ID,"seeds_balance",TRUE));
+
+	return render_template(__DIR__."/tpl/seeds_balance.tpl.php",$vars);
+}
+
+function seeds_history_sc($args) {
+	$user=wp_get_current_user();
+	if (!$user)
+		return render_template(__DIR__."/tpl/seeds_not_loggedin.tpl.php");
+
+	$vars=array();
+
+	$vars["transactions"]=array();
+	$transactions=SeedsTransaction::findAllByQuery(
+			"SELECT * ".
+			"FROM   :table ".
+			"WHERE  from_user_id=%s ".
+			"OR     to_user_id=%s",
+			$user->ID,
+			$user->ID);
+
+	foreach ($transactions as $transaction) {
+		$vars["transactions"][]=array(
+			"id"=>$transaction->transaction_id,
+			"amount"=>$transaction->getRelativeAmount($user),
+			"accountLabel"=>$transaction->getOtherUserFormatted($user)
+		);
+	}
+
+	return render_template(__DIR__."/tpl/seeds_history.tpl.php",$vars);
+}
+
+function seeds_send_sc($args) {
+	$currentUser=wp_get_current_user();
+	if (!$currentUser)
+		return render_template(__DIR__."/tpl/seeds_not_loggedin.tpl.php");
+
+	$vars=array();
+	$vars["showForm"]=TRUE;
+	$vars["message"]="";
+
+	if (array_key_exists("seedsDoSend",$_REQUEST)
+			&& $_REQUEST["seedsDoSend"]) {
+		$transaction=new SeedsTransaction();
+		$transaction->from_user_id=$currentUser->ID;
+		$transaction->to_user_id=$_REQUEST["seedsSendToAccount"];
+		$transaction->amount=$_REQUEST["seedsSendAmount"];
+
+		try {
+			$transaction->perform();
+			$vars["message"]="The seeds have been sent.";
+			$vars["showForm"]=FALSE;
+		}
+
+		catch (Exception $e) {
+			$vars["message"]=$e->getMessage();
+		}
+	}
+
+	$vars["actionUrl"]=get_permalink();
+
+	$vars["users"]=array();
+	$users=get_users();
+	foreach($users as $user) {
+		if ($user->ID!=$currentUser->ID)
+			$vars["users"][$user->ID]=SeedsTransaction::formatUser($user);
+	}
+
+	return render_template(__DIR__."/tpl/seeds_send.tpl.php",$vars);
+}
+
 // Register WordPress hooks.
+add_shortcode("seeds-balance","seeds_balance_sc");
+add_shortcode("seeds-history","seeds_history_sc");
+add_shortcode("seeds-send","seeds_send_sc");
 add_action("admin_init","seeds_admin_init");
 add_action("admin_menu","seeds_admin_menu");
 register_activation_hook(__FILE__,"seeds_activate");

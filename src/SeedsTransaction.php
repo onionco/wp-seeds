@@ -25,6 +25,27 @@ class SeedsTransaction extends WpRecord {
 		return SeedsTransaction::formatUser(get_user_by("id",$this->to_user_id));
 	}
 
+	public function getOtherUserFormatted($user) {
+		if ($user->ID==$this->from_user_id)
+			return $this->getToUserFormatted();
+
+		else if ($user->ID==$this->to_user_id)
+			return $this->getFromUserFormatted();
+
+		else return NULL;
+	}
+
+	public function getRelativeAmount($user) {
+		if ($user->ID==$this->to_user_id)
+			return $this->amount;
+
+		else if ($user->ID==$this->from_user_id)
+			return -$this->amount;
+
+		else
+			return NULL;
+	}
+
 	public function perform() {
 		if ($this->transaction_id)
 			throw new Exception("This transaction already has an id!");
