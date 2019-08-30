@@ -330,7 +330,7 @@ function seeds_admin_init() {
 
 function seeds_balance_sc($args) {
 	$user=wp_get_current_user();
-	if (!$user)
+	if (!$user || !$user->ID)
 		return render_template(__DIR__."/tpl/seeds_not_loggedin.tpl.php");
 
 	$vars=array();
@@ -342,7 +342,7 @@ function seeds_balance_sc($args) {
 
 function seeds_history_sc($args) {
 	$user=wp_get_current_user();
-	if (!$user)
+	if (!$user || !$user->ID)
 		return render_template(__DIR__."/tpl/seeds_not_loggedin.tpl.php");
 
 	$vars=array();
@@ -369,7 +369,7 @@ function seeds_history_sc($args) {
 
 function seeds_send_sc($args) {
 	$currentUser=wp_get_current_user();
-	if (!$currentUser)
+	if (!$currentUser || !$currentUser->ID)
 		return render_template(__DIR__."/tpl/seeds_not_loggedin.tpl.php");
 
 	$vars=array();
