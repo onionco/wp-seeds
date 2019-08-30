@@ -4,6 +4,7 @@ Transferrable tokens.
 
 * [About](#about)
 * [Shortcodes](#shortcodes)
+* [Demo](#demo)
 
 ## About
 
@@ -25,3 +26,11 @@ The plugin provides a number of shortcodes that can be used to create the user e
 * `[seeds-send]` - Show a form to let the current user send seeds to another user.
 
 The look and feel of the user interface is further tweakable using CSS.
+
+## Demo
+
+There is a demo site up and running here:
+
+http://limikael.altervista.org/seeds-staging/
+
+If you want to test it, please let me know and I will supply you with a username and password!
