@@ -20,9 +20,8 @@ It can be used, for example, to create a community driven currency or for reward
 
 The plugin provides a number of shortcodes that can be used to create the user experience on the frontend of the WordPress site. The shortcodes are:
 
-* `[bca-balance]` - Show the current balance for the currently logged in user.
-* `[bca-deposit]` - Show an interface, including a QR-code, for the user to deposit funds into the account.
-* `[bca-history]` - Show the account history for the current user.
-* `[bca-withdraw]` - Show an interface that lets the current user withdraw funds to an external Bitcoin address.
+* `[seeds-balance]` - Show the current balance for the currently logged in user.
+* `[seeds-history]` - Show the account history for the current user.
+* `[seeds-send]` - Show a form to let the current user send seeds to another user.
 
 The look and feel of the user interface is further tweakable using CSS.
