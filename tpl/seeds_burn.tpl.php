@@ -42,7 +42,6 @@
 				<td>
 					<select name="userId">
 						<option value="">Select User Account</option>
-						<option></option>
 						<?php foreach ($users as $user) { ?>
 							<option value="<?php echo $user["id"]; ?>"
 								<?php if ($userId==$user["id"]) echo "selected"; ?>
