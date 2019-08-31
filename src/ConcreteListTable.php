@@ -58,7 +58,6 @@ class ConcreteListTable extends WP_List_Table {
 					foreach ($this->filters as $filterSpec) {
 						echo "<select name='$filterSpec[key]'>";
 						echo "<option value=''>".htmlspecialchars($filterSpec["allLabel"])."</option>";
-						echo "<option></option>";
 						display_select_options($filterSpec["options"],$_REQUEST[$filterSpec["key"]]);
 						echo "</select>";
 					}
