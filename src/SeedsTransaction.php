@@ -50,12 +50,22 @@ class SeedsTransaction extends WpRecord {
 		if ($this->transaction_id)
 			throw new Exception("This transaction already has an id!");
 
-		$this->transaction_id=rand_chars(8);
-
 		$fromBalance=intval(get_user_meta($this->from_user_id,"seeds_balance",TRUE));
 		$toBalance=intval(get_user_meta($this->to_user_id,"seeds_balance",TRUE));
 		if ($fromBalance<$this->amount)
 			throw new Exception("Insufficient funds on account.");
+
+		$this->amount=intval($this->amount);
+		if ($this->amount<=0)
+			throw new Exception("Amount cannot be zero or negative.");
+
+		if (!$this->from_user_id || !$this->to_user_id)
+			throw new Exception("The user doesn't exist.");
+
+		if ($this->from_user_id==$this->to_user_id)
+			throw new Exception("The accounts cannot be the same.");
+
+		$this->transaction_id=rand_chars(8);
 
 		$fromBalance-=$this->amount;
 		$toBalance+=$this->amount;
