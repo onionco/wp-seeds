@@ -1,4 +1,4 @@
-# wp-seeds
+# WP Seeds 🌱
 
 Transferrable tokens.
 
