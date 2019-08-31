@@ -20,7 +20,6 @@
 				<td>
 					<select name="fromUserId">
 						<option value="">Select User Account</option>
-						<option></option>
 						<?php display_select_options($userAccounts,$fromUserId); ?>
 					</select>
 					<p class="description">
@@ -35,7 +34,6 @@
 				<td>
 					<select name="toUserId">
 						<option value="">Select User Account</option>
-						<option></option>
 						<?php display_select_options($userAccounts,$toUserId); ?>
 					</select>
 					<p class="description">
