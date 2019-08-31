@@ -1,0 +1,23 @@
+{
+    "name": "limikael/wp-seeds",
+    "description": "Transferrable tokens.",
+    "authors": [
+        {
+            "name": "Mikael Lindqvist",
+            "email": "li.mikael@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Niels Lange",
+            "email": "info@nielslange.de",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/limikael/wp-seeds/",
+    "support": {
+        "source": "https://github.com/limikael/wp-seeds/issues"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "2.*"
+    }
+}

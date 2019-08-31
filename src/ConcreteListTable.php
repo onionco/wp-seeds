@@ -1,7 +1,8 @@
 <?php
 
-if(!class_exists('WP_List_Table'))
-	require_once(ABSPATH.'wp-admin/includes/class-wp-list-table.php');
+if ( ! class_exists( 'WP_List_Table' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+}
 
 class ConcreteListTable extends WP_List_Table {
 	var $columns;
@@ -10,37 +11,38 @@ class ConcreteListTable extends WP_List_Table {
 	function __construct() {
 		parent::__construct();
 
-		$this->columns=array();
-		$this->filters=array();
+		$this->columns = array();
+		$this->filters = array();
 	}
 
-	function addFilter($filterSpec) {
-		if (!$filterSpec["key"])
-			$filterSpec["key"]="_".sizeof($this->filters);
+	function addFilter( $filterSpec ) {
+		if ( ! $filterSpec['key'] ) {
+			$filterSpec['key'] = '_' . sizeof( $this->filters );
+		}
 
-		$this->filters[$filterSpec["key"]]=$filterSpec;
-	} 
+		$this->filters[ $filterSpec['key'] ] = $filterSpec;
+	}
 
-	function addFieldColumn($title, $field) {
-		$index=sizeof($this->columns);
-		$key="_$index";
+	function addFieldColumn( $title, $field ) {
+		$index = sizeof( $this->columns );
+		$key   = "_$index";
 
-		$this->columns[$key]=array(
-			"key"=>$key,
-			"title"=>$title,
-			"field"=>$field
+		$this->columns[ $key ] = array(
+			'key'   => $key,
+			'title' => $title,
+			'field' => $field,
 		);
 	}
 
 	// Overridden in order to get rid of _wp_nounce and _wp_http_referer
-	protected function display_tablenav($which) {
+	protected function display_tablenav( $which ) {
 		?>
 		<div class="tablenav <?php echo esc_attr( $which ); ?>">
 			<?php if ( $this->has_items() ) : ?>
 			<div class="alignleft actions bulkactions">
 				<?php $this->bulk_actions( $which ); ?>
 			</div>
-			<?php
+				<?php
 				endif;
 				$this->extra_tablenav( $which );
 				$this->pagination( $which );
@@ -49,13 +51,13 @@ class ConcreteListTable extends WP_List_Table {
 		</div>
 		<?php
 	}
-	function extra_tablenav($which) {
-		switch ($which) {
-			case "top":
-				if ($this->filters) {
+	function extra_tablenav( $which ) {
+		switch ( $which ) {
+			case 'top':
+				if ( $this->filters ) {
 					echo "<div class='alignleft actions'>";
 
-					foreach ($this->filters as $filterSpec) {
+					foreach ( $this->filters as $filterSpec ) {
 						echo "<select name='$filterSpec[key]'>";
 						echo "<option value=''>".htmlspecialchars($filterSpec["allLabel"])."</option>";
 						display_select_options($filterSpec["options"],$_REQUEST[$filterSpec["key"]]);
@@ -63,75 +65,78 @@ class ConcreteListTable extends WP_List_Table {
 					}
 
 					echo "<input type='submit' class='button' value='Filter'>";
-					echo "</div>";
+					echo '</div>';
 				}
 
-/*				echo "<select><option>test</option></select>";
+				/*
+							  echo "<select><option>test</option></select>";
 				echo "<input type='submit' class='button' value='Filter'>";*/
 				break;
 		}
 	}
 
-	function addFuncColumn($title, $func) {
-		$index=sizeof($this->columns);
-		$key="_$index";
+	function addFuncColumn( $title, $func ) {
+		$index = sizeof( $this->columns );
+		$key   = "_$index";
 
-		$this->columns[$key]=array(
-			"key"=>$key,
-			"title"=>$title,
-			"func"=>$func
+		$this->columns[ $key ] = array(
+			'key'   => $key,
+			'title' => $title,
+			'func'  => $func,
 		);
 	}
 
-	function get_columns(){
-		$cols=array();
+	function get_columns() {
+		$cols = array();
 
-		foreach ($this->columns as $column)
-			$cols[$column["key"]]=$column["title"];
-
-		return $cols;
-    }
-
-	function column_default($item, $columnName) {
-		$colSpec=$this->columns[$columnName];
-
-		if ($colSpec["field"]) {
-			if (is_object($item))
-				return $item->$columnName;
-
-			else
-				return $item[$colSpec["field"]];
+		foreach ( $this->columns as $column ) {
+			$cols[ $column['key'] ] = $column['title'];
 		}
 
-		else if ($colSpec["func"]) {
-			return $colSpec["func"]($item);
+		return $cols;
+	}
+
+	function column_default( $item, $columnName ) {
+		$colSpec = $this->columns[ $columnName ];
+
+		if ( $colSpec['field'] ) {
+			if ( is_object( $item ) ) {
+				return $item->$columnName;
+
+			} else {
+				return $item[ $colSpec['field'] ];
+			}
+		} elseif ( $colSpec['func'] ) {
+			return $colSpec['func']($item);
 		}
 	}
 
-    function setData($data) {
-    	$this->items=$data;
-    	$this->prepare_items();
-    }
+	function setData( $data ) {
+		$this->items = $data;
+		$this->prepare_items();
+	}
 
-    function prepare_items() {
-        $columns = $this->get_columns();
-        $hidden = array();
-        $sortable = $this->get_sortable_columns();
-        $this->_column_headers = array($columns, $hidden, $sortable);
+	function prepare_items() {
+		$columns               = $this->get_columns();
+		$hidden                = array();
+		$sortable              = $this->get_sortable_columns();
+		$this->_column_headers = array( $columns, $hidden, $sortable );
 
-        //$this->process_bulk_action();
-		$this->set_pagination_args(array(
-			'total_items' => sizeof($this->items),
-			'per_page'    => sizeof($this->items),
-			'total_pages' => 1,
-		));
-    }
+		// $this->process_bulk_action();
+		$this->set_pagination_args(
+			array(
+				'total_items' => sizeof( $this->items ),
+				'per_page'    => sizeof( $this->items ),
+				'total_pages' => 1,
+			)
+		);
+	}
 
-    function display() {
-    	$adiminUrl=get_admin_url(NULL,"admin.php");
-    	echo "<form action='$adminUrl' method='get'>";
-    	echo "<input type='hidden' name='page' value='$_REQUEST[page]'/>";
-    	parent::display();
-    	echo "</form>";
-    }
+	function display() {
+		$adiminUrl = get_admin_url( null, 'admin.php' );
+		echo "<form action='$adminUrl' method='get'>";
+		echo "<input type='hidden' name='page' value='$_REQUEST[page]'/>";
+		parent::display();
+		echo '</form>';
+	}
 }
