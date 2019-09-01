@@ -92,12 +92,8 @@ function seeds_create_page() {
 
 	$vars['action'] = get_admin_url( null, 'admin.php?page=seeds_create' );
 	$vars['users']  = array();
-	foreach ( get_users() as $user ) {
-		$vars['users'][] = array(
-			'id'    => $user->ID,
-			'label' => $user->data->user_nicename . '( ' . $user->data->user_email . ')',
-		);
-	}
+	foreach ( get_users() as $user )
+		$vars['users'][$user->ID]=SeedsTransaction::formatUser($user);
 
 	display_template( __DIR__ . '/tpl/seeds_create.tpl.php', $vars );
 }
@@ -135,12 +131,8 @@ function seeds_burn_page() {
 
 	$vars['action'] = get_admin_url( null, 'admin.php?page=seeds_burn' );
 	$vars['users']  = array();
-	foreach ( get_users() as $user ) {
-		$vars['users'][] = array(
-			'id'    => $user->ID,
-			'label' => $user->data->user_nicename . '( ' . $user->data->user_email . ')',
-		);
-	}
+	foreach ( get_users() as $user )
+		$vars['users'][$user->ID]=SeedsTransaction::formatUser($user);
 
 	display_template( __DIR__ . '/tpl/seeds_burn.tpl.php', $vars );
 }

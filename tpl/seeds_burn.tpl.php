@@ -42,13 +42,7 @@
 				<td>
 					<select name="userId">
 						<option value="">Select User Account</option>
-						<?php foreach ($users as $user) { ?>
-							<option value="<?php echo $user["id"]; ?>"
-								<?php if ($userId==$user["id"]) echo "selected"; ?>
-							>
-								<?php echo htmlspecialchars($user["label"]); ?>
-							</option>
-						<?php } ?>
+						<?php display_select_options($users,$userId); ?>
 					</select>
 					<p class="description">
 						Where should these seeds be taken from?
