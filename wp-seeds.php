@@ -92,8 +92,9 @@ function seeds_create_page() {
 
 	$vars['action'] = get_admin_url( null, 'admin.php?page=seeds_create' );
 	$vars['users']  = array();
-	foreach ( get_users() as $user )
-		$vars['users'][$user->ID]=SeedsTransaction::formatUser($user);
+	foreach ( get_users() as $user ) {
+		$vars['users'][ $user->ID ] = SeedsTransaction::formatUser( $user );
+	}
 
 	display_template( __DIR__ . '/tpl/seeds_create.tpl.php', $vars );
 }
@@ -131,8 +132,9 @@ function seeds_burn_page() {
 
 	$vars['action'] = get_admin_url( null, 'admin.php?page=seeds_burn' );
 	$vars['users']  = array();
-	foreach ( get_users() as $user )
-		$vars['users'][$user->ID]=SeedsTransaction::formatUser($user);
+	foreach ( get_users() as $user ) {
+		$vars['users'][ $user->ID ] = SeedsTransaction::formatUser( $user );
+	}
 
 	display_template( __DIR__ . '/tpl/seeds_burn.tpl.php', $vars );
 }
@@ -445,12 +447,12 @@ function seeds_send_sc( $args ) {
  *  @subpackage WP Seeds
  *  @since 1.0
  */
-add_filter('manage_users_columns', 'wps_manage_users_columns');
-function wps_manage_users_columns($columns) {
+add_filter( 'manage_users_columns', 'wps_manage_users_columns' );
+function wps_manage_users_columns( $columns ) {
 	$new_columns = array(
-			'balance num'	=> __('Balance', 'wp-seeds'),
+		'balance num' => __( 'Balance', 'wp-seeds' ),
 	);
-	return array_merge($columns, $new_columns);
+	return array_merge( $columns, $new_columns );
 }
 
 /**
@@ -482,6 +484,16 @@ function wps_manage_users_sortable_columns( $columns ) {
 	return wp_parse_args( array( 'balance num' => 'seeds_balance' ), $columns );
 }
 
+add_action( 'pre_get_users', 'wps_pre_get_users', 10, 1 );
+function wps_pre_get_users( $WP_User_Query ) {
+	if ( isset( $WP_User_Query->query_vars['orderby'] )
+			&& ( 'seeds_balance' === $WP_User_Query->query_vars['orderby'] )
+	) {
+			$WP_User_Query->query_vars['meta_key'] = 'seeds_balance';
+			$WP_User_Query->query_vars['orderby']  = 'meta_value';
+	}
+}
+
 /**
  * Add custom styles to dashboard
  *
@@ -489,9 +501,9 @@ function wps_manage_users_sortable_columns( $columns ) {
  *  @subpackage WP Seeds
  *  @since 1.0
  */
-add_action('admin_head', 'wps_admin_head');
+add_action( 'admin_head', 'wps_admin_head' );
 function wps_admin_head() {
-  echo '<style>
+	echo '<style>
 	.fixed .column-balance {
     width: 100px;
 	}
