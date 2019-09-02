@@ -92,8 +92,9 @@ function seeds_create_page() {
 
 	$vars['action'] = get_admin_url( null, 'admin.php?page=seeds_create' );
 	$vars['users']  = array();
-	foreach ( get_users() as $user )
-		$vars['users'][$user->ID]=SeedsTransaction::formatUser($user);
+	foreach ( get_users() as $user ) {
+		$vars['users'][ $user->ID ] = SeedsTransaction::formatUser( $user );
+	}
 
 	display_template( __DIR__ . '/tpl/seeds_create.tpl.php', $vars );
 }
@@ -131,8 +132,9 @@ function seeds_burn_page() {
 
 	$vars['action'] = get_admin_url( null, 'admin.php?page=seeds_burn' );
 	$vars['users']  = array();
-	foreach ( get_users() as $user )
-		$vars['users'][$user->ID]=SeedsTransaction::formatUser($user);
+	foreach ( get_users() as $user ) {
+		$vars['users'][ $user->ID ] = SeedsTransaction::formatUser( $user );
+	}
 
 	display_template( __DIR__ . '/tpl/seeds_burn.tpl.php', $vars );
 }
@@ -436,6 +438,83 @@ function seeds_send_sc( $args ) {
 	}
 
 	return render_template( __DIR__ . '/tpl/seeds_send.tpl.php', $vars );
+}
+
+/**
+ * Add custom colum header to accouts page
+ *
+ *  @package WordPress
+ *  @subpackage WP Seeds
+ *  @since 1.0
+ */
+add_filter( 'manage_users_columns', 'wps_manage_users_columns' );
+function wps_manage_users_columns( $columns ) {
+	$new_columns = array(
+		'balance num' => __( 'Balance', 'wp-seeds' ),
+	);
+	return array_merge( $columns, $new_columns );
+}
+
+/**
+ * Add custom colum entry to accouts page
+ *
+ *  @package WordPress
+ *  @subpackage WP Seeds
+ *  @since 1.0
+ */
+add_action( 'manage_users_custom_column', 'wps_manage_users_custom_column', 10, 3 );
+function wps_manage_users_custom_column( $output, $column_name, $user_id ) {
+	global $wpdb;
+	switch ( $column_name ) {
+		case 'balance num':
+			return get_user_meta( $user_id, 'seeds_balance', true ) ?: '0';
+			break;
+	}
+}
+
+/**
+ * Make custom colum entry on accouts page sortable
+ *
+ *  @package WordPress
+ *  @subpackage WP Seeds
+ *  @since 1.0
+ */
+add_filter( 'manage_users_sortable_columns', 'wps_manage_users_sortable_columns' );
+function wps_manage_users_sortable_columns( $columns ) {
+	return wp_parse_args( array( 'balance num' => 'seeds_balance' ), $columns );
+}
+
+/**
+ * Add custom colum entry sort function
+ *
+ *  @package WordPress
+ *  @subpackage WP Seeds
+ *  @since 1.0
+ */
+add_action( 'pre_get_users', 'wps_pre_get_users', 10, 1 );
+function wps_pre_get_users( $WP_User_Query ) {
+	if ( isset( $WP_User_Query->query_vars['orderby'] )
+			&& ( 'seeds_balance' === $WP_User_Query->query_vars['orderby'] )
+	) {
+			$WP_User_Query->query_vars['meta_key'] = 'seeds_balance';
+			$WP_User_Query->query_vars['orderby']  = 'meta_value_num';
+	}
+}
+
+/**
+ * Add custom styles to dashboard
+ *
+ *  @package WordPress
+ *  @subpackage WP Seeds
+ *  @since 1.0
+ */
+add_action( 'admin_head', 'wps_admin_head' );
+function wps_admin_head() {
+	echo '<style>
+	.fixed .column-balance {
+    width: 100px;
+	}
+  </style>';
 }
 
 // Register WordPress hooks.
