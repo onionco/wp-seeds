@@ -1,6 +1,6 @@
 # WP Seeds 🌱
 
-Transferrable tokens.
+Allows users to hold, send and receive tokens named seeds.
 
 * [About](#about)
 * [Shortcodes](#shortcodes)
