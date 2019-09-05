@@ -62,3 +62,197 @@ function wps_tgmpa_register() {
 
 	tgmpa( $plugins, $config );
 }
+
+/**
+ * Register the required plugins for this theme.
+ */
+if ( function_exists( 'acf_add_local_field_group' ) ) {
+	acf_add_local_field_group(
+		array(
+			'key'                   => 'group_5d6e6eca8fedc',
+			'title'                 => 'Transaction',
+			'fields'                => array(
+				array(
+					'key'               => 'field_5d6e6ed3f45ac',
+					'label'             => 'From user',
+					'name'              => 'from_user',
+					'type'              => 'user',
+					'instructions'      => '',
+					'required'          => 1,
+					'conditional_logic' => 0,
+					'wrapper'           => array(
+						'width' => '',
+						'class' => '',
+						'id'    => '',
+					),
+					'role'              => '',
+					'allow_null'        => 0,
+					'multiple'          => 0,
+					'return_format'     => '',
+				),
+				array(
+					'key'               => 'field_5d6e6ef5f45ad',
+					'label'             => 'To user',
+					'name'              => 'to_user',
+					'type'              => 'user',
+					'instructions'      => '',
+					'required'          => 1,
+					'conditional_logic' => 0,
+					'wrapper'           => array(
+						'width' => '',
+						'class' => '',
+						'id'    => '',
+					),
+					'role'              => '',
+					'allow_null'        => 0,
+					'multiple'          => 0,
+					'return_format'     => '',
+				),
+				array(
+					'key'               => 'field_5d6e6efff45ae',
+					'label'             => 'Amount',
+					'name'              => 'amount',
+					'type'              => 'number',
+					'instructions'      => '',
+					'required'          => 1,
+					'conditional_logic' => 0,
+					'wrapper'           => array(
+						'width' => '',
+						'class' => '',
+						'id'    => '',
+					),
+					'default_value'     => '',
+					'placeholder'       => '',
+					'prepend'           => '',
+					'append'            => '',
+					'min'               => '',
+					'max'               => '',
+					'step'              => '',
+				),
+				array(
+					'key'               => 'field_5d6e6f10f45af',
+					'label'             => 'Note',
+					'name'              => 'note',
+					'type'              => 'text',
+					'instructions'      => '',
+					'required'          => 0,
+					'conditional_logic' => 0,
+					'wrapper'           => array(
+						'width' => '',
+						'class' => '',
+						'id'    => '',
+					),
+					'default_value'     => '',
+					'placeholder'       => '',
+					'prepend'           => '',
+					'append'            => '',
+					'maxlength'         => '',
+				),
+			),
+			'location'              => array(
+				array(
+					array(
+						'param'    => 'post_type',
+						'operator' => '==',
+						'value'    => 'transaction',
+					),
+				),
+			),
+			'menu_order'            => 0,
+			'position'              => 'normal',
+			'style'                 => 'default',
+			'label_placement'       => 'left',
+			'instruction_placement' => 'label',
+			'hide_on_screen'        => array(
+				0 => 'the_content',
+			),
+			'active'                => true,
+			'description'           => '',
+		)
+	);
+}
+
+/**
+ * Register Custom Post Type
+ *
+ * @return void
+ */
+function custom_post_type() {
+
+	$labels = array(
+		'name'               => _x( 'Transactions', 'Post Type General Name', 'wp-seeds' ),
+		'singular_name'      => _x( 'Transaction', 'Post Type Singular Name', 'wp-seeds' ),
+		'menu_name'          => __( 'Transactions', 'wp-seeds' ),
+		'parent_item_colon'  => __( 'Parent Item:', 'wp-seeds' ),
+		'all_items'          => __( 'All Transactions', 'wp-seeds' ),
+		'view_item'          => __( 'View Transaction', 'wp-seeds' ),
+		'add_new_item'       => __( 'Add New Transaction', 'wp-seeds' ),
+		'add_new'            => __( 'Add New', 'wp-seeds' ),
+		'edit_item'          => __( 'Edit Transaction', 'wp-seeds' ),
+		'update_item'        => __( 'Update Transaction', 'wp-seeds' ),
+		'search_items'       => __( 'Search Transaction', 'wp-seeds' ),
+		'not_found'          => __( 'Not found', 'wp-seeds' ),
+		'not_found_in_trash' => __( 'Not found in Trash', 'wp-seeds' ),
+	);
+	$args   = array(
+		'label'               => __( 'Transactions', 'wp-seeds' ),
+		'description'         => __( 'Transfer seeds from one user to another', 'wp-seeds' ),
+		'labels'              => $labels,
+		'supports'            => array(),
+		'taxonomies'          => array(),
+		'hierarchical'        => false,
+		'public'              => true,
+		'show_ui'             => true,
+		'show_in_menu'        => true,
+		'show_in_nav_menus'   => true,
+		'show_in_admin_bar'   => true,
+		'show_in_rest'        => true,
+		'menu_position'       => 2,
+		'menu_icon'           => 'dashicons-money',
+		'can_export'          => true,
+		'has_archive'         => true,
+		'exclude_from_search' => false,
+		'publicly_queryable'  => true,
+		'capability_type'     => 'post',
+	);
+	register_post_type( 'transaction', $args );
+
+}
+add_action( 'init', 'custom_post_type', 0 );
+
+/**
+ * Hide editor for transactions CPT
+ *
+ * @since 1.0
+ * @return void
+ */
+function hide_editor() {
+	remove_post_type_support( 'transaction', 'title' );
+	remove_post_type_support( 'transaction', 'editor' );
+}
+add_action( 'admin_init', 'hide_editor' );
+
+/**
+ * Auto add and update title field
+ *
+ * @since 1.0
+ * @param mixed $post_id The post id.
+ * @return void
+ */
+function wps_save_post( $post_id ) {
+
+	$title = array();
+	$temp  = array();
+
+	if ( get_post_type() === 'transaction' ) {
+		$temp[] = date( 'Y-m-d' );
+		$temp[] = get_field( 'from_user' );
+		$temp[] = get_field( 'to_user' );
+		$temp[] = get_field( 'amount' );
+
+		$title['post_title'] = implode( '-', $temp );
+	}
+
+	wp_update_post( $title );
+}
+add_action( 'acf/save_post', 'wps_save_post', 20 );
