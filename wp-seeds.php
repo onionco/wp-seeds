@@ -25,6 +25,7 @@
  * Include the TGM_Plugin_Activation class.
  *
  * @since 1.0
+ * @return void
  */
 require_once dirname( __FILE__ ) . '/class-tgm-plugin-activation.php';
 
@@ -35,6 +36,9 @@ add_action( 'tgmpa_register', 'wps_tgmpa_register' );
  *
  * This function is hooked into tgmpa_init, which is fired within the
  * TGM_Plugin_Activation class constructor.
+ *
+ * @since 1.0
+ * @return void
  */
 function wps_tgmpa_register() {
 	$plugins = array(
@@ -65,6 +69,9 @@ function wps_tgmpa_register() {
 
 /**
  * Register the required plugins for this theme.
+ *
+ * @since 1.0
+ * @return void
  */
 if ( function_exists( 'acf_add_local_field_group' ) ) {
 	acf_add_local_field_group(
@@ -175,6 +182,7 @@ if ( function_exists( 'acf_add_local_field_group' ) ) {
 /**
  * Register Custom Post Type
  *
+ * @since 1.0
  * @return void
  */
 function custom_post_type() {
