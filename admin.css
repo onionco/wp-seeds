@@ -1,0 +1,4 @@
+.plugins .plugin-title .dashicons,
+.plugins .plugin-title img {
+	float: inherit;
+}
