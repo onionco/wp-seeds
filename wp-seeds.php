@@ -8,7 +8,7 @@
  * @copyright 2019 Mikael Lindqvist & Niels Lange
  * @license   GPL v2 or later
 
- * Plugin Name:       WP Seeds
+ * Plugin Name:       WP Seeds 🌱
  * Plugin URI:        https://github.com/limikael/wp-seeds
  * Description:       Allows users to hold, send and receive tokens named seeds.
  * Version:           1.0
@@ -28,8 +28,6 @@
  * @return void
  */
 require_once dirname( __FILE__ ) . '/class-tgm-plugin-activation.php';
-
-add_action( 'tgmpa_register', 'wps_tgmpa_register' );
 
 /**
  * Register the required plugins for this theme.
@@ -66,6 +64,7 @@ function wps_tgmpa_register() {
 
 	tgmpa( $plugins, $config );
 }
+add_action( 'tgmpa_register', 'wps_tgmpa_register' );
 
 /**
  * Register the required plugins for this theme.
@@ -185,7 +184,7 @@ if ( function_exists( 'acf_add_local_field_group' ) ) {
  * @since 1.0
  * @return void
  */
-function custom_post_type() {
+function wps_register_cpt() {
 
 	$labels = array(
 		'name'               => _x( 'Transactions', 'Post Type General Name', 'wp-seeds' ),
@@ -226,7 +225,7 @@ function custom_post_type() {
 	register_post_type( 'transaction', $args );
 
 }
-add_action( 'init', 'custom_post_type', 0 );
+add_action( 'init', 'wps_register_cpt', 0 );
 
 /**
  * Hide editor for transactions CPT
@@ -234,11 +233,11 @@ add_action( 'init', 'custom_post_type', 0 );
  * @since 1.0
  * @return void
  */
-function hide_editor() {
+function wps_hide_editor() {
 	remove_post_type_support( 'transaction', 'title' );
 	remove_post_type_support( 'transaction', 'editor' );
 }
-add_action( 'admin_init', 'hide_editor' );
+add_action( 'admin_init', 'wps_hide_editor' );
 
 /**
  * Auto add and update title field
@@ -264,3 +263,13 @@ function wps_save_post( $post_id ) {
 	wp_update_post( $title );
 }
 add_action( 'acf/save_post', 'wps_save_post', 20 );
+
+/**
+ * Undocumented function
+ *
+ * @return void
+ */
+function wps_admin_style() {
+	wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . '/admin.css', null, '1.0', 'screen' );
+}
+add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
