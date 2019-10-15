@@ -266,19 +266,20 @@ add_action( 'admin_init', 'wps_hide_editor' );
  */
 function wps_save_post( $post_id ) {
 
-	$title = array();
-	$temp  = array();
+	$post = get_post( $post_id );
+	$temp = array();
 
 	if ( get_post_type() === 'transaction' ) {
-		$temp[] = date( 'Y-m-d' );
+		$temp[] = date( 'Y.m.d' );
 		$temp[] = get_field( 'from_user' );
 		$temp[] = get_field( 'to_user' );
 		$temp[] = get_field( 'amount' );
+		$temp[] = time();
 
-		$title['post_title'] = implode( '-', $temp );
+		$post->post_title = implode( '-', $temp );
 	}
 
-	wp_update_post( $title );
+	wp_update_post( $post );
 }
 add_action( 'acf/save_post', 'wps_save_post', 20 );
 
