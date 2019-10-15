@@ -60,6 +60,13 @@ function wps_tgmpa_register() {
 		'dismiss_msg'  => '',
 		'is_automatic' => true,
 		'message'      => '',
+		'strings'      => array(
+			'notice_can_install_required' => _n_noop(
+				'WP Seeds 🌱 plugin has the following dependency: %1$s.',
+				'WP Seeds 🌱 plugin has the following dependencies: %1$s.',
+				'wp-seeds'
+			),
+		)	
 	);
 
 	tgmpa( $plugins, $config );
