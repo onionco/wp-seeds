@@ -24,7 +24,7 @@
 /**
  * Include the TGM_Plugin_Activation class.
  *
- * @since 1.0
+ * @since 1.0.0
  * @return void
  */
 require_once dirname( __FILE__ ) . '/class-tgm-plugin-activation.php';
@@ -35,7 +35,7 @@ require_once dirname( __FILE__ ) . '/class-tgm-plugin-activation.php';
  * This function is hooked into tgmpa_init, which is fired within the
  * TGM_Plugin_Activation class constructor.
  *
- * @since 1.0
+ * @since 1.0.0
  * @return void
  */
 function wps_tgmpa_register() {
@@ -61,12 +61,13 @@ function wps_tgmpa_register() {
 		'is_automatic' => true,
 		'message'      => '',
 		'strings'      => array(
+			/* Translators: %s: name of the plugin that needs to be installed */
 			'notice_can_install_required' => _n_noop(
 				'WP Seeds 🌱 plugin has the following dependency: %1$s.',
 				'WP Seeds 🌱 plugin has the following dependencies: %1$s.',
 				'wp-seeds'
 			),
-		)	
+		),
 	);
 
 	tgmpa( $plugins, $config );
@@ -76,7 +77,7 @@ add_action( 'tgmpa_register', 'wps_tgmpa_register' );
 /**
  * Register the required plugins for this theme.
  *
- * @since 1.0
+ * @since 1.0.0
  * @return void
  */
 if ( function_exists( 'acf_add_local_field_group' ) ) {
@@ -188,7 +189,7 @@ if ( function_exists( 'acf_add_local_field_group' ) ) {
 /**
  * Register Custom Post Type
  *
- * @since 1.0
+ * @since 1.0.0
  * @return void
  */
 function wps_register_cpt() {
@@ -227,7 +228,17 @@ function wps_register_cpt() {
 		'has_archive'         => true,
 		'exclude_from_search' => false,
 		'publicly_queryable'  => true,
-		'capability_type'     => 'post',
+		'capability_type'     => 'transaction',
+		'capabilities'        => array(
+			'edit_post'          => 'edit_transaction',
+			'edit_posts'         => 'edit_transactions',
+			'edit_others_posts'  => 'edit_other_transactions',
+			'publish_posts'      => 'publish_transactions',
+			'read_post'          => 'read_transaction',
+			'read_private_posts' => 'read_private_transactions',
+			'delete_post'        => 'delete_transaction',
+		),
+		'map_meta_cap'        => true,
 	);
 	register_post_type( 'transaction', $args );
 
@@ -237,7 +248,7 @@ add_action( 'init', 'wps_register_cpt', 0 );
 /**
  * Hide editor for transactions CPT
  *
- * @since 1.0
+ * @since 1.0.0
  * @return void
  */
 function wps_hide_editor() {
@@ -249,7 +260,7 @@ add_action( 'admin_init', 'wps_hide_editor' );
 /**
  * Auto add and update title field
  *
- * @since 1.0
+ * @since 1.0.0
  * @param mixed $post_id The post id.
  * @return void
  */
@@ -272,8 +283,9 @@ function wps_save_post( $post_id ) {
 add_action( 'acf/save_post', 'wps_save_post', 20 );
 
 /**
- * Undocumented function
+ * Load admin styles
  *
+ * @since 1.0.0
  * @return void
  */
 function wps_admin_style() {
@@ -282,27 +294,41 @@ function wps_admin_style() {
 add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
 
 /**
- * WP Seeds settings page.
+ * Add custom user role
  *
+ * @since 1.0.0
  * @return void
  */
-function wps_settings_page() {
-	echo "hello world, here be the settings";
-}
-
-/**
- * Admin menu hook, add options page.
- *
- * @return void
- */
-function wps_admin_menu() {
-	add_submenu_page(
-		'edit.php?post_type=transaction',
-		'WP Seeds Settings',
-		'Settings',
-		'manage_options',
-		'wps_settings',
-		'wps_settings_page'
+function add_roles_on_plugin_activation() {
+	add_role(
+		'gardener',
+		'Gardener',
+		array(
+			'edit_transaction'          => true,
+			'edit_transactions'         => true,
+			'edit_other_transactions'   => true,
+			'publish_transactions'      => true,
+			'read_transaction'          => true,
+			'read_private_transactions' => true,
+			'delete_transaction'        => true,
+		)
 	);
 }
-add_action( 'admin_menu', 'wps_admin_menu' );
+add_action( 'init', 'add_roles_on_plugin_activation' );
+
+/**
+ * Add custom user capabilities
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function add_theme_caps() {
+	$role = get_role( 'gardener' );
+	$role->add_cap( 'edit_transactions' );
+	$role->add_cap( 'edit_other_transactions' );
+	$role->add_cap( 'publish_transactions' );
+	$role->add_cap( 'read_transaction' );
+	$role->add_cap( 'read_private_transactions' );
+	$role->add_cap( 'delete_transaction' );
+}
+add_action( 'init', 'add_theme_caps' );
