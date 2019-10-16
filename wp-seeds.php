@@ -432,3 +432,56 @@ function wps_pre_get_posts( $query ) {
 	}
 }
 add_action( 'pre_get_posts', 'wps_pre_get_posts' );
+
+/**
+ * Add custom filter
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_restrict_manage_posts() {
+	global $typenow, $wp_query;
+	$users = get_users();
+
+	if ( 'transaction' === $typenow ) {
+		if ( isset( $_GET['uid'] ) ) {
+			$user_id = (int) $_GET['uid'];
+		} ?>
+		<select name="uid" id="filter-by-user-id">
+			<option value="all" <?php selected( 'all', $user_id ); ?>><?php esc_html_e( 'All users', 'wp-seeds' ); ?></option>
+				<?php foreach ( $users as $user ) { ?>
+					<option value="<?php echo esc_attr( $user->ID ); ?>" <?php selected( $user->ID, $user_id ); ?>><?php echo esc_attr( $user->display_name ); ?></option>
+				<?php } ?>
+			</select>
+		<?php
+	}
+}
+add_action( 'restrict_manage_posts', 'wps_restrict_manage_posts' );
+
+/**
+ * Add custom query
+ *
+ * @param array $query The WP_Query object.
+ * @return void
+ */
+function wps_parse_query( $query ) {
+	global $pagenow;
+	$post_type = isset( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : '';
+
+	if ( is_admin() && 'edit.php' === $pagenow && 'transaction' === $post_type && isset( $_GET['uid'] ) && 'all' !== $_GET['uid'] ) {
+		$query->query_vars['meta_query'] = array(
+			'relation' => 'OR',
+			array(
+				'key'     => 'to_user',
+				'value'   => sanitize_text_field( wp_unslash( $_GET['uid'] ) ),
+				'compare' => '=',
+			),
+			array(
+				'key'     => 'from_user',
+				'value'   => sanitize_text_field( wp_unslash( $_GET['uid'] ) ),
+				'compare' => '=',
+			),
+		);
+	}
+}
+add_filter( 'parse_query', 'wps_parse_query' );
