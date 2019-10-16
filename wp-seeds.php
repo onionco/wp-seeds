@@ -502,7 +502,7 @@ function wps_parse_query( $query ) {
 }
 add_filter( 'parse_query', 'wps_parse_query' );
 
-/*
+/**
  * WP Seeds settings page.
  *
  * @return void
