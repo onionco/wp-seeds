@@ -276,7 +276,7 @@ function wps_save_post( $post_id ) {
 		$temp[] = get_field( 'amount' );
 		$temp[] = time();
 
-		$post->post_title = implode( '-', $temp );
+		$post->post_title = crypt( implode( '', $temp ) );
 	}
 
 	wp_update_post( $post );
@@ -333,3 +333,102 @@ function add_theme_caps() {
 	$role->add_cap( 'delete_transaction' );
 }
 add_action( 'init', 'add_theme_caps' );
+
+/**
+ * Add custom column titles.
+ *
+ * @since 1.0.0
+ * @param array $columns The original array with columns.
+ * @return array $columns The updated array with columns.
+ */
+function wps_transaction_columns( $columns ) {
+
+	$columns = array(
+		'cb'        => $columns['cb'],
+		'title'     => __( 'ID' ),
+		'from_user' => __( 'From' ),
+		'to_user'   => __( 'To' ),
+		'amount'    => __( 'Amount' ),
+		'date'      => __( 'Date' ),
+	);
+
+	return $columns;
+}
+add_filter( 'manage_edit-transaction_columns', 'wps_transaction_columns' );
+
+/**
+ * Add custom column content.
+ *
+ * @since 1.0.0
+ * @param array $column The column to add data to.
+ * @param int   $post_id The user id.
+ * @return void
+ */
+function wps_transaction_posts_custom_column( $column, $post_id ) {
+	global $post;
+
+	switch ( $column ) {
+
+		case 'from_user':
+			$user_id = get_post_meta( $post_id, 'from_user', true );
+			$user    = get_userdata( $user_id );
+			echo esc_html( $user->user_login );
+			break;
+		case 'to_user':
+			$user_id = get_post_meta( $post_id, 'to_user', true );
+			$user    = get_userdata( $user_id );
+			echo esc_html( $user->user_login );
+			break;
+		case 'amount':
+			echo esc_html( get_post_meta( $post_id, 'amount', true ) );
+			break;
+	}
+}
+add_action( 'manage_transaction_posts_custom_column', 'wps_transaction_posts_custom_column', 10, 2 );
+
+/**
+ * Make custom columns sortable
+ *
+ * @since 1.0.0
+ * @param array $columns The original array with columns.
+ * @return array $columns The updated array with columns.
+ */
+function wps_transaction_sortable_columns( $columns ) {
+	$columns['from_user'] = 'from_user';
+	$columns['to_user']   = 'to_user';
+	$columns['amount']    = 'amount';
+
+	return $columns;
+}
+add_filter( 'manage_edit-transaction_sortable_columns', 'wps_transaction_sortable_columns' );
+
+/**
+ * Query custom column.
+ *
+ * @since 1.0.0
+ * @param object $query The WP_Query object.
+ * @return void
+ */
+function wps_pre_get_posts( $query ) {
+	if ( ! is_admin() ) {
+		return;
+	}
+
+	$orderby = $query->get( 'orderby' );
+
+	if ( 'from_user' === $orderby ) {
+		$query->set( 'meta_key', 'from_user' );
+		$query->set( 'orderby', 'meta_value_num' );
+	}
+
+	if ( 'to_user' === $orderby ) {
+		$query->set( 'meta_key', 'to_user' );
+		$query->set( 'orderby', 'meta_value_num' );
+	}
+
+	if ( 'amount' === $orderby ) {
+		$query->set( 'meta_key', 'amount' );
+		$query->set( 'orderby', 'meta_value_num' );
+	}
+}
+add_action( 'pre_get_posts', 'wps_pre_get_posts' );
