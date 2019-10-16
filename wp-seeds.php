@@ -339,6 +339,14 @@ function add_theme_caps() {
 	$role->add_cap( 'read_transaction' );
 	$role->add_cap( 'read_private_transactions' );
 	$role->add_cap( 'delete_transaction' );
+
+	$role = get_role( 'administrator' );
+	$role->add_cap( 'edit_transactions' );
+	$role->add_cap( 'edit_other_transactions' );
+	$role->add_cap( 'publish_transactions' );
+	$role->add_cap( 'read_transaction' );
+	$role->add_cap( 'read_private_transactions' );
+	$role->add_cap( 'delete_transaction' );
 }
 add_action( 'init', 'add_theme_caps' );
 
@@ -440,3 +448,31 @@ function wps_pre_get_posts( $query ) {
 	}
 }
 add_action( 'pre_get_posts', 'wps_pre_get_posts' );
+
+/**
+ * WP Seeds settings page.
+ *
+ * @return void
+ */
+function wps_settings_page() {
+	$vars = array();
+
+	display_template( dirname( __FILE__ ) . '/tpl/wps_settings_page.tpl.php', $vars );
+}
+
+/**
+ * Admin menu hook, add options page.
+ *
+ * @return void
+ */
+function wps_admin_menu() {
+	add_submenu_page(
+		'edit.php?post_type=transaction',
+		'WP Seeds Settings',
+		'Settings',
+		'manage_options',
+		'wps_settings',
+		'wps_settings_page'
+	);
+}
+add_action( 'admin_menu', 'wps_admin_menu' );
