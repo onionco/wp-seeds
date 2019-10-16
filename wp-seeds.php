@@ -30,6 +30,14 @@
 require_once dirname( __FILE__ ) . '/class-tgm-plugin-activation.php';
 
 /**
+ * Include custom library.
+ *
+ * @since 1.0
+ * @return void
+ */
+require_once dirname( __FILE__ ) . '/inc/lib.php';
+
+/**
  * Register the required plugins for this theme.
  *
  * This function is hooked into tgmpa_init, which is fired within the
@@ -287,7 +295,9 @@ add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
  * @return void
  */
 function wps_settings_page() {
-	echo "hello world, here be the settings";
+	$vars = array();
+
+	display_template(dirname( __FILE__ ) . '/tpl/wps_settings_page.tpl.php');
 }
 
 /**
