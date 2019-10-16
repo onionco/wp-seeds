@@ -372,12 +372,12 @@ function wps_transaction_posts_custom_column( $column, $post_id ) {
 		case 'from_user':
 			$user_id = get_post_meta( $post_id, 'from_user', true );
 			$user    = get_userdata( $user_id );
-			echo '<a href="' . esc_html( get_edit_user_link( $user->ID ) ) . '">' . esc_attr( $user->user_nicename ) . '</a>';
+			echo '<a href="' . esc_html( get_edit_user_link( $user->ID ) ) . '">' . esc_attr( $user->display_name ) . '</a>';
 			break;
 		case 'to_user':
 			$user_id = get_post_meta( $post_id, 'to_user', true );
 			$user    = get_userdata( $user_id );
-			echo '<a href="' . esc_html( get_edit_user_link( $user->ID ) ) . '">' . esc_attr( $user->user_nicename ) . '</a>';
+			echo '<a href="' . esc_html( get_edit_user_link( $user->ID ) ) . '">' . esc_attr( $user->display_name ) . '</a>';
 			break;
 		case 'amount':
 			echo esc_html( get_post_meta( $post_id, 'amount', true ) );
