@@ -25,12 +25,18 @@
  * Include required classes and files.
  *
  * @since 1.0.0
- * @return void
  */
 require_once dirname( __FILE__ ) . '/classes/class-tgm-plugin-activation.php';
 require_once dirname( __FILE__ ) . '/inc/lib.php';
 require_once dirname( __FILE__ ) . '/inc/transaction-custom-columns.php';
 require_once dirname( __FILE__ ) . '/inc/user-custom-columns.php';
+
+/**
+ * Include transaction functionality.
+ *
+ * @since 1.0
+ */
+require_once dirname( __FILE__ ) . '/inc/transaction.php';
 
 /**
  * Register the required plugins for this theme.
@@ -353,7 +359,30 @@ add_action( 'init', 'add_theme_caps' );
 function wps_settings_page() {
 	$vars = array();
 
-	display_template( dirname( __FILE__ ) . '/tpl/wps_settings_page.tpl.php', $vars );
+	if (isset($_REQUEST['do_create'])) {
+		$user     = get_user_by( 'id', $_REQUEST['user_id'] );
+		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
+		$balance += intval( $_REQUEST['amount'] );
+		update_user_meta( $user->ID, 'wps_balance', $balance );
+
+		$vars [ 'notice_success' ] = "The seeds have been created.";
+	}
+
+	else if (isset($_REQUEST['do_burn'])) {
+		$user     = get_user_by( 'id', $_REQUEST['user_id'] );
+		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
+		$balance -= intval( $_REQUEST['amount'] );
+		update_user_meta( $user->ID, 'wps_balance', $balance );
+
+		$vars [ 'notice_success' ] = "The seeds have been burned.";
+	}
+
+	$vars['users'] = array();
+	foreach ( get_users() as $user ) {
+		$vars['users'][ $user->ID ] = wps_transaction_format_user( $user );
+	}
+
+	display_template( dirname( __FILE__ ) . '/tpl/wps-settings-page.tpl.php', $vars );
 }
 
 /**
