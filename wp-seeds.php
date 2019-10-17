@@ -28,16 +28,10 @@
  */
 require_once dirname( __FILE__ ) . '/classes/class-tgm-plugin-activation.php';
 require_once dirname( __FILE__ ) . '/inc/lib.php';
+require_once dirname( __FILE__ ) . '/inc/transaction.php';
 require_once dirname( __FILE__ ) . '/inc/transactions-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-profile.php';
-
-/**
- * Include transaction functionality.
- *
- * @since 1.0
- */
-require_once dirname( __FILE__ ) . '/inc/transaction.php';
 
 /**
  * Register the required plugins for this theme.
@@ -211,8 +205,8 @@ function wps_register_cpt() {
 		'parent_item_colon'  => __( 'Parent Item:', 'wp-seeds' ),
 		'all_items'          => __( 'All Transactions', 'wp-seeds' ),
 		'view_item'          => __( 'View Transaction', 'wp-seeds' ),
-		'add_new_item'       => __( 'Add New Transaction', 'wp-seeds' ),
-		'add_new'            => __( 'Add New', 'wp-seeds' ),
+		'add_new_item'       => __( 'Create Transaction', 'wp-seeds' ),
+		'add_new'            => __( 'Create Transaction', 'wp-seeds' ),
 		'edit_item'          => __( 'Edit Transaction', 'wp-seeds' ),
 		'update_item'        => __( 'Update Transaction', 'wp-seeds' ),
 		'search_items'       => __( 'Search Transaction', 'wp-seeds' ),
@@ -353,45 +347,20 @@ function add_theme_caps() {
 add_action( 'init', 'add_theme_caps' );
 
 /**
- * WP Seeds settings page.
- *
- * @since 1.0.0
- * @return void
- */
-function wps_settings_page() {
-	$vars = array();
-
-	if ( isset( $_REQUEST['do_create'] ) && isset( $_REQUEST['amount'] ) ) {
-		$user     = get_user_by( 'id', $_REQUEST['user_id'] ); // phpcs:ignore TODO: fix
-		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
-		$balance += intval( $_REQUEST['amount'] );
-		update_user_meta( $user->ID, 'wps_balance', $balance );
-
-		$vars ['notice_success'] = __( 'The seeds have been created.', 'wp-seeds' );
-	} elseif ( isset( $_REQUEST['do_burn'] ) && isset( $_REQUEST['amount'] ) ) {
-		$user     = get_user_by( 'id', $_REQUEST['user_id'] ); // phpcs:ignore TODO: fix
-		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
-		$balance -= intval( $_REQUEST['amount'] );
-		update_user_meta( $user->ID, 'wps_balance', $balance );
-
-		$vars ['notice_success'] = __( 'The seeds have been burned.', 'wp-seeds' );
-	}
-
-	$vars['users'] = array();
-	foreach ( get_users() as $user ) {
-		$vars['users'][ $user->ID ] = wps_transaction_format_user( $user );
-	}
-
-	display_template( dirname( __FILE__ ) . '/tpl/wps-settings-page.tpl.php', $vars );
-}
-
-/**
  * Admin menu hook, add options page.
  *
  * @since 1.0.0
  * @return void
  */
 function wps_admin_menu() {
+	add_submenu_page(
+		'edit.php?post_type=transaction',
+		'WP Seeds Request Transaction',
+		'Request Transaction',
+		'manage_options',
+		'wps_request_transaction',
+		'wps_request_transaction_page'
+	);
 	add_submenu_page(
 		'edit.php?post_type=transaction',
 		'WP Seeds Settings',
@@ -402,3 +371,116 @@ function wps_admin_menu() {
 	);
 }
 add_action( 'admin_menu', 'wps_admin_menu' );
+
+/**
+ * WP Seeds request transaction page.
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_request_transaction_page() {
+	$vars    = array();
+	$show_qr = false;
+
+	if ( isset( $_REQUEST['do_request'] ) ) {
+		if ( ! empty( $_REQUEST['amount'] ) ) {
+			$to_user                = (int) get_current_user_id();
+			$amount                 = (int) $_REQUEST['amount'];
+			$vars['notice_success'] = __( 'QR had been created successfully. Please ask the sender to scan this QR code to transfer seeds to you.', 'wp-seeds' );
+			$vars['qr_code_url']    = sprintf( '//wp.test/wp-admin/post-new.php?post_type=transaction&to_user=%d&ammount=%d', $to_user, $amount );
+			$show_qr                = true;
+		} else {
+			$vars['notice_error'] = __( 'Please provide an ammount to request.', 'wp-seeds' );
+		}
+	}
+
+	if ( $show_qr ) {
+		display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-code.tpl.php', $vars );
+	} else {
+		display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-page.tpl.php', $vars );
+	}
+}
+
+/**
+ * Populate from user field.
+ *
+ * @param array $field The original array with fields.
+ * @return array $field The updated array with fields.
+ */
+function wps_populate_from_user_field( $field ) {
+
+	if ( ! empty( $_REQUEST['action'] ) && 'request-transaction' === $_REQUEST['action'] ) {
+		$user                   = wp_get_current_user();
+		$field['default_value'] = $user->ID;
+	}
+
+	return $field;
+
+}
+add_filter( 'acf/load_field/name=from_user', 'wps_populate_from_user_field' );
+
+/**
+ * Populate to user field.
+ *
+ * @param array $field The original array with fields.
+ * @return array $field The updated array with fields.
+ */
+function wps_populate_to_user_field( $field ) {
+
+	if ( ! empty( $_REQUEST['uid'] ) && is_numeric( $_REQUEST['uid'] ) ) {
+		$user                   = get_userdata( (int) $_REQUEST['uid'] );
+		$field['default_value'] = $user->ID;
+	}
+
+	return $field;
+
+}
+add_filter( 'acf/load_field/name=to_user', 'wps_populate_to_user_field' );
+
+/**
+ * Populate amount field.
+ *
+ * @param array $field The original array with fields.
+ * @return array $field The updated array with fields.
+ */
+function wps_populate_amount_field( $field ) {
+
+	if ( ! empty( $_REQUEST['amount'] ) && is_numeric( $_REQUEST['amount'] ) ) {
+		$field['default_value'] = (int) $_REQUEST['amount'];
+	}
+
+	return $field;
+
+}
+add_filter( 'acf/load_field/name=amount', 'wps_populate_amount_field' );
+
+/**
+ * WP Seeds settings page.
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_settings_page() {
+	$vars = array();
+
+	if ( isset( $_REQUEST['do_create'] ) && isset( $_REQUEST['amount'] ) && isset( $_REQUEST['user_id'] ) ) {
+		$user     = get_user_by( 'id', (int) $_REQUEST['user_id'] );
+		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
+		$balance += intval( $_REQUEST['amount'] );
+		update_user_meta( $user->ID, 'wps_balance', $balance );
+		$vars ['notice_success'] = __( 'The seeds have been created.', 'wp-seeds' );
+	} elseif ( isset( $_REQUEST['do_burn'] ) && isset( $_REQUEST['amount'] ) && isset( $_REQUEST['user_id'] ) ) {
+		$user     = get_user_by( 'id', (int) $_REQUEST['user_id'] );
+		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
+		$balance -= intval( $_REQUEST['amount'] );
+		update_user_meta( $user->ID, 'wps_balance', $balance );
+		$vars ['notice_success'] = __( 'The seeds have been burned.', 'wp-seeds' );
+	}
+
+	$vars['users'] = array();
+	foreach ( get_users() as $user ) {
+		$vars['users'][ $user->ID ] = wps_transaction_format_user( $user );
+	}
+
+	display_template( dirname( __FILE__ ) . '/tpl/wps-settings-page.tpl.php', $vars );
+}
