@@ -1,6 +1,8 @@
 <?php
 /**
- * User custom columns
+ * Users » All Users
+ *
+ * Custom functionality for users overview page.
  *
  * @package WordPress
  * @subpackage WP Seeds

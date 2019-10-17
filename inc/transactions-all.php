@@ -1,6 +1,8 @@
 <?php
 /**
- * Transaction custom columns
+ * Transactions » All Transactions
+ *
+ * Custom functionality for transactions overview page.
  *
  * @package WordPress
  * @subpackage WP Seeds
