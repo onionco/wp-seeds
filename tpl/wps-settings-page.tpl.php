@@ -13,9 +13,9 @@
 <div class="wrap">
 	<h1>WP Seeds 🌱 Settings</h1>
 
-	<?php if ( isset( $notice_success )) { ?>
+	<?php if ( isset( $notice_success ) ) { ?>
 		<div class="notice notice-success">
-			<p><?php echo esc_html($notice_success); ?></p>
+			<p><?php echo esc_html( $notice_success ); ?></p>
 		</div>
 	<?php } ?>
 
