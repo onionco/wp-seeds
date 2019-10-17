@@ -354,27 +354,26 @@ add_action( 'init', 'add_theme_caps' );
 /**
  * WP Seeds settings page.
  *
+ * @since 1.0.0
  * @return void
  */
 function wps_settings_page() {
 	$vars = array();
 
-	if (isset($_REQUEST['do_create'])) {
-		$user     = get_user_by( 'id', $_REQUEST['user_id'] );
+	if ( isset( $_REQUEST['do_create'] ) && isset( $_REQUEST['amount'] ) ) {
+		$user     = get_user_by( 'id', $_REQUEST['user_id'] ); // phpcs:ignore
 		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
 		$balance += intval( $_REQUEST['amount'] );
 		update_user_meta( $user->ID, 'wps_balance', $balance );
 
-		$vars [ 'notice_success' ] = "The seeds have been created.";
-	}
-
-	else if (isset($_REQUEST['do_burn'])) {
-		$user     = get_user_by( 'id', $_REQUEST['user_id'] );
+		$vars ['notice_success'] = esc_html_e( 'The seeds have been created.', 'wp-seeds' );
+	} elseif ( isset( $_REQUEST['do_burn'] ) && isset( $_REQUEST['amount'] ) ) {
+		$user     = get_user_by( 'id', $_REQUEST['user_id'] ); // phpcs:ignore
 		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
 		$balance -= intval( $_REQUEST['amount'] );
 		update_user_meta( $user->ID, 'wps_balance', $balance );
 
-		$vars [ 'notice_success' ] = "The seeds have been burned.";
+		$vars ['notice_success'] = esc_html_e( 'The seeds have been burned.', 'wp-seeds' );
 	}
 
 	$vars['users'] = array();
@@ -388,6 +387,7 @@ function wps_settings_page() {
 /**
  * Admin menu hook, add options page.
  *
+ * @since 1.0.0
  * @return void
  */
 function wps_admin_menu() {
