@@ -28,8 +28,9 @@
  */
 require_once dirname( __FILE__ ) . '/classes/class-tgm-plugin-activation.php';
 require_once dirname( __FILE__ ) . '/inc/lib.php';
-require_once dirname( __FILE__ ) . '/inc/transaction-custom-columns.php';
-require_once dirname( __FILE__ ) . '/inc/user-custom-columns.php';
+require_once dirname( __FILE__ ) . '/inc/transactions-all.php';
+require_once dirname( __FILE__ ) . '/inc/users-all.php';
+require_once dirname( __FILE__ ) . '/inc/users-profile.php';
 
 /**
  * Include transaction functionality.
