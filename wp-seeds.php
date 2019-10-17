@@ -361,19 +361,19 @@ function wps_settings_page() {
 	$vars = array();
 
 	if ( isset( $_REQUEST['do_create'] ) && isset( $_REQUEST['amount'] ) ) {
-		$user     = get_user_by( 'id', $_REQUEST['user_id'] ); // phpcs:ignore
+		$user     = get_user_by( 'id', $_REQUEST['user_id'] ); // phpcs:ignore TODO: fix
 		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
 		$balance += intval( $_REQUEST['amount'] );
 		update_user_meta( $user->ID, 'wps_balance', $balance );
 
-		$vars ['notice_success'] = esc_html_e( 'The seeds have been created.', 'wp-seeds' );
+		$vars ['notice_success'] = __( 'The seeds have been created.', 'wp-seeds' );
 	} elseif ( isset( $_REQUEST['do_burn'] ) && isset( $_REQUEST['amount'] ) ) {
-		$user     = get_user_by( 'id', $_REQUEST['user_id'] ); // phpcs:ignore
+		$user     = get_user_by( 'id', $_REQUEST['user_id'] ); // phpcs:ignore TODO: fix
 		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
 		$balance -= intval( $_REQUEST['amount'] );
 		update_user_meta( $user->ID, 'wps_balance', $balance );
 
-		$vars ['notice_success'] = esc_html_e( 'The seeds have been burned.', 'wp-seeds' );
+		$vars ['notice_success'] = __( 'The seeds have been burned.', 'wp-seeds' );
 	}
 
 	$vars['users'] = array();
