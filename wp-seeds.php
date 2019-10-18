@@ -285,7 +285,46 @@ function wps_save_post( $post_id ) {
 
 	wp_update_post( $post );
 }
-add_action( 'acf/save_post', 'wps_save_post', 20 );
+add_action( 'acf/validate_save_post', 'wps_save_post', 20 );
+
+/**
+ * Validate amount field
+ *
+ * @param string $valid The original validation string.
+ * @return string $valid The updated validation string.
+ */
+function wps_validate_value_amount( $valid ) {
+
+	if ( ! $valid ) {
+		return $valid;
+	}
+
+	if ( ! isset( $_POST['acf']['field_5d6e6ed3f45ac'] )
+		|| ! isset( $_POST['acf']['field_5d6e6efff45ae'] )
+		|| ! isset( $_REQUEST['my_nonce'] ) ) {
+		return;
+	}
+
+	if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['my_nonce'] ) ) ) ) {
+		return;
+	}
+
+	$from_user = (int) $_POST['acf']['field_5d6e6ed3f45ac'];
+	$amount    = (int) $_POST['acf']['field_5d6e6efff45ae'];
+	$balance   = get_user_meta( $from_user, 'wps_balance', true );
+
+	if ( $amount < 0 ) {
+		$valid = esc_html__( 'Amount cannot be negative.', 'wp-seeds' );
+	}
+
+	if ( $amount > $balance ) {
+		/* Translators: %1$d is the balance of the current user. */
+		$valid = sprintf( esc_html__( 'Insufficient balance. Current balance is %1$d.', 'wp-seeds' ), $balance );
+	}
+
+	return $valid;
+}
+add_filter( 'acf/validate_value/name=amount', 'wps_validate_value_amount', 10 );
 
 /**
  * Load admin styles
