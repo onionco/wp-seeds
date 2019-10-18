@@ -21,5 +21,5 @@
 	<?php endif; ?>
 
 	<?php printf( '<p><img src="https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=%s"></p>', esc_html( $qr_code_url ) ); ?>
-	
+
 </div>

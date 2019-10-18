@@ -42,5 +42,5 @@
 			<input name="do_request" type="submit" class="button button-primary" value="Request transaction"/>
 		</p>
 	</form>
-	
+
 </div>
