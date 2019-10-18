@@ -32,6 +32,7 @@ require_once dirname( __FILE__ ) . '/inc/transaction.php';
 require_once dirname( __FILE__ ) . '/inc/transactions-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-profile.php';
+require_once dirname( __FILE__ ) . '/inc/wps-shortcodes.php';
 
 /**
  * Register the required plugins for this theme.
@@ -269,11 +270,10 @@ add_action( 'admin_init', 'wps_hide_editor' );
  * @return void
  */
 function wps_save_post( $post_id ) {
-
 	$post = get_post( $post_id );
 	$temp = array();
 
-	if ( get_post_type() === 'transaction' ) {
+	if ( 'transaction' === get_post_type( $post_id ) ) {
 		$temp[] = date( 'Y.m.d' );
 		$temp[] = get_field( 'from_user' );
 		$temp[] = get_field( 'to_user' );
