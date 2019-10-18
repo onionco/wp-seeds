@@ -27,6 +27,7 @@
  * @since 1.0.0
  */
 require_once dirname( __FILE__ ) . '/classes/class-tgm-plugin-activation.php';
+require_once dirname( __FILE__ ) . '/classes/class-wps-validation.php';
 require_once dirname( __FILE__ ) . '/inc/lib.php';
 require_once dirname( __FILE__ ) . '/inc/transaction.php';
 require_once dirname( __FILE__ ) . '/inc/transactions-all.php';
@@ -300,8 +301,7 @@ function wps_validate_value_amount( $valid ) {
 	}
 
 	if ( ! isset( $_POST['acf']['field_5d6e6ed3f45ac'] )
-		|| ! isset( $_POST['acf']['field_5d6e6efff45ae'] )
-		|| ! isset( $_REQUEST['my_nonce'] ) ) {
+		|| ! isset( $_POST['acf']['field_5d6e6efff45ae'] ) ) {
 		return;
 	}
 
@@ -313,11 +313,11 @@ function wps_validate_value_amount( $valid ) {
 	$amount    = (int) $_POST['acf']['field_5d6e6efff45ae'];
 	$balance   = get_user_meta( $from_user, 'wps_balance', true );
 
-	if ( $amount < 0 ) {
+	if ( WPS_Validation::is_negative( $amount ) ) {
 		$valid = esc_html__( 'Amount cannot be negative.', 'wp-seeds' );
 	}
 
-	if ( $amount > $balance ) {
+	if ( WPS_Validation::is_insufficient_balance( $amount, $balance ) ) {
 		/* Translators: %1$d is the balance of the current user. */
 		$valid = sprintf( esc_html__( 'Insufficient balance. Current balance is %1$d.', 'wp-seeds' ), $balance );
 	}
