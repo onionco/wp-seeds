@@ -1,6 +1,6 @@
 {
-    "name": "limikael/wp-seeds",
-    "description": "Transferrable tokens.",
+    "name": "wp-seeds",
+    "description": "Allows users to hold, send and receive tokens named seeds.",
     "authors": [
         {
             "name": "Mikael Lindqvist",
@@ -13,17 +13,27 @@
             "role": "Developer"
         }
     ],
+    "keywords": [
+		"WordPress",
+        "Plugin",
+        "WP Seeds"
+	],
     "homepage": "https://github.com/limikael/wp-seeds/",
-    "support": {
-        "source": "https://github.com/limikael/wp-seeds/issues"
+    "require": {
+		"php": ">=5.6"
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
+        "jakub-onderka/php-parallel-lint": "^1.0",
+        "wp-coding-standards/wpcs": "^2.1",
+		"wptrt/wpthemereview": "^0.2.0"
     },
     "scripts": {
-        "checkcs": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs --standard=WordPress --ignore=class-tgm-plugin-activation.php *.php inc/*.php tpl/*.php classes/*.php",
-        "checkcbf": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf --standard=WordPress --ignore=class-tgm-plugin-activation.php *.php inc/*.php classes/*.php"
+        "checkcs": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs --standard=WordPress --ignore=class-tgm-plugin-activation.php *.php inc/*.php tpl/*.php",
+        "checkcbf": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf --standard=WordPress --ignore=class-tgm-plugin-activation.php *.php inc/*.php",
+        "lint": "@php ./vendor/bin/parallel-lint --exclude .git --exclude vendor ."
     },
-    "require": {
-        "squizlabs/php_codesniffer": "^3.3.1",
-        "wp-coding-standards/wpcs": "^2.1",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0"
+    "support": {
+        "source": "https://github.com/limikael/wp-seeds/issues"
     }
 }

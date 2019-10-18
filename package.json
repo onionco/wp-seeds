@@ -1,0 +1,30 @@
+{
+	"name": "wp-seeds",
+	"version": "1.0.0",
+	"description": "Allows users to hold, send and receive tokens named seeds.",
+	"author": "Mikael Lindqvist and Niels Lange",
+	"license": "GPL-3.0-or-later",
+	"keywords": [
+		"WordPress",
+		"Plugin",
+		"WP Seeds"
+	],
+	"homepage": "https://github.com/limikael/wp-seeds/",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/limikael/wp-seeds/.git"
+	},
+	"bugs": {
+		"url": "https://github.com/limikael/wp-seeds/issues"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^5.0.0",
+		"concurrently": "^4.1.2",
+		"stylelint-a11y": "^1.2.1"
+	},
+	"scripts": {
+		"lint:css": "wp-scripts lint-style 'assets/**/*.css'",
+		"lint:js": "wp-scripts lint-js 'assets/**/*.js'",
+		"lint:pkg-json": "wp-scripts lint-pkg-json"
+	}
+}
