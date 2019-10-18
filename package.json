@@ -3,19 +3,19 @@
 	"version": "1.0.0",
 	"description": "Allows users to hold, send and receive tokens named seeds.",
 	"author": "Mikael Lindqvist and Niels Lange",
-	"license": "MIT",
+	"license": "GPL-2.0-or-later",
 	"keywords": [
 		"WordPress",
 		"Plugin",
 		"WP Seeds"
 	],
-	"homepage": "https://github.com/limikael/wp-seeds/",
+	"homepage": "https://github.com/onionco/wp-seeds/",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/limikael/wp-seeds/.git"
+		"url": "git+https://github.com/onionco/wp-seeds.git"
 	},
 	"bugs": {
-		"url": "https://github.com/limikael/wp-seeds/issues"
+		"url": "https://github.com/onionco/wp-seeds/issues"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^5.0.0",

@@ -3,19 +3,19 @@
  * WP Seeds 🌱
  *
  * @package   wp-seeds
- * @link      https://github.com/limikael/wp-seeds
+ * @link      https://github.com/onionco/wp-seeds
  * @author    Mikael Lindqvist & Niels Lange
  * @copyright 2019 Mikael Lindqvist & Niels Lange
  * @license   GPL v2 or later
 
  * Plugin Name:       WP Seeds 🌱
- * Plugin URI:        https://github.com/limikael/wp-seeds
+ * Plugin URI:        https://github.com/onionco/wp-seeds
  * Description:       Allows users to hold, send and receive tokens named seeds.
  * Version:           1.0
  * Requires at least: 5.2
  * Requires PHP:      7.3
  * Author:            Mikael Lindqvist & Niels Lange
- * Author URI:        https://github.com/limikael/wp-seeds
+ * Author URI:        https://github.com/onionco/wp-seeds
  * Text Domain:       wp-seeds
  * License:           GPL v2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt

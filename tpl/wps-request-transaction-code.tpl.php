@@ -3,7 +3,7 @@
  * WP Seeds 🌱
  *
  * @package   wp-seeds
- * @link      https://github.com/limikael/wp-seeds
+ * @link      https://github.com/onionco/wp-seeds
  * @author    Mikael Lindqvist & Niels Lange
  * @copyright 2019 Mikael Lindqvist & Niels Lange
  * @license   GPL v2 or later

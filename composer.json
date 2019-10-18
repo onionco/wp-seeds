@@ -13,13 +13,13 @@
             "role": "Developer"
         }
     ],
-    "license": "GPL-3.0-or-later",
+	"license": "GPL-2.0-or-later",
     "keywords": [
 		"WordPress",
         "Plugin",
         "WP Seeds"
 	],
-    "homepage": "https://github.com/limikael/wp-seeds/",
+    "homepage": "https://github.com/onionco/wp-seeds/",
     "require": {
 		"php": ">=5.6"
 	},
@@ -35,6 +35,6 @@
         "lint": "@php ./vendor/bin/parallel-lint --exclude .git --exclude vendor ."
     },
     "support": {
-        "source": "https://github.com/limikael/wp-seeds/issues"
+        "source": "https://github.com/onionco/wp-seeds/issues"
     }
 }
