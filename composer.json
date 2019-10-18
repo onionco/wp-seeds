@@ -1,5 +1,5 @@
 {
-    "name": "wp-seeds",
+    "name": "wpseeds",
     "description": "Allows users to hold, send and receive tokens named seeds.",
     "authors": [
         {
@@ -13,6 +13,7 @@
             "role": "Developer"
         }
     ],
+    "license": "GPL-3.0-or-later",
     "keywords": [
 		"WordPress",
         "Plugin",
