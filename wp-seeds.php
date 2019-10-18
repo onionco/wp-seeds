@@ -273,7 +273,7 @@ function wps_save_post( $post_id ) {
 	$post = get_post( $post_id );
 	$temp = array();
 
-	if ( 'transaction' === get_post_type( $post_id )) {
+	if ( 'transaction' === get_post_type( $post_id ) ) {
 		$temp[] = date( 'Y.m.d' );
 		$temp[] = get_field( 'from_user' );
 		$temp[] = get_field( 'to_user' );
