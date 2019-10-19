@@ -51,6 +51,8 @@ function wps_user_posts_custom_column( $output, $column, $post_id ) {
 			$balance = get_user_meta( $post_id, 'wps_balance', true );
 			if ( ! empty( $balance ) ) {
 				return sprintf( '<a href="%s/wp-admin/edit.php?s&post_status=all&post_type=transaction&action=-1&m=0&uid=%d&filter_action=Filter&paged=1&action2=-1">%s</a>', get_admin_url(), $post_id, $balance );
+			} else {
+				return 0;
 			}
 			break;
 	}
