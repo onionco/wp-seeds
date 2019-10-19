@@ -96,7 +96,9 @@ class WPS_Form_Validator {
 						throw new Exception( 'Invalid check' );
 				}
 
-				$this->request_vars[ $field_name ] = $value;
+				if ( array_key_exists( $field_name, $this->request_vars ) ) {
+					$this->request_vars[ $field_name ] = $value;
+				}
 			}
 		}
 
