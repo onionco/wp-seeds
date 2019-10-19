@@ -16,10 +16,12 @@
 function wps_send_sc( $args ) {
 	$current_user     = wp_get_current_user();
 	$vars             = array();
-	$vars['showForm'] = true;
+	$vars['show_form'] = true;
 	$vars['message']  = '';
 
-	if ( isset( $_REQUEST['seedsDoSend'] ) ) {
+	if ( isset( $_REQUEST['seedsDoSend'] )
+		&& isset( $_REQUEST['seedsSendToAccount'] )
+		&& isset( $_REQUEST['seedsSendAmount'] ) ) {
 		$post_id = wp_insert_post(
 			array(
 				'post_type' => 'transaction',
@@ -27,14 +29,14 @@ function wps_send_sc( $args ) {
 		);
 
 		update_post_meta( $post_id, 'from_user', $current_user->ID );
-		update_post_meta( $post_id, 'to_user', $_REQUEST['seedsSendToAccount'] );
-		update_post_meta( $post_id, 'amount', $_REQUEST['seedsSendAmount'] );
+		update_post_meta( $post_id, 'to_user', wp_unslash( (int) $_REQUEST['seedsSendToAccount'] ) );
+		update_post_meta( $post_id, 'amount', wp_unslash( (int) $_REQUEST['seedsSendAmount'] ) );
 
-		wp_publish_post( $postId );
+		wp_publish_post( $post_id );
 		do_action( 'acf/save_post', $post_id ); // phpcs:ignore
 	}
 
-	$vars['actionUrl'] = get_permalink();
+	$vars['action_url'] = get_permalink();
 	$vars['users']     = array();
 	$users             = get_users();
 	foreach ( $users as $user ) {

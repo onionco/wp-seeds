@@ -300,17 +300,12 @@ function wps_validate_value_amount( $valid ) {
 		return $valid;
 	}
 
-	if ( ! isset( $_POST['acf']['field_5d6e6ed3f45ac'] )
-		|| ! isset( $_POST['acf']['field_5d6e6efff45ae'] ) ) {
+	if ( ! isset( $_POST['acf']['field_5d6e6ed3f45ac'] ) || ! isset( $_POST['acf']['field_5d6e6efff45ae'] ) ) { /* phpcs:ignore */
 		return;
 	}
 
-	if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['my_nonce'] ) ) ) ) {
-		return;
-	}
-
-	$from_user = (int) $_POST['acf']['field_5d6e6ed3f45ac'];
-	$amount    = (int) $_POST['acf']['field_5d6e6efff45ae'];
+	$from_user = (int) $_POST['acf']['field_5d6e6ed3f45ac']; /* phpcs:ignore */
+	$amount    = (int) $_POST['acf']['field_5d6e6efff45ae']; /* phpcs:ignore */
 	$balance   = get_user_meta( $from_user, 'wps_balance', true );
 
 	if ( WPS_Validation::is_negative( $amount ) ) {

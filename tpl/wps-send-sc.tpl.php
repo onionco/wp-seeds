@@ -14,8 +14,8 @@
 	<i><?php echo esc_html( $message ); ?></i>
 <?php endif; ?>
 
-<?php if ( $showForm ) : ?>
-	<form class="seeds-send-form" method="post" action="<?php echo esc_html( $actionUrl ); ?>">
+<?php if ( $show_form ) : ?>
+	<form class="seeds-send-form" method="post" action="<?php echo esc_html( $action_url ); ?>">
 		<input type="hidden" name="seedsDoSend" value="1"/>
 
 		<p class="seeds-send-form-field-container">
