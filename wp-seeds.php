@@ -274,18 +274,37 @@ function wps_save_post( $post_id ) {
 	$temp = array();
 
 	if ( 'transaction' === get_post_type( $post_id ) ) {
-		$temp[] = date( 'Y.m.d' );
-		$temp[] = get_field( 'from_user' );
-		$temp[] = get_field( 'to_user' );
-		$temp[] = get_field( 'amount' );
-		$temp[] = time();
 
+		// Prepare variables
+		$amount               = get_field( 'amount' );
+
+		// Withdraw amount from sender.
+		$sender_id            = get_field( 'from_user' );
+		$sender_balance_old   = get_user_meta( $sender_id, 'wps_balance', true );
+		$sender_balance_new   = (int) $sender_balance_old - (int) $amount;
+		update_user_meta( $sender_id, 'wps_balance', $sender_balance_new );
+
+		// Send amount to receiver.
+		$receiver_id          = get_field( 'to_user' );
+		$receiver_balance_old = get_user_meta( $receiver_id, 'wps_balance', true );
+		$receiver_balance_new = (int) $receiver_balance_old + (int) $amount;
+		update_user_meta( $receiver_id, 'wps_balance', $receiver_balance_new );
+
+		// Prepare post title.
+		$temp[]           = date( 'Y.m.d' );
+		$temp[]           = get_field( 'from_user' );
+		$temp[]           = get_field( 'to_user' );
+		$temp[]           = get_field( 'amount' );
+		$temp[]           = time();
 		$post->post_title = crypt( implode( '', $temp ) );
-	}
-
+		
+		// Set post status
+		$post->post_status = 'publish';		
+	}	
+	
 	wp_update_post( $post );
 }
-add_action( 'acf/validate_save_post', 'wps_save_post', 20 );
+add_action( 'acf/save_post', 'wps_save_post', 20 );
 
 /**
  * Validate amount field
@@ -300,12 +319,7 @@ function wps_validate_value_amount( $valid ) {
 	}
 
 	if ( ! isset( $_POST['acf']['field_5d6e6ed3f45ac'] )
-		|| ! isset( $_POST['acf']['field_5d6e6efff45ae'] )
-		|| ! isset( $_REQUEST['my_nonce'] ) ) {
-		return;
-	}
-
-	if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['my_nonce'] ) ) ) ) {
+		|| ! isset( $_POST['acf']['field_5d6e6efff45ae'] ) ) {
 		return;
 	}
 
