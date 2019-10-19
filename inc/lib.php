@@ -60,3 +60,28 @@ function display_select_options( $options, $current = null ) {
 		);
 	}
 }
+
+/**
+ * Display notices.
+ *
+ * @param array $notices The notices to display.
+ *
+ * @return void
+ */
+function display_notices( $notices ) {
+	foreach ( $notices as $notice_class => $class_notices ) {
+		foreach ( $class_notices as $notice_text ) {
+			printf(
+				'<div class="notice notice-%s">',
+				esc_attr( $notice_class )
+			);
+
+			printf(
+				'<p><strong>%s</strong></p>',
+				esc_html( $notice_text )
+			);
+
+			echo '</div>';
+		}
+	}
+}
