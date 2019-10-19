@@ -96,7 +96,9 @@ class WPS_Form_Validator {
 						throw new Exception( 'Invalid check' );
 				}
 
-				$this->request_vars[ $field_name ] = $value;
+				if ( array_key_exists( $field_name, $this->request_vars ) ) {
+					$this->request_vars[ $field_name ] = $value;
+				}
 			}
 		}
 
@@ -226,11 +228,9 @@ class WPS_Form_Validator {
 	 * @return void
 	 */
 	public function echo_messages() {
-		if ( ! $this->is_submitted() ) {
-			return;
+		if ( $this->is_submitted() ) {
+			$this->ensure_checked();
 		}
-
-		$this->ensure_checked();
 
 		display_notices( $this->messages );
 	}
@@ -243,8 +243,6 @@ class WPS_Form_Validator {
 	 * @return bool
 	 */
 	public function is_submitted() {
-		$this->ensure_checked();
-
 		foreach ( $this->checks as $field_name => $field_checks ) {
 			if ( ! array_key_exists( $field_name, $this->request_vars ) ) {
 				return false;
@@ -261,5 +259,17 @@ class WPS_Form_Validator {
 	 */
 	public function echo_esc_attr_action() {
 		echo esc_attr( $this->action_url );
+	}
+
+	/**
+	 * Mark the form as done. The request variables will be cleared,
+	 * and the message will be shown.
+	 * 
+	 * @param string $message The success message to show.
+	 * @return void
+	 */
+	public function done( $message ) {
+		$this->request_vars=array();
+		$this->messages[ 'success' ][] = $message;
 	}
 }

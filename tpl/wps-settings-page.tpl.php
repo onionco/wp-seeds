@@ -13,11 +13,8 @@
 <div class="wrap">
 	<h1>WP Seeds 🌱 Settings</h1>
 
-	<?php if ( isset( $notice_success ) ) { ?>
-		<div class="notice notice-success">
-			<p><?php echo esc_html( $notice_success ); ?></p>
-		</div>
-	<?php } ?>
+	<?php $create_fv->echo_messages(); ?>
+	<?php $burn_fv->echo_messages(); ?>
 
 	<h2>Create Seeds</h2>
 	<p>
@@ -34,15 +31,15 @@
 		If you have decided that you actually want to create new seeds, the power is yours!
 	</p>
 
-	<form method="post" class="form-table" action="<?php echo esc_attr( $action ); ?>">
+	<form method="post" class="form-table" action="<?php $create_fv->echo_esc_attr_action(); ?>">
 		<table>
 			<tr>
 				<th scope="row">
 					<label>Amount</label>
 				</th>
 				<td>
-					<input type="text" class="regular-text" name="amount"
-						value="<?php echo esc_attr( $amount ); ?>"/>
+					<input type="text" class="regular-text" name="create_amount"
+						value="<?php $create_fv->echo_esc_attr_unchecked( 'create_amount' ); ?>"/>
 					<p class="description">
 						How many seeds do you want to create?
 					</p>
@@ -53,9 +50,9 @@
 					<label>Account</label>
 				</th>
 				<td>
-					<select name="user_id">
+					<select name="create_user_id">
 						<option value="">Select User Account</option>
-						<?php display_select_options( $users, $user_id ); ?>
+						<?php display_select_options( $users, $create_fv->get_unchecked( 'create_user_id' ) ); ?>
 					</select>
 					<p class="description">
 						Where should these new seeds be deposited?
@@ -64,7 +61,7 @@
 			</tr>
 		</table>
 		<p class="submit">
-			<input name="do_create" type="submit" class="button button-primary" value="Create New Seeds"/>
+			<input type="submit" class="button button-primary" value="Create New Seeds"/>
 		</p>
 	</form>
 
@@ -83,15 +80,15 @@
 		If you have decided that you actually want to burn existing seeds, the power is yours!
 	</p>
 
-	<form method="post" class="form-table" action="<?php echo esc_attr( $action ); ?>">
+	<form method="post" class="form-table" action="<?php $create_fv->echo_esc_attr_action(); ?>">
 		<table>
 			<tr>
 				<th scope="row">
 					<label>Amount</label>
 				</th>
 				<td>
-					<input type="text" class="regular-text" name="amount"
-						value="<?php echo esc_attr( $amount ); ?>"/>
+					<input type="text" class="regular-text" name="burn_amount"
+						value="<?php $burn_fv->echo_esc_attr_unchecked( 'burn_amount' ); ?>"/>
 					<p class="description">
 						How many seeds do you want to burn?
 					</p>
@@ -102,9 +99,9 @@
 					<label>Account</label>
 				</th>
 				<td>
-					<select name="user_id">
+					<select name="burn_user_id">
 						<option value="">Select User Account</option>
-						<?php display_select_options( $users, $user_id ); ?>
+						<?php display_select_options( $users, $burn_fv->get_unchecked( 'create_user_id' ) ); ?>
 					</select>
 					<p class="description">
 						Where should these seeds be taken from?
@@ -113,7 +110,7 @@
 			</tr>
 		</table>
 		<p class="submit">
-			<input name="do_burn" type="submit" class="button button-primary" value="Burn Seeds"/>
+			<input type="submit" class="button button-primary" value="Burn Seeds"/>
 		</p>
 	</form>
 </div>
