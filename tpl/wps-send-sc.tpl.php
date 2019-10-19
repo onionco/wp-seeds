@@ -19,7 +19,7 @@
 			<label>To Account</label>
 			<div class="seeds-send-form-field">
 				<select name="to_user">
-					<option>Select user to receive the seeds</option>
+					<option><?php esc_html_e( 'Select user to receive the seeds', 'wp-seeds' ); ?></option>
 					<?php display_select_options( $users, $v->get_unchecked( 'to_user' ) ); ?>
 				</select>
 			</div>
