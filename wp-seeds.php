@@ -500,25 +500,40 @@ add_filter( 'acf/load_field/name=amount', 'wps_populate_amount_field' );
  * @return void
  */
 function wps_settings_page() {
-	$vars = array();
-
-	if ( isset( $_REQUEST['do_create'] ) && isset( $_REQUEST['amount'] ) && isset( $_REQUEST['user_id'] ) ) {
-		$user     = get_user_by( 'id', (int) $_REQUEST['user_id'] );
-		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
-		$balance += intval( $_REQUEST['amount'] );
-		update_user_meta( $user->ID, 'wps_balance', $balance );
-		$vars ['notice_success'] = __( 'The seeds have been created.', 'wp-seeds' );
-	} elseif ( isset( $_REQUEST['do_burn'] ) && isset( $_REQUEST['amount'] ) && isset( $_REQUEST['user_id'] ) ) {
-		$user     = get_user_by( 'id', (int) $_REQUEST['user_id'] );
-		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
-		$balance -= intval( $_REQUEST['amount'] );
-		update_user_meta( $user->ID, 'wps_balance', $balance );
-		$vars ['notice_success'] = __( 'The seeds have been burned.', 'wp-seeds' );
-	}
-
+	$vars          = array();
 	$vars['users'] = array();
 	foreach ( get_users() as $user ) {
 		$vars['users'][ $user->ID ] = wps_transaction_format_user( $user );
+	}
+
+	$create_fv         = new WPS_Form_Validator();
+	$vars['create_fv'] = $create_fv;
+	$create_fv->check_wp_user_id( 'create_user_id' );
+	$create_fv->check_positive_number( 'create_amount' );
+	$create_fv->set_action_url( admin_url( 'edit.php?post_type=transaction&page=wps_settings' ) );
+
+	if ( $create_fv->is_valid_submission() ) {
+		$user     = get_user_by( 'id', $create_fv->get_checked( 'create_user_id' ) );
+		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
+		$balance += intval( $create_fv->get_checked( 'create_amount' ) );
+		update_user_meta( $user->ID, 'wps_balance', $balance );
+
+		$create_fv->done( __( 'The seeds have been created.', 'wp-seeds' ) );
+	}
+
+	$burn_fv         = new WPS_Form_Validator();
+	$vars['burn_fv'] = $burn_fv;
+	$burn_fv->check_wp_user_id( 'burn_user_id' );
+	$burn_fv->check_positive_number( 'burn_amount' );
+	$burn_fv->set_action_url( admin_url( 'edit.php?post_type=transaction&page=wps_settings' ) );
+
+	if ( $burn_fv->is_valid_submission() ) {
+		$user     = get_user_by( 'id', $burn_fv->get_checked( 'burn_user_id' ) );
+		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
+		$balance -= intval( $burn_fv->get_checked( 'burn_amount' ) );
+		update_user_meta( $user->ID, 'wps_balance', $balance );
+
+		$burn_fv->done( __( 'The seeds have been burned.', 'wp-seeds' ) );
 	}
 
 	display_template( dirname( __FILE__ ) . '/tpl/wps-settings-page.tpl.php', $vars );

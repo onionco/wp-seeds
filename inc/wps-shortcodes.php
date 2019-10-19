@@ -48,8 +48,9 @@ function wps_send_sc( $args ) {
 		update_post_meta( $post_id, 'amount', $v->get_checked( 'amount' ) );
 
 		wp_publish_post( $post_id );
-		do_action( 'acf/validate_save_post', $post_id ); // phpcs:ignore
+		do_action( 'acf/save_post', $post_id ); // phpcs:ignore
 
+		$v->done( __( 'The seeds have been sent!', 'wp-seeds' ) );
 		$vars['show_form'] = false;
 	}
 
