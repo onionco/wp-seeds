@@ -41,25 +41,42 @@ function wps_process_transaction( $post_id ) {
 	}
 
 	// Prepare variables.
-	$amount = (int) get_post_meta( $post_id, 'amount' );
+	$amount = (int) get_post_meta( $post_id, 'amount', true );
 	if ( $amount <= 0 ) {
 		throw new Exception( 'Zero or negative transaction amount.' );
 	}
 
-	// Withdraw amount from sender.
-	$sender_id          = get_post_meta( $post_id, 'from_user', true );
-	$sender_balance_old = get_user_meta( $sender_id, 'wps_balance', true );
-	$sender_balance_new = (int) $sender_balance_old - (int) $amount;
-	if ( $amount < 0 ) {
-		throw new Exception( 'Insufficient funds on sender account.' );
+	// Get sender and receiver.
+	$sender_id   = get_post_meta( $post_id, 'from_user', true );
+	$receiver_id = get_post_meta( $post_id, 'to_user', true );
+
+	// Check if seeding transaction, or else non seeding (normal) transaction.
+	if ( '' !== get_post_meta( $post_id, 'seeding_transaction', true ) ) {
+		if ( '' !== $sender_id && '' !== $receiver_id ) {
+			throw new Exception( 'For a seeding transaction, there should be only sender or receiver.' );
+		}
+	} else {
+		if ( '' === $sender_id || '' === $receiver_id ) {
+			throw new Exception( 'Expected both sender and receiver for transaction' );
+		}
 	}
-	update_user_meta( $sender_id, 'wps_balance', $sender_balance_new );
+
+	// Withdraw amount from sender.
+	if ( '' !== $sender_id ) {
+		$sender_balance_old = get_user_meta( $sender_id, 'wps_balance', true );
+		$sender_balance_new = (int) $sender_balance_old - (int) $amount;
+		if ( $sender_balance_new < 0 ) {
+			throw new Exception( 'Insufficient funds on sender account.' );
+		}
+		update_user_meta( $sender_id, 'wps_balance', $sender_balance_new );
+	}
 
 	// Send amount to receiver.
-	$receiver_id          = get_post_meta( $post_id, 'to_user', true );
-	$receiver_balance_old = get_user_meta( $receiver_id, 'wps_balance', true );
-	$receiver_balance_new = (int) $receiver_balance_old + (int) $amount;
-	update_user_meta( $receiver_id, 'wps_balance', $receiver_balance_new );
+	if ( '' !== $receiver_id ) {
+		$receiver_balance_old = get_user_meta( $receiver_id, 'wps_balance', true );
+		$receiver_balance_new = (int) $receiver_balance_old + (int) $amount;
+		update_user_meta( $receiver_id, 'wps_balance', $receiver_balance_new );
+	}
 
 	// Prepare post title.
 	$temp[]           = date( 'Y.m.d' );
