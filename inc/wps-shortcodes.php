@@ -37,21 +37,18 @@ function wps_send_sc( $args ) {
 	$v->check_positive_number( 'amount' );
 
 	if ( $v->is_valid_submission() ) {
-		$post_id = wp_insert_post(
-			array(
-				'post_type' => 'transaction',
-			)
-		);
-
+		$post_id = wp_insert_post( array( 'post_type' => 'transaction' ) );
 		update_post_meta( $post_id, 'from_user', $current_user->ID );
 		update_post_meta( $post_id, 'to_user', $v->get_checked( 'to_user' ) );
 		update_post_meta( $post_id, 'amount', $v->get_checked( 'amount' ) );
-
-		wp_publish_post( $post_id );
-		do_action( 'acf/save_post', $post_id ); // phpcs:ignore
-
-		$v->done( __( 'The seeds have been sent!', 'wp-seeds' ) );
-		$vars['show_form'] = false;
+		try {
+			wps_process_transaction( $post_id );
+			$v->done( __( 'The seeds have been sent.', 'wp-seeds' ) );
+			$vars['show_form'] = false;
+		} catch ( Exception $e ) {
+			$v->trigger( $e->getMessage() );
+			wp_delete_post( $post_id, true );
+		}
 	}
 
 	return render_template( __DIR__ . '/../tpl/wps-send-sc.tpl.php', $vars );
