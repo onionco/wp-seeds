@@ -1,17 +1,20 @@
 <?php
 /**
+ * WP Seeds 🌱
+ *
  * Template for the user facing send seeds from.
  *
- * @package WordPress
- * @subpackage WP Seeds
- * @since 1.0.0
+ * @package   wp-seeds/tpl
+ * @link      https://github.com/limikael/wp-seeds
+ * @author    Mikael Lindqvist & Niels Lange
+ * @copyright 2019 Mikael Lindqvist & Niels Lange
+ * @license   GPL v2 or later
  */
 
 ?>
-
 <?php $v->echo_messages(); ?>
 
-<?php if ( $show_form ) { ?>
+<?php if ( $show_form ) : ?>
 	<form class="seeds-send-form" method="post" action="<?php echo esc_attr( $action_url ); ?>">
 		<input type="hidden" name="seedsDoSend" value="1"/>
 
@@ -37,4 +40,5 @@
 			<input type="submit" value="Send Seeds"/>
 		</p>
 	</form>
-<?php } ?>
+
+<?php endif; ?>

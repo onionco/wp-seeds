@@ -2,7 +2,7 @@
 /**
  * WP Seeds 🌱
  *
- * @package   wp-seeds
+ * @package   wp-seeds/tpl
  * @link      https://github.com/limikael/wp-seeds
  * @author    Mikael Lindqvist & Niels Lange
  * @copyright 2019 Mikael Lindqvist & Niels Lange
@@ -42,4 +42,5 @@
 			<input name="do_request" type="submit" class="button button-primary" value="Request transaction"/>
 		</p>
 	</form>
+	
 </div>
