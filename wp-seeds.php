@@ -214,39 +214,9 @@ add_action( 'admin_init', 'wps_hide_editor' );
  * @return void
  */
 function wps_save_post( $post_id ) {
-	$post = get_post( $post_id );
-	$temp = array();
-
 	if ( 'transaction' === get_post_type( $post_id ) ) {
-
-		// Prepare variables
-		$amount               = get_field( 'amount' );
-
-		// Withdraw amount from sender.
-		$sender_id            = get_field( 'from_user' );
-		$sender_balance_old   = get_user_meta( $sender_id, 'wps_balance', true );
-		$sender_balance_new   = (int) $sender_balance_old - (int) $amount;
-		update_user_meta( $sender_id, 'wps_balance', $sender_balance_new );
-
-		// Send amount to receiver.
-		$receiver_id          = get_field( 'to_user' );
-		$receiver_balance_old = get_user_meta( $receiver_id, 'wps_balance', true );
-		$receiver_balance_new = (int) $receiver_balance_old + (int) $amount;
-		update_user_meta( $receiver_id, 'wps_balance', $receiver_balance_new );
-
-		// Prepare post title.
-		$temp[]           = date( 'Y.m.d' );
-		$temp[]           = get_field( 'from_user' );
-		$temp[]           = get_field( 'to_user' );
-		$temp[]           = get_field( 'amount' );
-		$temp[]           = time();
-		$post->post_title = crypt( implode( '', $temp ) );
-		
-		// Set post status
-		$post->post_status = 'publish';		
-	}	
-	
-	wp_update_post( $post );
+		wps_process_transaction( $post_id );
+	}
 }
 add_action( 'acf/save_post', 'wps_save_post', 20 );
 
@@ -451,31 +421,41 @@ function wps_settings_page() {
 	$vars['create_fv'] = $create_fv;
 	$create_fv->check_wp_user_id( 'create_user_id' );
 	$create_fv->check_positive_number( 'create_amount' );
-
 	if ( $create_fv->is_valid_submission() ) {
-		$user     = get_user_by( 'id', $create_fv->get_checked( 'create_user_id' ) );
-		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
-		$balance += intval( $create_fv->get_checked( 'create_amount' ) );
-		update_user_meta( $user->ID, 'wps_balance', $balance );
+		$post_id = wp_insert_post( array( 'post_type' => 'transaction' ) );
+		update_post_meta( $post_id, 'amount', (int) $create_fv->get_checked( 'create_amount' ) );
+		update_post_meta( $post_id, 'to_user', $create_fv->get_checked( 'create_user_id' ) );
+		update_post_meta( $post_id, 'seeding_transaction', true );
 
-		$create_fv->done( __( 'The seeds have been created.', 'wp-seeds' ) );
+		try {
+			wps_process_transaction( $post_id );
+			$create_fv->done( __( 'The seeds have been created.', 'wp-seeds' ) );
+		} catch ( Exception $e ) {
+			$create_fv->trigger( $e->getMessage() );
+			wp_delete_post( $post_id, true );
+		}
 	}
 
 	$burn_fv         = new WPS_Form_Validator();
 	$vars['burn_fv'] = $burn_fv;
 	$burn_fv->check_wp_user_id( 'burn_user_id' );
 	$burn_fv->check_positive_number( 'burn_amount' );
-
 	if ( $burn_fv->is_valid_submission() ) {
-		$user     = get_user_by( 'id', $burn_fv->get_checked( 'burn_user_id' ) );
-		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
-		$balance -= intval( $burn_fv->get_checked( 'burn_amount' ) );
-		update_user_meta( $user->ID, 'wps_balance', $balance );
+		$post_id = wp_insert_post( array( 'post_type' => 'transaction' ) );
+		update_post_meta( $post_id, 'amount', (int) $burn_fv->get_checked( 'burn_amount' ) );
+		update_post_meta( $post_id, 'from_user', $burn_fv->get_checked( 'burn_user_id' ) );
+		update_post_meta( $post_id, 'seeding_transaction', true );
 
-		$burn_fv->done( __( 'The seeds have been burned.', 'wp-seeds' ) );
+		try {
+			wps_process_transaction( $post_id );
+			$burn_fv->done( __( 'The seeds have been burned.', 'wp-seeds' ) );
+		} catch ( Exception $e ) {
+			$burn_fv->trigger( $e->getMessage() );
+			wp_delete_post( $post_id, true );
+		}
 	}
 
-	display_template( dirname( __FILE__ ) . '/tpl/wps-settings-page.tpl.php', $vars );
+	display_template( __DIR__ . '/tpl/wps-settings-page.tpl.php', $vars );
 }
 
 function wps_list_capabilities() {
