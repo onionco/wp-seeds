@@ -30,8 +30,8 @@
 		"wptrt/wpthemereview": "^0.2.0"
     },
     "scripts": {
-        "checkcs": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs --standard=WordPress --ignore=class-tgm-plugin-activation.php *.php inc/*.php tpl/*.php",
-        "checkcbf": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf --standard=WordPress --ignore=class-tgm-plugin-activation.php *.php inc/*.php",
+        "checkcs": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs --standard=WordPress --ignore=class-tgm-plugin-activation.php *.php inc/*.php tpl/*.php classes/*.php",
+        "checkcbf": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf --standard=WordPress --ignore=class-tgm-plugin-activation.php *.php inc/*.php tpl/*.php classes/*.php",
         "lint": "@php ./vendor/bin/parallel-lint --exclude .git --exclude vendor ."
     },
     "support": {

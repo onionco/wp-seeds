@@ -264,12 +264,12 @@ class WPS_Form_Validator {
 	/**
 	 * Mark the form as done. The request variables will be cleared,
 	 * and the message will be shown.
-	 * 
+	 *
 	 * @param string $message The success message to show.
 	 * @return void
 	 */
 	public function done( $message ) {
-		$this->request_vars=array();
-		$this->messages[ 'success' ][] = $message;
+		$this->request_vars          = array();
+		$this->messages['success'][] = $message;
 	}
 }
