@@ -514,8 +514,9 @@ add_filter( 'acf/load_field/name=amount', 'wps_populate_amount_field' );
  * @return void
  */
 function wps_settings_page() {
-	$vars          = array();
-	$vars['users'] = array();
+	$vars               = array();
+	$vars['action_url'] = admin_url( 'edit.php?post_type=transaction&page=wps_settings' );
+	$vars['users']      = array();
 	foreach ( get_users() as $user ) {
 		$vars['users'][ $user->ID ] = wps_transaction_format_user( $user );
 	}
@@ -524,7 +525,6 @@ function wps_settings_page() {
 	$vars['create_fv'] = $create_fv;
 	$create_fv->check_wp_user_id( 'create_user_id' );
 	$create_fv->check_positive_number( 'create_amount' );
-	$create_fv->set_action_url( admin_url( 'edit.php?post_type=transaction&page=wps_settings' ) );
 
 	if ( $create_fv->is_valid_submission() ) {
 		$user     = get_user_by( 'id', $create_fv->get_checked( 'create_user_id' ) );
@@ -539,7 +539,6 @@ function wps_settings_page() {
 	$vars['burn_fv'] = $burn_fv;
 	$burn_fv->check_wp_user_id( 'burn_user_id' );
 	$burn_fv->check_positive_number( 'burn_amount' );
-	$burn_fv->set_action_url( admin_url( 'edit.php?post_type=transaction&page=wps_settings' ) );
 
 	if ( $burn_fv->is_valid_submission() ) {
 		$user     = get_user_by( 'id', $burn_fv->get_checked( 'burn_user_id' ) );

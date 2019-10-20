@@ -117,15 +117,6 @@ class WPS_Form_Validator {
 	}
 
 	/**
-	 * Set the action url.
-	 *
-	 * @param string $action_url The action url.
-	 */
-	public function set_action_url( $action_url ) {
-		$this->action_url = $action_url;
-	}
-
-	/**
 	 * Get a form field value.
 	 * This function can only be called if there is a valid submission, otherwise
 	 * an exception will be thrown.
@@ -253,23 +244,14 @@ class WPS_Form_Validator {
 	}
 
 	/**
-	 * Echo the action for the form.
-	 *
-	 * @return void
-	 */
-	public function echo_esc_attr_action() {
-		echo esc_attr( $this->action_url );
-	}
-
-	/**
 	 * Mark the form as done. The request variables will be cleared,
 	 * and the message will be shown.
-	 * 
+	 *
 	 * @param string $message The success message to show.
 	 * @return void
 	 */
 	public function done( $message ) {
-		$this->request_vars=array();
-		$this->messages[ 'success' ][] = $message;
+		$this->request_vars          = array();
+		$this->messages['success'][] = $message;
 	}
 }
