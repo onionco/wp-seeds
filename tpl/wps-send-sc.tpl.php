@@ -14,7 +14,7 @@
 ?>
 <?php $v->echo_messages(); ?>
 
-<?php if ( $show_form ) { ?>
+<?php if ( $show_form ) : ?>
 	<form class="seeds-send-form" method="post" action="<?php echo esc_attr( $action_url ); ?>">
 		<input type="hidden" name="seedsDoSend" value="1"/>
 
