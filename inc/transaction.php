@@ -41,13 +41,13 @@ function wps_process_transaction( $post_id ) {
 	}
 
 	// Prepare variables.
-	$amount = (int) get_field( 'amount', $post_id );
+	$amount = (int) get_post_meta( $post_id, 'amount' );
 	if ( $amount <= 0 ) {
 		throw new Exception( 'Zero or negative transaction amount.' );
 	}
 
 	// Withdraw amount from sender.
-	$sender_id          = get_field( 'from_user', $post_id );
+	$sender_id          = get_post_meta( $post_id, 'from_user', true );
 	$sender_balance_old = get_user_meta( $sender_id, 'wps_balance', true );
 	$sender_balance_new = (int) $sender_balance_old - (int) $amount;
 	if ( $amount < 0 ) {
@@ -56,16 +56,16 @@ function wps_process_transaction( $post_id ) {
 	update_user_meta( $sender_id, 'wps_balance', $sender_balance_new );
 
 	// Send amount to receiver.
-	$receiver_id          = get_field( 'to_user', $post_id );
+	$receiver_id          = get_post_meta( $post_id, 'to_user', true );
 	$receiver_balance_old = get_user_meta( $receiver_id, 'wps_balance', true );
 	$receiver_balance_new = (int) $receiver_balance_old + (int) $amount;
 	update_user_meta( $receiver_id, 'wps_balance', $receiver_balance_new );
 
 	// Prepare post title.
 	$temp[]           = date( 'Y.m.d' );
-	$temp[]           = get_field( 'from_user' );
-	$temp[]           = get_field( 'to_user' );
-	$temp[]           = get_field( 'amount' );
+	$temp[]           = get_post_meta( $post_id, 'from_user', true );
+	$temp[]           = get_post_meta( $post_id, 'to_user', true );
+	$temp[]           = get_post_meta( $post_id, 'amount', true );
 	$temp[]           = time();
 	$post->post_title = crypt( implode( '', $temp ) );
 
