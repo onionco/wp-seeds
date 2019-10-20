@@ -12,7 +12,7 @@
 <?php $v->echo_messages(); ?>
 
 <?php if ( $show_form ) { ?>
-	<form class="seeds-send-form" method="post" action="<?php $v->echo_esc_attr_action(); ?>">
+	<form class="seeds-send-form" method="post" action="<?php echo esc_attr( $action_url ); ?>">
 		<input type="hidden" name="seedsDoSend" value="1"/>
 
 		<p class="seeds-send-form-field-container">

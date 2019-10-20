@@ -117,15 +117,6 @@ class WPS_Form_Validator {
 	}
 
 	/**
-	 * Set the action url.
-	 *
-	 * @param string $action_url The action url.
-	 */
-	public function set_action_url( $action_url ) {
-		$this->action_url = $action_url;
-	}
-
-	/**
 	 * Get a form field value.
 	 * This function can only be called if there is a valid submission, otherwise
 	 * an exception will be thrown.
@@ -250,15 +241,6 @@ class WPS_Form_Validator {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Echo the action for the form.
-	 *
-	 * @return void
-	 */
-	public function echo_esc_attr_action() {
-		echo esc_attr( $this->action_url );
 	}
 
 	/**
