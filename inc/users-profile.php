@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param object $user The user object.
  * @return void
  */
-function wps_show_user_profile( $user ) {
+function wps_show_balance( $user ) {
 	$balance = get_user_meta( $user->ID, 'wps_balance', true );
 	?>
 	<h3><?php esc_html_e( 'WP Seeds 🌱', 'wp-seeds' ); ?></h3>

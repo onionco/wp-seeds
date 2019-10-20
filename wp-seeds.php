@@ -353,12 +353,22 @@ function wps_request_transaction_page() {
 /**
  * Populate from user field.
  *
+ * @since 1.0.0
  * @param array $field The original array with fields.
  * @return array $field The updated array with fields.
  */
 function wps_populate_from_user_field( $field ) {
 
-	if ( ! empty( $_REQUEST['action'] ) && 'request-transaction' === $_REQUEST['action'] ) {
+	if ( ! empty( $_REQUEST['action'] ) 
+		&& 'request-transaction' === $_REQUEST['action'] ) {
+		$user                   = wp_get_current_user();
+		$field['default_value'] = $user->ID;
+	}
+
+	if ( current_user_can( 'subscriber' ) 
+		|| current_user_can( 'contributor' ) 
+		|| current_user_can( 'author' ) 
+		|| current_user_can( 'editor' ) ) {
 		$user                   = wp_get_current_user();
 		$field['default_value'] = $user->ID;
 	}
@@ -371,12 +381,14 @@ add_filter( 'acf/load_field/name=from_user', 'wps_populate_from_user_field' );
 /**
  * Populate to user field.
  *
+ * @since 1.0.0
  * @param array $field The original array with fields.
  * @return array $field The updated array with fields.
  */
 function wps_populate_to_user_field( $field ) {
 
-	if ( ! empty( $_REQUEST['uid'] ) && is_numeric( $_REQUEST['uid'] ) ) {
+	if ( ! empty( $_REQUEST['uid'] ) 
+		&& is_numeric( $_REQUEST['uid'] ) ) {
 		$user                   = get_userdata( (int) $_REQUEST['uid'] );
 		$field['default_value'] = $user->ID;
 	}
@@ -394,7 +406,8 @@ add_filter( 'acf/load_field/name=to_user', 'wps_populate_to_user_field' );
  */
 function wps_populate_amount_field( $field ) {
 
-	if ( ! empty( $_REQUEST['amount'] ) && is_numeric( $_REQUEST['amount'] ) ) {
+	if ( ! empty( $_REQUEST['amount'] ) 
+		&& is_numeric( $_REQUEST['amount'] ) ) {
 		$field['default_value'] = (int) $_REQUEST['amount'];
 	}
 
@@ -402,6 +415,23 @@ function wps_populate_amount_field( $field ) {
 
 }
 add_filter( 'acf/load_field/name=amount', 'wps_populate_amount_field' );
+
+/**
+ * Populate note field.
+ *
+ * @param array $field The original array with fields.
+ * @return array $field The updated array with fields.
+ */
+function wps_populate_note_field( $field ) {
+
+	if ( ! empty( $_REQUEST['note'] ) ) {
+		$field['default_value'] = esc_html( $_REQUEST['note'] );
+	}
+
+	return $field;
+
+}
+add_filter( 'acf/load_field/name=note', 'wps_populate_note_field' );
 
 /**
  * WP Seeds settings page.

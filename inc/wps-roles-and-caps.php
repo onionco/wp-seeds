@@ -72,3 +72,15 @@ function wps_custom_caps() {
 
 }
 add_action( 'init', 'wps_custom_caps' );
+
+function wps_show_only_own_transactions( $wp_query ) {
+	if ( current_user_can('administrator') || current_user_can('gardener') ) {
+		return;
+	}
+
+	if ( strpos( $_SERVER[ 'REQUEST_URI' ], '/wp-admin/edit.php?post_type=transaction' ) !== false ) {
+		global $current_user;
+		$wp_query->set( 'author', $current_user->id );
+	 }
+}
+add_filter('parse_query', 'wps_show_only_own_transactions' );
