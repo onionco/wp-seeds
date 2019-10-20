@@ -32,6 +32,8 @@ require_once dirname( __FILE__ ) . '/inc/transaction.php';
 require_once dirname( __FILE__ ) . '/inc/transactions-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-profile.php';
+require_once dirname( __FILE__ ) . '/inc/wps-cpt-transaction.php';
+require_once dirname( __FILE__ ) . '/inc/wps-roles-and-caps.php';
 require_once dirname( __FILE__ ) . '/inc/wps-shortcodes.php';
 
 /**
@@ -191,64 +193,6 @@ if ( function_exists( 'acf_add_local_field_group' ) ) {
 	);
 }
 
-/**
- * Register Custom Post Type
- *
- * @since 1.0.0
- * @return void
- */
-function wps_register_cpt() {
-
-	$labels = array(
-		'name'               => _x( 'Transactions', 'Post Type General Name', 'wp-seeds' ),
-		'singular_name'      => _x( 'Transaction', 'Post Type Singular Name', 'wp-seeds' ),
-		'menu_name'          => __( 'Transactions', 'wp-seeds' ),
-		'parent_item_colon'  => __( 'Parent Item:', 'wp-seeds' ),
-		'all_items'          => __( 'All Transactions', 'wp-seeds' ),
-		'view_item'          => __( 'View Transaction', 'wp-seeds' ),
-		'add_new_item'       => __( 'Create Transaction', 'wp-seeds' ),
-		'add_new'            => __( 'Create Transaction', 'wp-seeds' ),
-		'edit_item'          => __( 'Edit Transaction', 'wp-seeds' ),
-		'update_item'        => __( 'Update Transaction', 'wp-seeds' ),
-		'search_items'       => __( 'Search Transaction', 'wp-seeds' ),
-		'not_found'          => __( 'Not found', 'wp-seeds' ),
-		'not_found_in_trash' => __( 'Not found in Trash', 'wp-seeds' ),
-	);
-	$args   = array(
-		'label'               => __( 'Transactions', 'wp-seeds' ),
-		'description'         => __( 'Transfer seeds from one user to another', 'wp-seeds' ),
-		'labels'              => $labels,
-		'supports'            => array(),
-		'taxonomies'          => array(),
-		'hierarchical'        => false,
-		'public'              => true,
-		'show_ui'             => true,
-		'show_in_menu'        => true,
-		'show_in_nav_menus'   => true,
-		'show_in_admin_bar'   => true,
-		'show_in_rest'        => true,
-		'menu_position'       => 2,
-		'menu_icon'           => 'dashicons-money',
-		'can_export'          => true,
-		'has_archive'         => true,
-		'exclude_from_search' => false,
-		'publicly_queryable'  => true,
-		'capability_type'     => 'transaction',
-		'capabilities'        => array(
-			'edit_post'          => 'edit_transaction',
-			'edit_posts'         => 'edit_transactions',
-			'edit_others_posts'  => 'edit_other_transactions',
-			'publish_posts'      => 'publish_transactions',
-			'read_post'          => 'read_transaction',
-			'read_private_posts' => 'read_private_transactions',
-			'delete_post'        => 'delete_transaction',
-		),
-		'map_meta_cap'        => true,
-	);
-	register_post_type( 'transaction', $args );
-
-}
-add_action( 'init', 'wps_register_cpt', 0 );
 
 /**
  * Hide editor for transactions CPT
@@ -352,54 +296,6 @@ function wps_admin_style() {
 add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
 
 /**
- * Add custom user role
- *
- * @since 1.0.0
- * @return void
- */
-function add_roles_on_plugin_activation() {
-	add_role(
-		'gardener',
-		'Gardener',
-		array(
-			'edit_transaction'          => true,
-			'edit_transactions'         => true,
-			'edit_other_transactions'   => true,
-			'publish_transactions'      => true,
-			'read_transaction'          => true,
-			'read_private_transactions' => true,
-			'delete_transaction'        => true,
-		)
-	);
-}
-add_action( 'init', 'add_roles_on_plugin_activation' );
-
-/**
- * Add custom user capabilities
- *
- * @since 1.0.0
- * @return void
- */
-function add_theme_caps() {
-	$role = get_role( 'gardener' );
-	$role->add_cap( 'edit_transactions' );
-	$role->add_cap( 'edit_other_transactions' );
-	$role->add_cap( 'publish_transactions' );
-	$role->add_cap( 'read_transaction' );
-	$role->add_cap( 'read_private_transactions' );
-	$role->add_cap( 'delete_transaction' );
-
-	$role = get_role( 'administrator' );
-	$role->add_cap( 'edit_transactions' );
-	$role->add_cap( 'edit_other_transactions' );
-	$role->add_cap( 'publish_transactions' );
-	$role->add_cap( 'read_transaction' );
-	$role->add_cap( 'read_private_transactions' );
-	$role->add_cap( 'delete_transaction' );
-}
-add_action( 'init', 'add_theme_caps' );
-
-/**
  * Admin menu hook, add options page.
  *
  * @since 1.0.0
@@ -410,7 +306,7 @@ function wps_admin_menu() {
 		'edit.php?post_type=transaction',
 		'WP Seeds Request Transaction',
 		'Request Transaction',
-		'manage_options',
+		'read',
 		'wps_request_transaction',
 		'wps_request_transaction_page'
 	);
@@ -552,3 +448,11 @@ function wps_settings_page() {
 
 	display_template( dirname( __FILE__ ) . '/tpl/wps-settings-page.tpl.php', $vars );
 }
+
+function wps_list_capabilities() {
+	global $wp_roles;
+	$roles = $wp_roles->roles; 
+	echo '<pre>' . print_r( $roles, true ) . '</pre>';
+	die();
+}
+//add_action( 'init', 'wps_list_capabilities' );

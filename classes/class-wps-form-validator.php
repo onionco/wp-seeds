@@ -2,7 +2,7 @@
 /**
  * WP Seeds 🌱
  *
- * @package   wp-seeds
+ * @package   wp-seeds/classes
  * @link      https://github.com/limikael/wp-seeds
  * @author    Mikael Lindqvist & Niels Lange
  * @copyright 2019 Mikael Lindqvist & Niels Lange

@@ -2,12 +2,16 @@
 /**
  * WP Seeds 🌱
  *
- * @package   wp-seeds
+ * @package   wp-seeds/inc
  * @link      https://github.com/limikael/wp-seeds
  * @author    Mikael Lindqvist & Niels Lange
  * @copyright 2019 Mikael Lindqvist & Niels Lange
  * @license   GPL v2 or later
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Format a user as nicename (email).
