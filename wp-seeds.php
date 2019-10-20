@@ -270,39 +270,9 @@ add_action( 'admin_init', 'wps_hide_editor' );
  * @return void
  */
 function wps_save_post( $post_id ) {
-	$post = get_post( $post_id );
-	$temp = array();
-
 	if ( 'transaction' === get_post_type( $post_id ) ) {
-
-		// Prepare variables
-		$amount               = get_field( 'amount' );
-
-		// Withdraw amount from sender.
-		$sender_id            = get_field( 'from_user' );
-		$sender_balance_old   = get_user_meta( $sender_id, 'wps_balance', true );
-		$sender_balance_new   = (int) $sender_balance_old - (int) $amount;
-		update_user_meta( $sender_id, 'wps_balance', $sender_balance_new );
-
-		// Send amount to receiver.
-		$receiver_id          = get_field( 'to_user' );
-		$receiver_balance_old = get_user_meta( $receiver_id, 'wps_balance', true );
-		$receiver_balance_new = (int) $receiver_balance_old + (int) $amount;
-		update_user_meta( $receiver_id, 'wps_balance', $receiver_balance_new );
-
-		// Prepare post title.
-		$temp[]           = date( 'Y.m.d' );
-		$temp[]           = get_field( 'from_user' );
-		$temp[]           = get_field( 'to_user' );
-		$temp[]           = get_field( 'amount' );
-		$temp[]           = time();
-		$post->post_title = crypt( implode( '', $temp ) );
-		
-		// Set post status
-		$post->post_status = 'publish';		
-	}	
-	
-	wp_update_post( $post );
+		wps_process_transaction( $post_id );
+	}
 }
 add_action( 'acf/save_post', 'wps_save_post', 20 );
 
