@@ -31,7 +31,7 @@
 		If you have decided that you actually want to create new seeds, the power is yours!
 	</p>
 
-	<form method="post" class="form-table" action="<?php $create_fv->echo_esc_attr_action(); ?>">
+	<form method="post" class="form-table" action="<?php echo esc_attr( $action_url ); ?>">
 		<table>
 			<tr>
 				<th scope="row">
@@ -80,7 +80,7 @@
 		If you have decided that you actually want to burn existing seeds, the power is yours!
 	</p>
 
-	<form method="post" class="form-table" action="<?php $create_fv->echo_esc_attr_action(); ?>">
+	<form method="post" class="form-table" action="<?php echo esc_attr( $action_url ); ?>">
 		<table>
 			<tr>
 				<th scope="row">

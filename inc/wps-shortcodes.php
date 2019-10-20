@@ -19,11 +19,12 @@ require_once __DIR__ . '/../classes/class-wps-form-validator.php';
  * @return string
  */
 function wps_send_sc( $args ) {
-	$current_user      = wp_get_current_user();
-	$vars              = array();
-	$vars['show_form'] = true;
-	$vars['users']     = array();
-	$users             = get_users();
+	$current_user       = wp_get_current_user();
+	$vars               = array();
+	$vars['show_form']  = true;
+	$vars['users']      = array();
+	$vars['action_url'] = get_permalink();
+	$users              = get_users();
 	foreach ( $users as $user ) {
 		if ( $user->ID !== $current_user->ID ) {
 			$vars['users'][ $user->ID ] = wps_transaction_format_user( $user );
@@ -32,7 +33,6 @@ function wps_send_sc( $args ) {
 
 	$v         = new WPS_Form_Validator();
 	$vars['v'] = $v;
-	$v->set_action_url( get_permalink() );
 	$v->check_wp_user_id( 'to_user' );
 	$v->check_positive_number( 'amount' );
 
