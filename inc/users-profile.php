@@ -1,7 +1,7 @@
 <?php
 /**
  * WP Seeds 🌱
- * 
+ *
  * Custom functionality for profile page.
  *
  * @package   wp-seeds/inc
