@@ -36,7 +36,7 @@ function wps_custom_caps() {
 	$roles_caps = array(
 		'administrator' => array(
 			'can'    => array( 'delete_transaction', 'delete_transactions', 'delete_published_transactions', 'delete_private_transactions', 'delete_others_transactions', 'spread_seeds', 'edit_transaction', 'edit_transactions', 'edit_other_transactions', 'edit_private_transactions', 'edit_published_transactions', 'publish_transactions', 'read_transaction', 'read_private_transactions' ),
-			'cannot' => array(  ),
+			'cannot' => array(),
 		),
 		'gardener'      => array(
 			'can'    => array( 'spread_seeds', 'edit_transaction', 'edit_transactions', 'edit_other_transactions', 'edit_private_transactions', 'edit_published_transactions', 'publish_transactions', 'read_transaction', 'read_private_transactions' ),
