@@ -564,29 +564,39 @@ function wps_settings_page() {
 	$vars['create_fv'] = $create_fv;
 	$create_fv->check_wp_user_id( 'create_user_id' );
 	$create_fv->check_positive_number( 'create_amount' );
-
 	if ( $create_fv->is_valid_submission() ) {
-		$user     = get_user_by( 'id', $create_fv->get_checked( 'create_user_id' ) );
-		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
-		$balance += intval( $create_fv->get_checked( 'create_amount' ) );
-		update_user_meta( $user->ID, 'wps_balance', $balance );
+		$post_id = wp_insert_post( array( 'post_type' => 'transaction' ) );
+		update_post_meta( $post_id, 'amount', (int) $create_fv->get_checked( 'create_amount' ) );
+		update_post_meta( $post_id, 'to_user', $create_fv->get_checked( 'create_user_id' ) );
+		update_post_meta( $post_id, 'seeding_transaction', true );
 
-		$create_fv->done( __( 'The seeds have been created.', 'wp-seeds' ) );
+		try {
+			wps_process_transaction( $post_id );
+			$create_fv->done( __( 'The seeds have been created.', 'wp-seeds' ) );
+		} catch ( Exception $e ) {
+			$create_fv->trigger( $e->getMessage() );
+			wp_delete_post( $post_id, true );
+		}
 	}
 
 	$burn_fv         = new WPS_Form_Validator();
 	$vars['burn_fv'] = $burn_fv;
 	$burn_fv->check_wp_user_id( 'burn_user_id' );
 	$burn_fv->check_positive_number( 'burn_amount' );
-
 	if ( $burn_fv->is_valid_submission() ) {
-		$user     = get_user_by( 'id', $burn_fv->get_checked( 'burn_user_id' ) );
-		$balance  = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
-		$balance -= intval( $burn_fv->get_checked( 'burn_amount' ) );
-		update_user_meta( $user->ID, 'wps_balance', $balance );
+		$post_id = wp_insert_post( array( 'post_type' => 'transaction' ) );
+		update_post_meta( $post_id, 'amount', (int) $burn_fv->get_checked( 'burn_amount' ) );
+		update_post_meta( $post_id, 'from_user', $burn_fv->get_checked( 'burn_user_id' ) );
+		update_post_meta( $post_id, 'seeding_transaction', true );
 
-		$burn_fv->done( __( 'The seeds have been burned.', 'wp-seeds' ) );
+		try {
+			wps_process_transaction( $post_id );
+			$burn_fv->done( __( 'The seeds have been burned.', 'wp-seeds' ) );
+		} catch ( Exception $e ) {
+			$burn_fv->trigger( $e->getMessage() );
+			wp_delete_post( $post_id, true );
+		}
 	}
 
-	display_template( dirname( __FILE__ ) . '/tpl/wps-settings-page.tpl.php', $vars );
+	display_template( __DIR__ . '/tpl/wps-settings-page.tpl.php', $vars );
 }
