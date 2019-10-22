@@ -42,7 +42,8 @@ function wps_custom_metabox() {
 				'required' => 'required',
 			),
 			'show_option_none' => __( 'Please select', 'wp-seeds' ),
-			'options'          => wps_get_senders(),
+			'default'          => wps_sender_default(),
+			'options'          => wps_sender_options(),
 		)
 	);
 
@@ -56,7 +57,8 @@ function wps_custom_metabox() {
 				'required' => 'required',
 			),
 			'show_option_none' => __( 'Please select', 'wp-seeds' ),
-			'options'          => wps_get_receivers(),
+			'default'          => wps_receiver_default(),
+			'options'          => wps_receiver_options(),
 		)
 	);
 
@@ -69,6 +71,7 @@ function wps_custom_metabox() {
 			'attributes'  => array(
 				'required' => 'required',
 			),
+			'default'     => wps_amount_default(),
 		)
 	);
 
@@ -78,6 +81,7 @@ function wps_custom_metabox() {
 			'description' => esc_html__( 'Here you can add a transaction note.', 'cmb2' ),
 			'id'          => $prefix . 'note',
 			'type'        => 'textarea_small',
+			'default'     => wps_note_default(),
 		)
 	);
 }
@@ -105,7 +109,7 @@ function wps_get_users() {
  * @since 1.0.0
  * @return array $users Array with all senders.
  */
-function wps_get_senders() {
+function wps_sender_options() {
 	$users = wps_get_users();
 
 	if ( ! current_user_can( 'spread_seeds' ) ) {
@@ -122,7 +126,7 @@ function wps_get_senders() {
  * @since 1.0.0
  * @return array $users Array with all receivers.
  */
-function wps_get_receivers() {
+function wps_receiver_options() {
 	$users = wps_get_users();
 
 	if ( ! current_user_can( 'spread_seeds' ) ) {
@@ -130,4 +134,62 @@ function wps_get_receivers() {
 	}
 
 	return $users;
+}
+
+/**
+ * Get sender default value
+ *
+ * @since 1.0.0
+ * @return int The provided user ID of the sender, if available, otherwise the current user ID.
+ */
+function wps_sender_default() {
+	$user = get_userdata( get_current_user_id() );
+
+	if ( isset( $_GET['sender'] ) && is_numeric( $_GET['sender'] ) ) {
+		$result = get_userdata( (int) $_GET['sender'] );
+		if ( $result ) {
+			$user = $result;
+		}
+	}
+
+	return $user->ID;
+}
+
+/**
+ * Get receiver default value
+ *
+ * @since 1.0.0
+ * @return int The provided user ID of the receiver, if available.
+ */
+function wps_receiver_default() {
+	if ( isset( $_GET['sender'] ) && is_numeric( $_GET['sender'] ) ) {
+		$result = get_userdata( (int) $_GET['sender'] );
+		if ( $result ) {
+			return $result->ID;
+		}
+	}
+}
+
+/**
+ * Get amount default value
+ *
+ * @since 1.0.0
+ * @return int The provided amount, if available.
+ */
+function wps_amount_default() {
+	if ( isset( $_GET['amount'] ) && is_numeric( $_GET['amount'] ) ) {
+		return (int) $_GET['amount'];
+	}
+}
+
+/**
+ * Get note default value
+ *
+ * @since 1.0.0
+ * @return int The provided amount, if available.
+ */
+function wps_note_default() {
+	if ( isset( $_GET['note'] ) ) {
+		return sanitize_text_field( wp_unslash( $_GET['note'] ) );
+	}
 }

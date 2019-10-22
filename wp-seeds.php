@@ -59,7 +59,13 @@ add_action( 'admin_init', 'wps_hide_editor' );
  * @return void
  */
 function wps_save_transaction( $post_id, $post, $update ) {
+	// Return if post status is auto-draft.
 	if ( isset( $post->post_status ) && 'auto-draft' === $post->post_status ) {
+		return;
+	}
+
+	// Return if post status is trash.
+	if ( isset( $post->post_status ) && 'trash' === $post->post_status ) {
 		return;
 	}
 
