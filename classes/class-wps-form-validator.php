@@ -254,4 +254,14 @@ class WPS_Form_Validator {
 		$this->request_vars          = array();
 		$this->messages['success'][] = $message;
 	}
+
+	/**
+	 * Trigger an error.
+	 *
+	 * @param string $message The error message.
+	 * @return void
+	 */
+	public function trigger( $message ) {
+		$this->messages['error'][] = $message;
+	}
 }

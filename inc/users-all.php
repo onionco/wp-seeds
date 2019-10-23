@@ -1,7 +1,7 @@
 <?php
 /**
  * WP Seeds 🌱
- * 
+ *
  * Custom functionality for users overview page.
  *
  * @package   wp-seeds/inc
