@@ -53,21 +53,12 @@ add_action( 'admin_init', 'wps_hide_editor' );
  * Save transaction
  *
  * @since 1.0.0
-<<<<<<< HEAD
  * @param int $post_id The post ID.
  * @return void
  */
 function wps_save_transaction( $post_id ) {
 	$post = get_post( $post_id );
 
-=======
- * @param int    $post_id The post ID.
- * @param object $post The post object.
- * @param bool   $update Indicator if post exists already.
- * @return void
- */
-function wps_save_transaction( $post_id, $post, $update ) {
->>>>>>> e11d0d6899a6b9936c3d8c7348ddeb8727941fbc
 	// Return if post status is auto-draft.
 	if ( isset( $post->post_status ) && 'auto-draft' === $post->post_status ) {
 		return;
@@ -78,14 +69,11 @@ function wps_save_transaction( $post_id, $post, $update ) {
 		return;
 	}
 
-<<<<<<< HEAD
 	// Return when no transactiuon gets created.
 	if ( ! isset( $_GET['create_transaction'] ) ) {
 		return;
 	}
 
-=======
->>>>>>> e11d0d6899a6b9936c3d8c7348ddeb8727941fbc
 	$errors = false;
 
 	if ( wps_missing_sender() ) {
@@ -156,11 +144,7 @@ function wps_save_transaction( $post_id, $post, $update ) {
 		$post->post_title = crypt( implode( '', $temp ) );
 	}
 }
-<<<<<<< HEAD
 add_action( 'save_post', 'wps_save_transaction', 10, 1 );
-=======
-add_action( 'save_post', 'wps_save_transaction', 10, 3 );
->>>>>>> e11d0d6899a6b9936c3d8c7348ddeb8727941fbc
 
 /**
  * Redirect error message
@@ -523,15 +507,15 @@ function wps_request_transaction_page() {
  */
 function wps_populate_from_user_field( $field ) {
 
-	if ( ! empty( $_REQUEST['action'] ) 
+	if ( ! empty( $_REQUEST['action'] )
 		&& 'request-transaction' === $_REQUEST['action'] ) {
 		$user                   = wp_get_current_user();
 		$field['default_value'] = $user->ID;
 	}
 
-	if ( current_user_can( 'subscriber' ) 
-		|| current_user_can( 'contributor' ) 
-		|| current_user_can( 'author' ) 
+	if ( current_user_can( 'subscriber' )
+		|| current_user_can( 'contributor' )
+		|| current_user_can( 'author' )
 		|| current_user_can( 'editor' ) ) {
 		$user                   = wp_get_current_user();
 		$field['default_value'] = $user->ID;
@@ -551,7 +535,7 @@ add_filter( 'acf/load_field/name=from_user', 'wps_populate_from_user_field' );
  */
 function wps_populate_to_user_field( $field ) {
 
-	if ( ! empty( $_REQUEST['uid'] ) 
+	if ( ! empty( $_REQUEST['uid'] )
 		&& is_numeric( $_REQUEST['uid'] ) ) {
 		$user                   = get_userdata( (int) $_REQUEST['uid'] );
 		$field['default_value'] = $user->ID;
@@ -570,7 +554,7 @@ add_filter( 'acf/load_field/name=to_user', 'wps_populate_to_user_field' );
  */
 function wps_populate_amount_field( $field ) {
 
-	if ( ! empty( $_REQUEST['amount'] ) 
+	if ( ! empty( $_REQUEST['amount'] )
 		&& is_numeric( $_REQUEST['amount'] ) ) {
 		$field['default_value'] = (int) $_REQUEST['amount'];
 	}
