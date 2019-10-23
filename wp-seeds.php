@@ -53,21 +53,12 @@ add_action( 'admin_init', 'wps_hide_editor' );
  * Save transaction
  *
  * @since 1.0.0
-<<<<<<< HEAD
  * @param int $post_id The post ID.
  * @return void
  */
 function wps_save_transaction( $post_id ) {
 	$post = get_post( $post_id );
 
-=======
- * @param int    $post_id The post ID.
- * @param object $post The post object.
- * @param bool   $update Indicator if post exists already.
- * @return void
- */
-function wps_save_transaction( $post_id, $post, $update ) {
->>>>>>> e11d0d6899a6b9936c3d8c7348ddeb8727941fbc
 	// Return if post status is auto-draft.
 	if ( isset( $post->post_status ) && 'auto-draft' === $post->post_status ) {
 		return;
@@ -78,14 +69,11 @@ function wps_save_transaction( $post_id, $post, $update ) {
 		return;
 	}
 
-<<<<<<< HEAD
 	// Return when no transactiuon gets created.
 	if ( ! isset( $_GET['create_transaction'] ) ) {
 		return;
 	}
 
-=======
->>>>>>> e11d0d6899a6b9936c3d8c7348ddeb8727941fbc
 	$errors = false;
 
 	if ( wps_missing_sender() ) {
@@ -156,11 +144,7 @@ function wps_save_transaction( $post_id, $post, $update ) {
 		$post->post_title = crypt( implode( '', $temp ) );
 	}
 }
-<<<<<<< HEAD
 add_action( 'save_post', 'wps_save_transaction', 10, 1 );
-=======
-add_action( 'save_post', 'wps_save_transaction', 10, 3 );
->>>>>>> e11d0d6899a6b9936c3d8c7348ddeb8727941fbc
 
 /**
  * Redirect error message
