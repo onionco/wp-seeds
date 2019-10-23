@@ -1,7 +1,7 @@
 <?php
 /**
  * WP Seeds 🌱
- * 
+ *
  * Create CPT transaction.
  *
  * @package   wp-seeds/inc

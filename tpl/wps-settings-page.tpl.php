@@ -101,7 +101,7 @@
 				<td>
 					<select name="burn_user_id">
 						<option value="">Select User Account</option>
-						<?php display_select_options( $users, $burn_fv->get_unchecked( 'create_user_id' ) ); ?>
+						<?php display_select_options( $users, $burn_fv->get_unchecked( 'burn_user_id' ) ); ?>
 					</select>
 					<p class="description">
 						Where should these seeds be taken from?
