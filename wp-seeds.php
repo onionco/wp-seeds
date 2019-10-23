@@ -399,40 +399,6 @@ function wps_transaction_admin_notices() {
 add_action( 'admin_notices', 'wps_transaction_admin_notices' );
 
 /**
- * Validate amount field
- *
- * @param string $valid The original validation string.
- * @return string $valid The updated validation string.
- */
-function wps_validate_value_amount( $valid ) {
-
-	if ( ! $valid ) {
-		return $valid;
-	}
-
-	if ( ! isset( $_POST['acf']['field_5d6e6ed3f45ac'] ) // phpcs:ignore
-		|| ! isset( $_POST['acf']['field_5d6e6efff45ae'] ) ) { // phpcs:ignore
-		return;
-	}
-
-	$from_user = (int) $_POST['acf']['field_5d6e6ed3f45ac']; // phpcs:ignore
-	$amount    = (int) $_POST['acf']['field_5d6e6efff45ae']; // phpcs:ignore
-	$balance   = get_user_meta( $from_user, 'wps_balance', true );
-
-	if ( $amount < 0 ) {
-		$valid = esc_html__( 'Amount cannot be negative.', 'wp-seeds' );
-	}
-
-	if ( $amount > $balance ) {
-		/* Translators: %1$d is the balance of the current user. */
-		$valid = sprintf( esc_html__( 'Insufficient balance. Current balance is %1$d.', 'wp-seeds' ), $balance );
-	}
-
-	return $valid;
-}
-add_filter( 'acf/validate_value/name=amount', 'wps_validate_value_amount', 10 );
-
-/**
  * Load admin styles
  *
  * @since 1.0.0
@@ -497,89 +463,6 @@ function wps_request_transaction_page() {
 		display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-page.tpl.php', $vars );
 	}
 }
-
-/**
- * Populate from user field.
- *
- * @since 1.0.0
- * @param array $field The original array with fields.
- * @return array $field The updated array with fields.
- */
-function wps_populate_from_user_field( $field ) {
-
-	if ( ! empty( $_REQUEST['action'] )
-		&& 'request-transaction' === $_REQUEST['action'] ) {
-		$user                   = wp_get_current_user();
-		$field['default_value'] = $user->ID;
-	}
-
-	if ( current_user_can( 'subscriber' )
-		|| current_user_can( 'contributor' )
-		|| current_user_can( 'author' )
-		|| current_user_can( 'editor' ) ) {
-		$user                   = wp_get_current_user();
-		$field['default_value'] = $user->ID;
-	}
-
-	return $field;
-
-}
-add_filter( 'acf/load_field/name=from_user', 'wps_populate_from_user_field' );
-
-/**
- * Populate to user field.
- *
- * @since 1.0.0
- * @param array $field The original array with fields.
- * @return array $field The updated array with fields.
- */
-function wps_populate_to_user_field( $field ) {
-
-	if ( ! empty( $_REQUEST['uid'] )
-		&& is_numeric( $_REQUEST['uid'] ) ) {
-		$user                   = get_userdata( (int) $_REQUEST['uid'] );
-		$field['default_value'] = $user->ID;
-	}
-
-	return $field;
-
-}
-add_filter( 'acf/load_field/name=to_user', 'wps_populate_to_user_field' );
-
-/**
- * Populate amount field.
- *
- * @param array $field The original array with fields.
- * @return array $field The updated array with fields.
- */
-function wps_populate_amount_field( $field ) {
-
-	if ( ! empty( $_REQUEST['amount'] )
-		&& is_numeric( $_REQUEST['amount'] ) ) {
-		$field['default_value'] = (int) $_REQUEST['amount'];
-	}
-
-	return $field;
-
-}
-add_filter( 'acf/load_field/name=amount', 'wps_populate_amount_field' );
-
-/**
- * Populate note field.
- *
- * @param array $field The original array with fields.
- * @return array $field The updated array with fields.
- */
-function wps_populate_note_field( $field ) {
-
-	if ( ! empty( $_REQUEST['note'] ) ) {
-		$field['default_value'] = esc_html( $_REQUEST['note'] );
-	}
-
-	return $field;
-
-}
-add_filter( 'acf/load_field/name=note', 'wps_populate_note_field' );
 
 /**
  * WP Seeds settings page.
