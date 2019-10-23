@@ -72,3 +72,21 @@ function wps_custom_caps() {
 
 }
 add_action( 'init', 'wps_custom_caps' );
+
+/**
+ * Custom row actions
+ *
+ * @since 1.0.0
+ * @param array $actions The original array with actions.
+ * @return array $actions The updated array with actions.
+ */
+function wps_transaction_post_row_actions( $actions ) {
+	if ( ! current_user_can( 'spread_seeds') && get_post_type() === 'transaction' ) {
+		unset( $actions['edit'] );
+		unset( $actions['view'] );
+		unset( $actions['trash'] );
+		unset( $actions['inline hide-if-no-js'] );
+	}
+	return $actions;
+}
+add_filter( 'post_row_actions', 'wps_transaction_post_row_actions', 10, 1 );

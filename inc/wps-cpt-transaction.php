@@ -78,22 +78,3 @@ function wps_register_cpt() {
 	register_post_type( 'transaction', $args );
 }
 add_action( 'init', 'wps_register_cpt', 0 );
-
-
-/**
- * Custom row actions
- *
- * @since 1.0.0
- * @param array $actions The original array with actions.
- * @return array $actions The updated array with actions.
- */
-function wps_transaction_post_row_actions( $actions ) {
-	if ( get_post_type() === 'transaction' ) {
-		unset( $actions['edit'] );
-		unset( $actions['view'] );
-		unset( $actions['trash'] );
-		unset( $actions['inline hide-if-no-js'] );
-	}
-	return $actions;
-}
-add_filter( 'post_row_actions', 'wps_transaction_post_row_actions', 10, 1 );
