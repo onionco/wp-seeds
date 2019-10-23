@@ -69,11 +69,6 @@ function wps_save_transaction( $post_id ) {
 		return;
 	}
 
-	// Return when no transactiuon gets created.
-	if ( ! isset( $_GET['create_transaction'] ) ) {
-		return;
-	}
-
 	$errors = false;
 
 	if ( wps_missing_sender() ) {
@@ -123,28 +118,32 @@ function wps_save_transaction( $post_id ) {
 
 		$amount = $_POST['wps_amount']; // phpcs:ignore
 
-		// // Withdraw amount from sender.
+		// // // Withdraw amount from sender.
 		$sender_id          = $_POST['wps_sender']; // phpcs:ignore
 		$sender_balance_old = get_user_meta( $sender_id, 'wps_balance', true );
 		$sender_balance_new = (int) $sender_balance_old - (int) $amount;
 		update_user_meta( $sender_id, 'wps_balance', $sender_balance_new );
 
-		// // Send amount to receiver.
+		// // // Send amount to receiver.
 		$receiver_id          = $_POST['wps_receiver']; // phpcs:ignore
 		$receiver_balance_old = get_user_meta( $receiver_id, 'wps_balance', true );
 		$receiver_balance_new = (int) $receiver_balance_old + (int) $amount;
 		update_user_meta( $receiver_id, 'wps_balance', $receiver_balance_new );
 
 		// Prepare post title.
+		remove_action( 'save_post', 'wps_save_transaction' );
 		$temp[]           = date( 'Y.m.d' );
 		$temp[]           = $_POST['wps_sender']; 	// phpcs:ignore
 		$temp[]           = $_POST['wps_receiver']; // phpcs:ignore
 		$temp[]           = $_POST['wps_amount']; 	// phpcs:ignore
 		$temp[]           = time();
 		$post->post_title = crypt( implode( '', $temp ) );
+		$post->status = 'publish';
+		wp_update_post( $post );
+		add_action( 'save_post', 'wps_save_transaction' );
 	}
 }
-add_action( 'save_post', 'wps_save_transaction', 10, 1 );
+add_action( 'save_post', 'wps_save_transaction', 10, 2 );
 
 /**
  * Redirect error message
@@ -167,7 +166,7 @@ function wps_transaction_redirect_filter( $location ) {
  * @return bool Returns true if sender is missing and false otherwise.
  */
 function wps_missing_sender() {
-		return empty( $_POST['wps_sender'] ); // phpcs:ignore
+	return empty( $_POST['wps_sender'] ); // phpcs:ignore
 }
 
 /**
@@ -446,9 +445,9 @@ function wps_request_transaction_page() {
 	$show_qr = false;
 
 	if ( isset( $_REQUEST['do_request'] ) ) {
-		if ( ! empty( $_REQUEST['amount'] ) ) {
+		if ( ! empty( $_REQUEST['wps_amount'] ) ) {
 			$to_user                = (int) get_current_user_id();
-			$amount                 = (int) $_REQUEST['amount'];
+			$amount                 = (int) $_REQUEST['wps_amount'];
 			$vars['notice_success'] = __( 'QR had been created successfully. Please ask the sender to scan this QR code to transfer seeds to you.', 'wp-seeds' );
 			$vars['qr_code_url']    = sprintf( '//wp.test/wp-admin/post-new.php?post_type=transaction&to_user=%d&ammount=%d', $to_user, $amount );
 			$show_qr                = true;
@@ -484,8 +483,8 @@ function wps_settings_page() {
 	$create_fv->check_positive_number( 'create_amount' );
 	if ( $create_fv->is_valid_submission() ) {
 		$post_id = wp_insert_post( array( 'post_type' => 'transaction' ) );
-		update_post_meta( $post_id, 'amount', (int) $create_fv->get_checked( 'create_amount' ) );
-		update_post_meta( $post_id, 'to_user', $create_fv->get_checked( 'create_user_id' ) );
+		update_post_meta( $post_id, 'wps_amount', (int) $create_fv->get_checked( 'create_amount' ) );
+		update_post_meta( $post_id, 'wps_receiver', $create_fv->get_checked( 'create_user_id' ) );
 		update_post_meta( $post_id, 'seeding_transaction', true );
 
 		try {
@@ -503,8 +502,8 @@ function wps_settings_page() {
 	$burn_fv->check_positive_number( 'burn_amount' );
 	if ( $burn_fv->is_valid_submission() ) {
 		$post_id = wp_insert_post( array( 'post_type' => 'transaction' ) );
-		update_post_meta( $post_id, 'amount', (int) $burn_fv->get_checked( 'burn_amount' ) );
-		update_post_meta( $post_id, 'from_user', $burn_fv->get_checked( 'burn_user_id' ) );
+		update_post_meta( $post_id, 'wps_amount', (int) $burn_fv->get_checked( 'burn_amount' ) );
+		update_post_meta( $post_id, 'wps_sender', $burn_fv->get_checked( 'burn_user_id' ) );
 		update_post_meta( $post_id, 'seeding_transaction', true );
 
 		try {

@@ -22,11 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return void
  */
 function wps_custom_metabox() {
-	$prefix = 'wps_';
-
 	$cmb = new_cmb2_box(
 		array(
-			'id'           => $prefix . 'transaction',
+			'id'           => 'wps_transaction',
 			'title'        => esc_html__( 'Transaction', 'cmb2' ),
 			'object_types' => array( 'transaction' ),
 		)
@@ -43,7 +41,7 @@ function wps_custom_metabox() {
 		array(
 			'name'             => esc_html__( 'Sender', 'cmb2' ),
 			'description'      => esc_html__( 'Who will send the seeds?', 'cmb2' ),
-			'id'               => $prefix . 'sender',
+			'id'               => 'wps_sender',
 			'type'             => 'select',
 			'attributes'       => array(
 				'required' => 'required',
@@ -58,7 +56,7 @@ function wps_custom_metabox() {
 		array(
 			'name'             => esc_html__( 'Receiver', 'cmb2' ),
 			'description'      => esc_html__( 'Who will receive the seeds?', 'cmb2' ),
-			'id'               => $prefix . 'receiver',
+			'id'               => 'wps_receiver',
 			'type'             => 'select',
 			'attributes'       => array(
 				'required' => 'required',
@@ -73,7 +71,7 @@ function wps_custom_metabox() {
 		array(
 			'name'        => esc_html__( 'Amount', 'cmb2' ),
 			'description' => esc_html__( 'How many seeds should be send?', 'cmb2' ),
-			'id'          => $prefix . 'amount',
+			'id'          => 'wps_amount',
 			'type'        => 'text_small',
 			'attributes'  => array(
 				'required' => 'required',
@@ -86,7 +84,7 @@ function wps_custom_metabox() {
 		array(
 			'name'        => esc_html__( 'Note', 'cmb2' ),
 			'description' => esc_html__( 'Here you can add a transaction note.', 'cmb2' ),
-			'id'          => $prefix . 'note',
+			'id'          => 'wps_note',
 			'type'        => 'textarea_small',
 			'default'     => wps_note_default(),
 		)

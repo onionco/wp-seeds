@@ -27,9 +27,9 @@ function wps_transaction_columns( $columns ) {
 	$columns = array(
 		'cb'        => $columns['cb'],
 		'title'     => __( 'ID' ),
-		'from_user' => __( 'From' ),
-		'to_user'   => __( 'To' ),
-		'amount'    => __( 'Amount' ),
+		'wps_sender' => __( 'From' ),
+		'wps_receiver'   => __( 'To' ),
+		'wps_amount'    => __( 'Amount' ),
 		'date'      => __( 'Date' ),
 	);
 
@@ -50,8 +50,8 @@ function wps_transaction_posts_custom_column( $column, $post_id ) {
 
 	switch ( $column ) {
 
-		case 'from_user':
-			$user_id = get_post_meta( $post_id, 'from_user', true );
+		case 'wps_sender':
+			$user_id = get_post_meta( $post_id, 'wps_sender', true );
 			$user    = get_userdata( $user_id );
 			if ( $user ) {
 				echo '<a href="' . esc_html( get_edit_user_link( $user->ID ) ) . '">' . esc_attr( $user->display_name ) . '</a>';
@@ -59,8 +59,8 @@ function wps_transaction_posts_custom_column( $column, $post_id ) {
 				esc_html_e( 'SYSTEM', 'wp-seeds' );
 			}
 			break;
-		case 'to_user':
-			$user_id = get_post_meta( $post_id, 'to_user', true );
+		case 'wps_receiver':
+			$user_id = get_post_meta( $post_id, 'wps_receiver', true );
 			$user    = get_userdata( $user_id );
 			if ( $user ) {
 				echo '<a href="' . esc_html( get_edit_user_link( $user->ID ) ) . '">' . esc_attr( $user->display_name ) . '</a>';
@@ -68,8 +68,8 @@ function wps_transaction_posts_custom_column( $column, $post_id ) {
 				esc_html_e( 'SYSTEM', 'wp-seeds' );
 			}
 			break;
-		case 'amount':
-			echo esc_html( get_post_meta( $post_id, 'amount', true ) );
+		case 'wps_amount':
+			echo esc_html( get_post_meta( $post_id, 'wps_amount', true ) );
 			break;
 	}
 }
@@ -83,9 +83,9 @@ add_action( 'manage_transaction_posts_custom_column', 'wps_transaction_posts_cus
  * @return array $columns The updated array with columns.
  */
 function wps_transaction_sortable_columns( $columns ) {
-	$columns['from_user'] = 'from_user';
-	$columns['to_user']   = 'to_user';
-	$columns['amount']    = 'amount';
+	$columns['wps_sender'] = 'wps_sender';
+	$columns['wps_receiver']   = 'wps_receiver';
+	$columns['wps_amount']    = 'wps_amount';
 
 	return $columns;
 }
@@ -105,18 +105,18 @@ function wps_pre_get_posts( $query ) {
 
 	$orderby = $query->get( 'orderby' );
 
-	if ( 'from_user' === $orderby ) {
-		$query->set( 'meta_key', 'from_user' );
+	if ( 'wps_sender' === $orderby ) {
+		$query->set( 'meta_key', 'wps_sender' );
 		$query->set( 'orderby', 'meta_value_num' );
 	}
 
-	if ( 'to_user' === $orderby ) {
-		$query->set( 'meta_key', 'to_user' );
+	if ( 'wps_receiver' === $orderby ) {
+		$query->set( 'meta_key', 'wps_receiver' );
 		$query->set( 'orderby', 'meta_value_num' );
 	}
 
-	if ( 'amount' === $orderby ) {
-		$query->set( 'meta_key', 'amount' );
+	if ( 'wps_amount' === $orderby ) {
+		$query->set( 'meta_key', 'wps_amount' );
 		$query->set( 'orderby', 'meta_value_num' );
 	}
 }
@@ -161,12 +161,12 @@ function wps_parse_query( $query ) {
 		$query->query_vars['meta_query'] = array(
 			'relation' => 'OR',
 			array(
-				'key'     => 'to_user',
+				'key'     => 'wps_receiver',
 				'value'   => sanitize_text_field( wp_unslash( $_GET['uid'] ) ),
 				'compare' => '=',
 			),
 			array(
-				'key'     => 'from_user',
+				'key'     => 'wps_sender',
 				'value'   => sanitize_text_field( wp_unslash( $_GET['uid'] ) ),
 				'compare' => '=',
 			),

@@ -23,7 +23,7 @@
 			<div class="seeds-send-form-field">
 				<select name="to_user">
 					<option><?php esc_html_e( 'Select user to receive the seeds', 'wp-seeds' ); ?></option>
-					<?php display_select_options( $users, $v->get_unchecked( 'to_user' ) ); ?>
+					<?php display_select_options( $users, $v->get_unchecked( 'wps_receiver' ) ); ?>
 				</select>
 			</div>
 		</p>
@@ -32,7 +32,7 @@
 			<label>Amount</label>
 			<div class="seeds-send-form-field">
 				<input type="text" name="amount" 
-						value="<?php $v->echo_esc_attr_unchecked( 'amount' ); ?>">
+						value="<?php $v->echo_esc_attr_unchecked( 'wps_amount' ); ?>">
 			</div>
 		</p>
 

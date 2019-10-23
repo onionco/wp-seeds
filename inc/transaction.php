@@ -45,14 +45,14 @@ function wps_process_transaction( $post_id ) {
 	}
 
 	// Prepare variables.
-	$amount = (int) get_post_meta( $post_id, 'amount', true );
+	$amount = (int) get_post_meta( $post_id, 'wps_amount', true );
 	if ( $amount <= 0 ) {
 		throw new Exception( 'Zero or negative transaction amount.' );
 	}
 
 	// Get sender and receiver.
-	$sender_id   = get_post_meta( $post_id, 'from_user', true );
-	$receiver_id = get_post_meta( $post_id, 'to_user', true );
+	$sender_id   = get_post_meta( $post_id, 'wps_sender', true );
+	$receiver_id = get_post_meta( $post_id, 'wps_receiver', true );
 
 	// Check if seeding transaction, or else non seeding (normal) transaction.
 	if ( '' !== get_post_meta( $post_id, 'seeding_transaction', true ) ) {
@@ -84,9 +84,9 @@ function wps_process_transaction( $post_id ) {
 
 	// Prepare post title.
 	$temp[]           = date( 'Y.m.d' );
-	$temp[]           = get_post_meta( $post_id, 'from_user', true );
-	$temp[]           = get_post_meta( $post_id, 'to_user', true );
-	$temp[]           = get_post_meta( $post_id, 'amount', true );
+	$temp[]           = get_post_meta( $post_id, 'wps_sender', true );
+	$temp[]           = get_post_meta( $post_id, 'wps_receiver', true );
+	$temp[]           = get_post_meta( $post_id, 'wps_amount', true );
 	$temp[]           = time();
 	$post->post_title = crypt( implode( '', $temp ) );
 

@@ -33,14 +33,14 @@ function wps_send_sc( $args ) {
 
 	$v         = new WPS_Form_Validator();
 	$vars['v'] = $v;
-	$v->check_wp_user_id( 'to_user' );
-	$v->check_positive_number( 'amount' );
+	$v->check_wp_user_id( 'wps_receiver' );
+	$v->check_positive_number( 'wps_amount' );
 
 	if ( $v->is_valid_submission() ) {
 		$post_id = wp_insert_post( array( 'post_type' => 'transaction' ) );
-		update_post_meta( $post_id, 'from_user', $current_user->ID );
-		update_post_meta( $post_id, 'to_user', $v->get_checked( 'to_user' ) );
-		update_post_meta( $post_id, 'amount', $v->get_checked( 'amount' ) );
+		update_post_meta( $post_id, 'wps_sender', $current_user->ID );
+		update_post_meta( $post_id, 'wps_receiver', $v->get_checked( 'wps_receiver' ) );
+		update_post_meta( $post_id, 'wps_amount', $v->get_checked( 'wps_amount' ) );
 		try {
 			wps_process_transaction( $post_id );
 			$v->done( __( 'The seeds have been sent.', 'wp-seeds' ) );
