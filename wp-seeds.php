@@ -26,173 +26,16 @@
  *
  * @since 1.0.0
  */
-require_once dirname( __FILE__ ) . '/classes/class-tgm-plugin-activation.php';
+require_once dirname( __FILE__ ) . '/assets/cmb2/init.php';
 require_once dirname( __FILE__ ) . '/inc/lib.php';
 require_once dirname( __FILE__ ) . '/inc/transaction.php';
 require_once dirname( __FILE__ ) . '/inc/transactions-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-profile.php';
 require_once dirname( __FILE__ ) . '/inc/wps-cpt-transaction.php';
+require_once dirname( __FILE__ ) . '/inc/wps-metaboxes.php';
 require_once dirname( __FILE__ ) . '/inc/wps-roles-and-caps.php';
 require_once dirname( __FILE__ ) . '/inc/wps-shortcodes.php';
-
-/**
- * Register the required plugins for this theme.
- *
- * This function is hooked into tgmpa_init, which is fired within the
- * TGM_Plugin_Activation class constructor.
- *
- * @since 1.0.0
- * @return void
- */
-function wps_tgmpa_register() {
-	$plugins = array(
-		array(
-			'name'               => 'Advanced Custom Fields',
-			'slug'               => 'advanced-custom-fields',
-			'required'           => true,
-			'force_activation'   => true,
-			'force_deactivation' => true,
-		),
-	);
-
-	$config = array(
-		'id'           => 'wps_tgmpa',
-		'default_path' => '',
-		'menu'         => 'tgmpa-install-plugins',
-		'parent_slug'  => 'plugins.php',
-		'capability'   => 'activate_plugins',
-		'has_notices'  => true,
-		'dismissable'  => true,
-		'dismiss_msg'  => '',
-		'is_automatic' => true,
-		'message'      => '',
-		'strings'      => array(
-			/* Translators: %s: name of the plugin that needs to be installed */
-			'notice_can_install_required' => _n_noop(
-				'WP Seeds 🌱 plugin has the following dependency: %1$s.',
-				'WP Seeds 🌱 plugin has the following dependencies: %1$s.',
-				'wp-seeds'
-			),
-		),
-	);
-
-	tgmpa( $plugins, $config );
-}
-add_action( 'tgmpa_register', 'wps_tgmpa_register' );
-
-/**
- * Register the required plugins for this theme.
- *
- * @since 1.0.0
- * @return void
- */
-if ( function_exists( 'acf_add_local_field_group' ) ) {
-	acf_add_local_field_group(
-		array(
-			'key'                   => 'group_5d6e6eca8fedc',
-			'title'                 => 'Transaction',
-			'fields'                => array(
-				array(
-					'key'               => 'field_5d6e6ed3f45ac',
-					'label'             => 'From user',
-					'name'              => 'from_user',
-					'type'              => 'user',
-					'instructions'      => '',
-					'required'          => 1,
-					'conditional_logic' => 0,
-					'wrapper'           => array(
-						'width' => '',
-						'class' => '',
-						'id'    => '',
-					),
-					'role'              => '',
-					'allow_null'        => 0,
-					'multiple'          => 0,
-					'return_format'     => '',
-				),
-				array(
-					'key'               => 'field_5d6e6ef5f45ad',
-					'label'             => 'To user',
-					'name'              => 'to_user',
-					'type'              => 'user',
-					'instructions'      => '',
-					'required'          => 1,
-					'conditional_logic' => 0,
-					'wrapper'           => array(
-						'width' => '',
-						'class' => '',
-						'id'    => '',
-					),
-					'role'              => '',
-					'allow_null'        => 0,
-					'multiple'          => 0,
-					'return_format'     => '',
-				),
-				array(
-					'key'               => 'field_5d6e6efff45ae',
-					'label'             => 'Amount',
-					'name'              => 'amount',
-					'type'              => 'number',
-					'instructions'      => '',
-					'required'          => 1,
-					'conditional_logic' => 0,
-					'wrapper'           => array(
-						'width' => '',
-						'class' => '',
-						'id'    => '',
-					),
-					'default_value'     => '',
-					'placeholder'       => '',
-					'prepend'           => '',
-					'append'            => '',
-					'min'               => '',
-					'max'               => '',
-					'step'              => '',
-				),
-				array(
-					'key'               => 'field_5d6e6f10f45af',
-					'label'             => 'Note',
-					'name'              => 'note',
-					'type'              => 'text',
-					'instructions'      => '',
-					'required'          => 0,
-					'conditional_logic' => 0,
-					'wrapper'           => array(
-						'width' => '',
-						'class' => '',
-						'id'    => '',
-					),
-					'default_value'     => '',
-					'placeholder'       => '',
-					'prepend'           => '',
-					'append'            => '',
-					'maxlength'         => '',
-				),
-			),
-			'location'              => array(
-				array(
-					array(
-						'param'    => 'post_type',
-						'operator' => '==',
-						'value'    => 'transaction',
-					),
-				),
-			),
-			'menu_order'            => 0,
-			'position'              => 'normal',
-			'style'                 => 'default',
-			'label_placement'       => 'left',
-			'instruction_placement' => 'label',
-			'hide_on_screen'        => array(
-				0 => 'the_content',
-			),
-			'active'                => true,
-			'description'           => '',
-		)
-	);
-}
-
 
 /**
  * Hide editor for transactions CPT
@@ -207,18 +50,369 @@ function wps_hide_editor() {
 add_action( 'admin_init', 'wps_hide_editor' );
 
 /**
- * Auto add and update title field
+ * Save transaction
  *
  * @since 1.0.0
- * @param mixed $post_id The post id.
+<<<<<<< HEAD
+ * @param int $post_id The post ID.
  * @return void
  */
-function wps_save_post( $post_id ) {
-	if ( 'transaction' === get_post_type( $post_id ) ) {
-		wps_process_transaction( $post_id );
+function wps_save_transaction( $post_id ) {
+	$post = get_post( $post_id );
+
+=======
+ * @param int    $post_id The post ID.
+ * @param object $post The post object.
+ * @param bool   $update Indicator if post exists already.
+ * @return void
+ */
+function wps_save_transaction( $post_id, $post, $update ) {
+>>>>>>> e11d0d6899a6b9936c3d8c7348ddeb8727941fbc
+	// Return if post status is auto-draft.
+	if ( isset( $post->post_status ) && 'auto-draft' === $post->post_status ) {
+		return;
+	}
+
+	// Return if post status is trash.
+	if ( isset( $post->post_status ) && 'trash' === $post->post_status ) {
+		return;
+	}
+
+<<<<<<< HEAD
+	// Return when no transactiuon gets created.
+	if ( ! isset( $_GET['create_transaction'] ) ) {
+		return;
+	}
+
+=======
+>>>>>>> e11d0d6899a6b9936c3d8c7348ddeb8727941fbc
+	$errors = false;
+
+	if ( wps_missing_sender() ) {
+		wps_missing_sender_error();
+		$errors = true;
+	}
+
+	if ( wps_missing_receiver() ) {
+		wps_missing_receiver_error();
+		$errors = true;
+	}
+
+	if ( wps_identical_sender_receiver() ) {
+		wps_identical_sender_receiver_error();
+		$errors = true;
+	}
+
+	if ( wps_missing_amount() ) {
+		wps_missing_amount_error();
+		$errors = true;
+	}
+
+	if ( wps_negative_amount() ) {
+		wps_negative_amount_error();
+		$errors = true;
+	}
+
+	if ( wps_zero_amount() ) {
+		wps_zero_amount_error();
+		$errors = true;
+	}
+
+	if ( wps_insufficient_balance() ) {
+		wps_insufficient_balance_error();
+		$errors = true;
+	}
+
+	if ( $errors ) {
+
+		remove_action( 'save_post', 'wps_save_transaction' );
+		$post->post_status = 'draft';
+		wp_update_post( $post );
+		add_action( 'save_post', 'wps_save_transaction' );
+		add_filter( 'redirect_post_location', 'wps_transaction_redirect_filter' );
+
+	} else {
+
+		$amount = $_POST['wps_amount']; // phpcs:ignore
+
+		// // Withdraw amount from sender.
+		$sender_id          = $_POST['wps_sender']; // phpcs:ignore
+		$sender_balance_old = get_user_meta( $sender_id, 'wps_balance', true );
+		$sender_balance_new = (int) $sender_balance_old - (int) $amount;
+		update_user_meta( $sender_id, 'wps_balance', $sender_balance_new );
+
+		// // Send amount to receiver.
+		$receiver_id          = $_POST['wps_receiver']; // phpcs:ignore
+		$receiver_balance_old = get_user_meta( $receiver_id, 'wps_balance', true );
+		$receiver_balance_new = (int) $receiver_balance_old + (int) $amount;
+		update_user_meta( $receiver_id, 'wps_balance', $receiver_balance_new );
+
+		// Prepare post title.
+		$temp[]           = date( 'Y.m.d' );
+		$temp[]           = $_POST['wps_sender']; 	// phpcs:ignore
+		$temp[]           = $_POST['wps_receiver']; // phpcs:ignore
+		$temp[]           = $_POST['wps_amount']; 	// phpcs:ignore
+		$temp[]           = time();
+		$post->post_title = crypt( implode( '', $temp ) );
 	}
 }
-add_action( 'acf/save_post', 'wps_save_post', 20 );
+<<<<<<< HEAD
+add_action( 'save_post', 'wps_save_transaction', 10, 1 );
+=======
+add_action( 'save_post', 'wps_save_transaction', 10, 3 );
+>>>>>>> e11d0d6899a6b9936c3d8c7348ddeb8727941fbc
+
+/**
+ * Redirect error message
+ *
+ * @since 1.0.0
+ * @param object $location The original location object.
+ * @return object $location The updated location object.
+ */
+function wps_transaction_redirect_filter( $location ) {
+	remove_filter( 'redirect_post_location', __FUNCTION__, 99 );
+	$location = add_query_arg( 'message', 99, $location );
+
+	return $location;
+}
+
+/**
+ * Check if sender is missing
+ *
+ * @since 1.0.0
+ * @return bool Returns true if sender is missing and false otherwise.
+ */
+function wps_missing_sender() {
+		return empty( $_POST['wps_sender'] ); // phpcs:ignore
+}
+
+/**
+ * Check if receiver is missing
+ *
+ * @since 1.0.0
+ * @return bool Returns true if receiver is missing and false otherwise.
+ */
+function wps_missing_receiver() {
+	return empty( $_POST['wps_receiver'] ); // phpcs:ignore
+}
+
+/**
+ * Check if sender and receiver are identical
+ *
+ * @since 1.0.0
+ * @return bool Returns true if sender and receiver are identical and false otherwise.
+ */
+function wps_identical_sender_receiver() {
+	return ! empty( $_POST['wps_sender'] ) // phpcs:ignore
+			&& ! empty( $_POST['wps_receiver'] ) // phpcs:ignore
+			&& $_POST['wps_sender'] === $_POST['wps_receiver']; // phpcs:ignore
+}
+
+/**
+ * Check if amount is missing
+ *
+ * @since 1.0.0
+ * @return bool Returns true if amount is missing and false otherwise.
+ */
+function wps_missing_amount() {
+	return empty( $_POST['wps_amount'] ); // phpcs:ignore
+}
+
+/**
+ * Check if amount is negative
+ *
+ * @since 1.0.0
+ * @return bool Returns true if amount is negative and false otherwise.
+ */
+function wps_negative_amount() {
+	return ! empty( $_POST['wps_amount'] ) && 0 > $_POST['wps_amount']; // phpcs:ignore
+}
+
+/**
+ * Check if amount is zero
+ *
+ * @since 1.0.0
+ * @return bool Returns true if amount is zero and false otherwise.
+ */
+function wps_zero_amount() {
+	return ! empty( $_POST['wps_amount'] ) && 0 === $_POST['wps_amount']; // phpcs:ignore
+}
+
+/**
+ * Check if balance is insufficient
+ *
+ * @since 1.0.0
+ * @return bool Returns true if balance is insufficient and false otherwise.
+ */
+function wps_insufficient_balance() {
+	if ( wps_missing_sender()
+		|| wps_negative_amount()
+		|| wps_zero_amount() ) {
+		return;
+	}
+
+	$balance = get_user_meta( $_POST['wps_sender'], 'wps_balance', true ); // phpcs:ignore
+
+	return ! empty( $_POST['wps_amount'] ) && $balance < $_POST['wps_amount']; // phpcs:ignore
+}
+
+
+/**
+ * Prepare unpermitted update error
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_unpermitted_update_error() {
+	add_settings_error(
+		'unpermitted_update',
+		'unpermitted-update',
+		__( 'Completed transactions cannot be updated.', 'wp-seeds' ),
+		'warning'
+	);
+
+	set_transient( 'settings_errors', get_settings_errors(), 30 );
+}
+
+/**
+ * Prepare missing sender error
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_missing_sender_error() {
+	add_settings_error(
+		'missing_sender',
+		'missing-sender',
+		__( 'Please select a sender.', 'wp-seeds' ),
+		'error'
+	);
+
+	set_transient( 'settings_errors', get_settings_errors(), 30 );
+}
+
+/**
+ * Prepare missing receiver error
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_missing_receiver_error() {
+	add_settings_error(
+		'missing_receiver',
+		'missing-receiver',
+		__( 'Please select a receiver.', 'wp-seeds' ),
+		'error'
+	);
+
+	set_transient( 'settings_errors', get_settings_errors(), 30 );
+}
+
+/**
+ * Prepare missing receiver error
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_identical_sender_receiver_error() {
+	add_settings_error(
+		'identical_sender_receiver',
+		'identical-sender-receiver',
+		__( 'The sender and receiver cannot be identical.', 'wp-seeds' ),
+		'error'
+	);
+
+	set_transient( 'settings_errors', get_settings_errors(), 30 );
+}
+
+/**
+ * Prepare missing amount error
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_missing_amount_error() {
+	add_settings_error(
+		'missing_amount',
+		'missing-amount',
+		__( 'You have not specified the amount of seeds to transfer.', 'wp-seeds' ),
+		'error'
+	);
+
+	set_transient( 'settings_errors', get_settings_errors(), 30 );
+}
+
+/**
+ * Prepare negative receiver error
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_negative_amount_error() {
+	add_settings_error(
+		'negative_amount',
+		'negative-amount',
+		__( 'You cannot provide a negative amount of seeds to transfer.', 'wp-seeds' ),
+		'error'
+	);
+
+	set_transient( 'settings_errors', get_settings_errors(), 30 );
+}
+
+/**
+ * Prepare zero receiver error
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_zero_amount_error() {
+	add_settings_error(
+		'zero_amount',
+		'zero-amount',
+		__( 'You cannot provide a zero amount of seeds to transfer.', 'wp-seeds' ),
+		'error'
+	);
+
+	set_transient( 'settings_errors', get_settings_errors(), 30 );
+}
+
+/**
+ * Prepare insufficient balance error
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_insufficient_balance_error() {
+	add_settings_error(
+		'insufficient_balance',
+		'insufficient-balance',
+		__( 'You have an insufficient balance.', 'wp-seeds' ),
+		'error'
+	);
+
+	set_transient( 'settings_errors', get_settings_errors(), 30 );
+}
+
+/**
+ * Show admin notices if available
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_transaction_admin_notices() {
+	$errors = get_transient( 'settings_errors' );
+	if ( ! $errors ) {
+		return;
+	}
+
+	foreach ( $errors as $error ) {
+		printf( '<div class="notice notice-%s is-dismissible"><p>%s</p></div>', esc_html( $error['type'] ), esc_html( $error['message'] ) );
+	}
+
+	delete_transient( 'settings_errors' );
+	remove_action( 'admin_notices', 'wps_transaction_admin_notices' );
+}
+add_action( 'admin_notices', 'wps_transaction_admin_notices' );
 
 /**
  * Validate amount field
@@ -232,13 +426,13 @@ function wps_validate_value_amount( $valid ) {
 		return $valid;
 	}
 
-	if ( ! isset( $_POST['acf']['field_5d6e6ed3f45ac'] )
-		|| ! isset( $_POST['acf']['field_5d6e6efff45ae'] ) ) {
+	if ( ! isset( $_POST['acf']['field_5d6e6ed3f45ac'] ) // phpcs:ignore
+		|| ! isset( $_POST['acf']['field_5d6e6efff45ae'] ) ) { // phpcs:ignore
 		return;
 	}
 
-	$from_user = (int) $_POST['acf']['field_5d6e6ed3f45ac'];
-	$amount    = (int) $_POST['acf']['field_5d6e6efff45ae'];
+	$from_user = (int) $_POST['acf']['field_5d6e6ed3f45ac']; // phpcs:ignore
+	$amount    = (int) $_POST['acf']['field_5d6e6efff45ae']; // phpcs:ignore
 	$balance   = get_user_meta( $from_user, 'wps_balance', true );
 
 	if ( $amount < 0 ) {
@@ -457,11 +651,3 @@ function wps_settings_page() {
 
 	display_template( __DIR__ . '/tpl/wps-settings-page.tpl.php', $vars );
 }
-
-function wps_list_capabilities() {
-	global $wp_roles;
-	$roles = $wp_roles->roles; 
-	echo '<pre>' . print_r( $roles, true ) . '</pre>';
-	die();
-}
-//add_action( 'init', 'wps_list_capabilities' );
