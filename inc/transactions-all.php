@@ -25,12 +25,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 function wps_transaction_columns( $columns ) {
 
 	$columns = array(
-		'cb'        => $columns['cb'],
-		'title'     => __( 'ID' ),
-		'wps_sender' => __( 'From' ),
-		'wps_receiver'   => __( 'To' ),
-		'wps_amount'    => __( 'Amount' ),
-		'date'      => __( 'Date' ),
+		'cb'           => $columns['cb'],
+		'title'        => __( 'ID' ),
+		'wps_sender'   => __( 'From' ),
+		'wps_receiver' => __( 'To' ),
+		'wps_amount'   => __( 'Amount' ),
+		'date'         => __( 'Date' ),
 	);
 
 	return $columns;
@@ -83,9 +83,9 @@ add_action( 'manage_transaction_posts_custom_column', 'wps_transaction_posts_cus
  * @return array $columns The updated array with columns.
  */
 function wps_transaction_sortable_columns( $columns ) {
-	$columns['wps_sender'] = 'wps_sender';
-	$columns['wps_receiver']   = 'wps_receiver';
-	$columns['wps_amount']    = 'wps_amount';
+	$columns['wps_sender']   = 'wps_sender';
+	$columns['wps_receiver'] = 'wps_receiver';
+	$columns['wps_amount']   = 'wps_amount';
 
 	return $columns;
 }

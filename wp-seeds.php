@@ -69,44 +69,54 @@ function wps_save_transaction( $post_id ) {
 		return;
 	}
 
-	$errors = false;
+	$errors  = false;
+	$warning = false;
 
-	if ( wps_missing_sender() ) {
+	if ( wps_existing_transaction( $post_id ) ) {
+		wps_existing_transaction_warning();
+		$warning = true;
+	}
+
+	if ( ! $warning && wps_missing_sender() ) {
 		wps_missing_sender_error();
 		$errors = true;
 	}
 
-	if ( wps_missing_receiver() ) {
+	if ( ! $warning && wps_missing_receiver() ) {
 		wps_missing_receiver_error();
 		$errors = true;
 	}
 
-	if ( wps_identical_sender_receiver() ) {
+	if ( ! $warning && wps_identical_sender_receiver() ) {
 		wps_identical_sender_receiver_error();
 		$errors = true;
 	}
 
-	if ( wps_missing_amount() ) {
+	if ( ! $warning && wps_missing_amount() ) {
 		wps_missing_amount_error();
 		$errors = true;
 	}
 
-	if ( wps_negative_amount() ) {
+	if ( ! $warning && wps_negative_amount() ) {
 		wps_negative_amount_error();
 		$errors = true;
 	}
 
-	if ( wps_zero_amount() ) {
+	if ( ! $warning && wps_zero_amount() ) {
 		wps_zero_amount_error();
 		$errors = true;
 	}
 
-	if ( wps_insufficient_balance() ) {
+	if ( ! $warning && wps_insufficient_balance() ) {
 		wps_insufficient_balance_error();
 		$errors = true;
 	}
 
-	if ( $errors ) {
+	if ( $warning ) {
+
+		add_filter( 'redirect_post_location', 'wps_transaction_redirect_filter' );
+
+	} elseif ( $errors ) {
 
 		remove_action( 'save_post', 'wps_save_transaction' );
 		$post->post_status = 'draft';
@@ -118,13 +128,13 @@ function wps_save_transaction( $post_id ) {
 
 		$amount = $_POST['wps_amount']; // phpcs:ignore
 
-		// // // Withdraw amount from sender.
+		// Withdraw amount from sender.
 		$sender_id          = $_POST['wps_sender']; // phpcs:ignore
 		$sender_balance_old = get_user_meta( $sender_id, 'wps_balance', true );
 		$sender_balance_new = (int) $sender_balance_old - (int) $amount;
 		update_user_meta( $sender_id, 'wps_balance', $sender_balance_new );
 
-		// // // Send amount to receiver.
+		// Send amount to receiver.
 		$receiver_id          = $_POST['wps_receiver']; // phpcs:ignore
 		$receiver_balance_old = get_user_meta( $receiver_id, 'wps_balance', true );
 		$receiver_balance_new = (int) $receiver_balance_old + (int) $amount;
@@ -138,8 +148,9 @@ function wps_save_transaction( $post_id ) {
 		$temp[]           = $_POST['wps_amount']; 	// phpcs:ignore
 		$temp[]           = time();
 		$post->post_title = crypt( implode( '', $temp ) );
-		$post->status = 'publish';
+		$post->status     = 'publish';
 		wp_update_post( $post );
+		update_post_meta( $post->ID, 'wps_transaction_complete', true );
 		add_action( 'save_post', 'wps_save_transaction' );
 	}
 }
@@ -157,6 +168,17 @@ function wps_transaction_redirect_filter( $location ) {
 	$location = add_query_arg( 'message', 99, $location );
 
 	return $location;
+}
+
+/**
+ * Check if transaction exists
+ *
+ * @since 1.0.0
+ * @param int $post_id The ID of the current post.
+ * @return bool Return true if transaction exists already.
+ */
+function wps_existing_transaction( $post_id ) {
+	return get_post_meta( $post_id, 'wps_transaction_complete', true );
 }
 
 /**
@@ -239,14 +261,13 @@ function wps_insufficient_balance() {
 	return ! empty( $_POST['wps_amount'] ) && $balance < $_POST['wps_amount']; // phpcs:ignore
 }
 
-
 /**
  * Prepare unpermitted update error
  *
  * @since 1.0.0
  * @return void
  */
-function wps_unpermitted_update_error() {
+function wps_existing_transaction_warning() {
 	add_settings_error(
 		'unpermitted_update',
 		'unpermitted-update',
