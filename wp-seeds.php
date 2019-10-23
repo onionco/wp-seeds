@@ -8,7 +8,7 @@
  * @copyright 2019 Mikael Lindqvist & Niels Lange
  * @license   GPL v2 or later
 
- * Plugin Name:       WP Seeds 🌱
+ * Plugin Name:       WP Seeds
  * Plugin URI:        https://github.com/limikael/wp-seeds
  * Description:       Allows users to hold, send and receive tokens named seeds.
  * Version:           1.0
