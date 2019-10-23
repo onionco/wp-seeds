@@ -81,7 +81,7 @@ add_action( 'init', 'wps_custom_caps' );
  * @return array $actions The updated array with actions.
  */
 function wps_transaction_post_row_actions( $actions ) {
-	if ( ! current_user_can( 'spread_seeds') && get_post_type() === 'transaction' ) {
+	if ( ! current_user_can( 'spread_seeds' ) && get_post_type() === 'transaction' ) {
 		unset( $actions['edit'] );
 		unset( $actions['view'] );
 		unset( $actions['trash'] );
