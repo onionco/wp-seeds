@@ -28,8 +28,9 @@
  */
 require_once plugin_dir_path( __FILE__ ) . '/ext/cmb2/init.php';
 require_once plugin_dir_path(__FILE__) . '/models/Transaction.php';
-/*require_once dirname( __FILE__ ) . '/inc/lib.php';
-require_once dirname( __FILE__ ) . '/inc/transaction.php';
+require_once plugin_dir_path(__FILE__) . '/inc/ConcreteListTable.php';
+require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
+/*require_once dirname( __FILE__ ) . '/inc/transaction.php';
 require_once dirname( __FILE__ ) . '/inc/transactions-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-profile.php';
@@ -50,7 +51,41 @@ function wps_admin_style() {
 add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
 
 function seeds_transactions_page() {
-	echo "TODO... the listing of transactions will be here...";
+	$table=new ConcreteListTable();
+
+	$table->addFilter(
+		array(
+			'key'      => 'account',
+			'options'  => $accounts,
+			'allLabel' => 'All Accounts',
+		)
+	);
+	$table->addFieldColumn( 'Transaction ID', 'id' );
+	$table->addFieldColumn( 'From Account', 'fromAccount' );
+	$table->addFieldColumn( 'To Account', 'toAccount' );
+	$table->addFieldColumn( 'Amount', 'amount' );
+
+	$usersById = array();
+	foreach ( get_users() as $user )
+		$usersById[ $user->ID ] = $user;
+
+	$transactions = Transaction::findAll();
+
+	foreach ( $transactions as $transaction ) {
+		$fromUser = $usersById[ $transaction->sender ];
+		$toUser   = $usersById[ $transaction->receiver ];
+		$link = get_admin_url( null, 'admin.php?page=seeds_transactions&transaction_detail=' . $transaction->id );
+		$transactionViews[] = array(
+			'id'          => "<a href='$link'>" . $transaction->transaction_id . '</a>',
+			'fromAccount' => $fromUser->data->user_nicename . ' (' . $fromUser->data->user_email . ')',
+			'toAccount'   => $toUser->data->user_nicename . ' (' . $toUser->data->user_email . ')',
+			'amount'      => $transaction->amount,
+		);
+	}
+	$table->setMickeTitle("Transactions");
+	$table->setData( $transactionViews );
+
+	$table->display();
 }
 
 /**

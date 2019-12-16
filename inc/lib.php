@@ -55,6 +55,9 @@ function render_template( $fn, $vars = array() ) {
  * @return void
  */
 function display_select_options( $options, $current = null ) {
+	if (!$options)
+		return;
+
 	foreach ( $options as $key => $label ) {
 		printf(
 			'<option value="%s" %s>%s</option>',
