@@ -82,7 +82,7 @@ function seeds_transactions_page() {
 			'amount'      => $transaction->amount,
 		);
 	}
-	$table->setMickeTitle("Transactions");
+	$table->setTitle("Transactions");
 	$table->setData( $transactionViews );
 
 	$table->display();

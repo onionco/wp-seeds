@@ -11,8 +11,7 @@ class ConcreteListTable extends WP_List_Table {
 		$this->columns = array();
 		$this->filters = array();
 	}
-	function setMickeTitle($title) {
-		echo "setting title $title";
+	function setTitle($title) {
 		$this->title=$title;
 	}
 	function addFilter( $filterSpec ) {
