@@ -51,35 +51,85 @@ function wps_admin_style() {
 add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
 
 function seeds_transactions_page() {
+	$userById = array();
+	$userdisplayById = array();
+	foreach ( get_users() as $user ) {
+		$userById[ $user->ID ] = $user;
+		$userdisplayById[ $user->ID ] = 
+			$user->data->user_nicename . ' (' . $user->data->user_email . ')';
+	}
+
 	$table=new ConcreteListTable();
 
-	$table->addFilter(
-		array(
-			'key'      => 'account',
-			'options'  => $accounts,
-			'allLabel' => 'All Accounts',
-		)
-	);
-	$table->addFieldColumn( 'Transaction ID', 'id' );
-	$table->addFieldColumn( 'From Account', 'fromAccount' );
-	$table->addFieldColumn( 'To Account', 'toAccount' );
-	$table->addFieldColumn( 'Amount', 'amount' );
+	$table->addFilter(array(
+		'key'      => 'account',
+		'options'  => $userdisplayById,
+		'allLabel' => 'All Accounts',
+	));
 
-	$usersById = array();
-	foreach ( get_users() as $user )
-		$usersById[ $user->ID ] = $user;
+	$table->addColumn(array(
+		"title"=>"Time",
+		"field"=>"timestamp",
+		"sortable"=>true
+	));
 
-	$transactions = Transaction::findAll();
+	$table->addColumn(array(
+		"title"=>"Transaction ID",
+		"field"=>"id"
+	));
+
+	$table->addColumn(array(
+		"title"=>"From Account",
+		"field"=>"fromAccount"
+	));
+
+	$table->addColumn(array(
+		"title"=>"To Account",
+		"field"=>"toAccount"
+	));
+
+	$table->addColumn(array(
+		"title"=>"Amount",
+		"field"=>"amount",
+		"sortable"=>true
+	));
+
+	if (isset($_REQUEST["orderby"])) {
+		$order=esc_sql($_REQUEST["orderby"])." ".esc_sql($_REQUEST["order"]);
+	}
+
+	else {
+		$order='timestamp desc';
+	}
+
+	if ( isset( $_REQUEST['account'] ) && $_REQUEST['account'] ) {
+		$transactions = Transaction::findAllByQuery(
+			'SELECT   * ' .
+			'FROM     :table ' .
+			'WHERE    sender=%s ' .
+			"OR       receiver=%s ".
+			"ORDER BY $order",
+			$_REQUEST['account'],
+			$_REQUEST['account']
+		);
+	} else {
+		$transactions = Transaction::findAllByQuery(
+			'SELECT   * '.
+			'FROM      :table '.
+			"ORDER BY  $order"
+		);
+	}
 
 	foreach ( $transactions as $transaction ) {
-		$fromUser = $usersById[ $transaction->sender ];
-		$toUser   = $usersById[ $transaction->receiver ];
+		$fromUser = $userById[ $transaction->sender ];
+		$toUser   = $userById[ $transaction->receiver ];
 		$link = get_admin_url( null, 'admin.php?page=seeds_transactions&transaction_detail=' . $transaction->id );
 		$transactionViews[] = array(
 			'id'          => "<a href='$link'>" . $transaction->transaction_id . '</a>',
 			'fromAccount' => $fromUser->data->user_nicename . ' (' . $fromUser->data->user_email . ')',
 			'toAccount'   => $toUser->data->user_nicename . ' (' . $toUser->data->user_email . ')',
 			'amount'      => $transaction->amount,
+			'timestamp'   => date("Y-m-d H:m:s",$transaction->timestamp)
 		);
 	}
 	$table->setTitle("Transactions");

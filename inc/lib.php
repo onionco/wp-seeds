@@ -62,7 +62,7 @@ function display_select_options( $options, $current = null ) {
 		printf(
 			'<option value="%s" %s>%s</option>',
 			esc_attr( $key ),
-			( ( $current === $key ) ? 'selected' : '' ),
+			( ( strval($current) === strval($key) ) ? 'selected' : '' ),
 			esc_html( $label )
 		);
 	}

@@ -20,15 +20,27 @@ class ConcreteListTable extends WP_List_Table {
 		}
 		$this->filters[ $filterSpec['key'] ] = $filterSpec;
 	}
-	function addFieldColumn( $title, $field ) {
-		$index = sizeof( $this->columns );
-		$key   = "_$index";
-		$this->columns[ $key ] = array(
-			'key'   => $key,
-			'title' => $title,
-			'field' => $field,
-		);
+	function addColumn( $columnSpec ) {
+		if ( ! $columnSpec['key'] ) {
+			if (isset($columnSpec['field'])) {
+				$columnSpec['key'] = $columnSpec['field'];
+			}
+
+			else {
+				$columnSpec['key'] = '_' . sizeof( $this->columns );
+			}
+		}
+
+		$this->columns[ $columnSpec['key'] ] = $columnSpec;
 	}
+
+    public function __call( $name, $arguments ) {
+        if ( in_array( $name, $this->compat_methods ) ) {
+            return $this->$name( ...$arguments );
+        }
+        throw new Error("Undefined method: ".$name);
+    }
+
 	// Overridden in order to get rid of _wp_nounce and _wp_http_referer
 	protected function display_tablenav( $which ) {
 		?>
@@ -60,20 +72,8 @@ class ConcreteListTable extends WP_List_Table {
 					echo "<input type='submit' class='button' value='Filter'>";
 					echo '</div>';
 				}
-				/*
-							  echo "<select><option>test</option></select>";
-				echo "<input type='submit' class='button' value='Filter'>";*/
 				break;
 		}
-	}
-	function addFuncColumn( $title, $func ) {
-		$index = sizeof( $this->columns );
-		$key   = "_$index";
-		$this->columns[ $key ] = array(
-			'key'   => $key,
-			'title' => $title,
-			'func'  => $func,
-		);
 	}
 	function get_columns() {
 		$cols = array();
@@ -97,6 +97,17 @@ class ConcreteListTable extends WP_List_Table {
 	function setData( $data ) {
 		$this->items = $data;
 		$this->prepare_items();
+	}
+	function get_sortable_columns() {
+		$sortable_columns=array();
+
+		foreach ($this->columns as $colSpec) {
+			if ($colSpec["sortable"]) {
+				$sortable_columns[$colSpec["key"]]=array($colSpec["key"],false);
+			}
+		}
+
+		return $sortable_columns;
 	}
 	function prepare_items() {
 		$columns               = $this->get_columns();
