@@ -55,14 +55,15 @@ function render_template( $fn, $vars = array() ) {
  * @return void
  */
 function display_select_options( $options, $current = null ) {
-	if (!$options)
+	if ( ! $options ) {
 		return;
+	}
 
 	foreach ( $options as $key => $label ) {
 		printf(
 			'<option value="%s" %s>%s</option>',
 			esc_attr( $key ),
-			( ( strval($current) === strval($key) ) ? 'selected' : '' ),
+			( ( strval( $current ) === strval( $key ) ) ? 'selected' : '' ),
 			esc_html( $label )
 		);
 	}

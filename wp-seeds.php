@@ -28,7 +28,7 @@
  */
 require_once plugin_dir_path( __FILE__ ) . '/ext/cmb2/init.php';
 require_once plugin_dir_path(__FILE__) . '/models/class-transaction.php';
-require_once plugin_dir_path(__FILE__) . '/inc/ConcreteListTable.php';
+require_once plugin_dir_path(__FILE__) . '/inc/class-custom-list-table.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
 /*require_once dirname( __FILE__ ) . '/inc/transaction.php';
 require_once dirname( __FILE__ ) . '/inc/transactions-all.php';
@@ -59,36 +59,36 @@ function seeds_transactions_page() {
 			$user->data->user_nicename . ' (' . $user->data->user_email . ')';
 	}
 
-	$table=new ConcreteListTable();
+	$table=new Custom_List_Table();
 
-	$table->addFilter(array(
+	$table->add_filter(array(
 		'key'      => 'account',
 		'options'  => $userdisplayById,
 		'allLabel' => 'All Accounts',
 	));
 
-	$table->addColumn(array(
+	$table->add_column(array(
 		"title"=>"Time",
 		"field"=>"timestamp",
 		"sortable"=>true
 	));
 
-	$table->addColumn(array(
+	$table->add_column(array(
 		"title"=>"Transaction ID",
 		"field"=>"id"
 	));
 
-	$table->addColumn(array(
+	$table->add_column(array(
 		"title"=>"From Account",
 		"field"=>"fromAccount"
 	));
 
-	$table->addColumn(array(
+	$table->add_column(array(
 		"title"=>"To Account",
 		"field"=>"toAccount"
 	));
 
-	$table->addColumn(array(
+	$table->add_column(array(
 		"title"=>"Amount",
 		"field"=>"amount",
 		"sortable"=>true
@@ -132,8 +132,8 @@ function seeds_transactions_page() {
 			'timestamp'   => date("Y-m-d H:m:s",$transaction->timestamp)
 		);
 	}
-	$table->setTitle("Transactions");
-	$table->setData( $transactionViews );
+	$table->set_title("Transactions");
+	$table->set_data( $transactionViews );
 
 	$table->display();
 }
