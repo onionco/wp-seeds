@@ -27,7 +27,7 @@
  * @since 1.0.0
  */
 require_once plugin_dir_path( __FILE__ ) . '/ext/cmb2/init.php';
-require_once plugin_dir_path(__FILE__) . '/models/Transaction.php';
+require_once plugin_dir_path(__FILE__) . '/models/class-transaction.php';
 require_once plugin_dir_path(__FILE__) . '/inc/ConcreteListTable.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
 /*require_once dirname( __FILE__ ) . '/inc/transaction.php';
