@@ -13,7 +13,7 @@
  * Description:       Allows users to hold, send and receive tokens named seeds.
  * Version:           1.0
  * Requires at least: 5.2
- * Requires PHP:      7.3
+ * Requires PHP:      7.2
  * Author:            Mikael Lindqvist & Niels Lange
  * Author URI:        https://github.com/limikael/wp-seeds
  * Text Domain:       wp-seeds
@@ -192,3 +192,18 @@ function wps_deactivate() {
 	Transaction::uninstall();
 }
 register_deactivation_hook(__FILE__,'wps_deactivate');
+
+/**
+ * Get the url where to find cmb2 resources. We hook into this function
+ * because the original implementation of cmb2 fails if the plugin is inside
+ * a sym-linked directory.
+ *
+ * @since 1.0.0
+ * @return string
+ */
+function wps_cmb2_meta_box_url($url) {
+	$new_url=trailingslashit(plugin_dir_url(__FILE__).'ext/cmb2');
+
+	return $new_url;
+}
+add_filter('cmb2_meta_box_url','wps_cmb2_meta_box_url');
