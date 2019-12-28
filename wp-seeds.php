@@ -27,10 +27,11 @@
  * @since 1.0.0
  */
 require_once plugin_dir_path( __FILE__ ) . '/ext/cmb2/init.php';
-require_once plugin_dir_path(__FILE__) . '/models/class-transaction.php';
-require_once plugin_dir_path(__FILE__) . '/inc/class-custom-list-table.php';
+require_once plugin_dir_path( __FILE__ ) . '/models/class-transaction.php';
+require_once plugin_dir_path( __FILE__ ) . '/inc/class-custom-list-table.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
-/*require_once dirname( __FILE__ ) . '/inc/transaction.php';
+/*
+require_once dirname( __FILE__ ) . '/inc/transaction.php';
 require_once dirname( __FILE__ ) . '/inc/transactions-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-profile.php';
@@ -51,55 +52,65 @@ function wps_admin_style() {
 add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
 
 function seeds_transactions_page() {
-	$userById = array();
+	$userById        = array();
 	$userdisplayById = array();
 	foreach ( get_users() as $user ) {
-		$userById[ $user->ID ] = $user;
-		$userdisplayById[ $user->ID ] = 
+		$userById[ $user->ID ]        = $user;
+		$userdisplayById[ $user->ID ] =
 			$user->data->user_nicename . ' (' . $user->data->user_email . ')';
 	}
 
-	$table=new Custom_List_Table();
+	$table = new Custom_List_Table();
 
-	$table->add_filter(array(
-		'key'      => 'account',
-		'options'  => $userdisplayById,
-		'allLabel' => 'All Accounts',
-	));
+	$table->add_filter(
+		array(
+			'key'      => 'account',
+			'options'  => $userdisplayById,
+			'allLabel' => 'All Accounts',
+		)
+	);
 
-	$table->add_column(array(
-		"title"=>"Time",
-		"field"=>"timestamp",
-		"sortable"=>true
-	));
+	$table->add_column(
+		array(
+			'title'    => 'Time',
+			'field'    => 'timestamp',
+			'sortable' => true,
+		)
+	);
 
-	$table->add_column(array(
-		"title"=>"Transaction ID",
-		"field"=>"id"
-	));
+	$table->add_column(
+		array(
+			'title' => 'Transaction ID',
+			'field' => 'id',
+		)
+	);
 
-	$table->add_column(array(
-		"title"=>"From Account",
-		"field"=>"fromAccount"
-	));
+	$table->add_column(
+		array(
+			'title' => 'From Account',
+			'field' => 'fromAccount',
+		)
+	);
 
-	$table->add_column(array(
-		"title"=>"To Account",
-		"field"=>"toAccount"
-	));
+	$table->add_column(
+		array(
+			'title' => 'To Account',
+			'field' => 'toAccount',
+		)
+	);
 
-	$table->add_column(array(
-		"title"=>"Amount",
-		"field"=>"amount",
-		"sortable"=>true
-	));
+	$table->add_column(
+		array(
+			'title'    => 'Amount',
+			'field'    => 'amount',
+			'sortable' => true,
+		)
+	);
 
-	if (isset($_REQUEST["orderby"])) {
-		$order=esc_sql($_REQUEST["orderby"])." ".esc_sql($_REQUEST["order"]);
-	}
-
-	else {
-		$order='timestamp desc';
+	if ( isset( $_REQUEST['orderby'] ) ) {
+		$order = esc_sql( $_REQUEST['orderby'] ) . ' ' . esc_sql( $_REQUEST['order'] );
+	} else {
+		$order = 'timestamp desc';
 	}
 
 	if ( isset( $_REQUEST['account'] ) && $_REQUEST['account'] ) {
@@ -107,32 +118,32 @@ function seeds_transactions_page() {
 			'SELECT   * ' .
 			'FROM     :table ' .
 			'WHERE    sender=%s ' .
-			"OR       receiver=%s ".
+			'OR       receiver=%s ' .
 			"ORDER BY $order",
 			$_REQUEST['account'],
 			$_REQUEST['account']
 		);
 	} else {
 		$transactions = Transaction::findAllByQuery(
-			'SELECT   * '.
-			'FROM      :table '.
+			'SELECT   * ' .
+			'FROM      :table ' .
 			"ORDER BY  $order"
 		);
 	}
 
 	foreach ( $transactions as $transaction ) {
-		$fromUser = $userById[ $transaction->sender ];
-		$toUser   = $userById[ $transaction->receiver ];
-		$link = get_admin_url( null, 'admin.php?page=seeds_transactions&transaction_detail=' . $transaction->id );
+		$fromUser           = $userById[ $transaction->sender ];
+		$toUser             = $userById[ $transaction->receiver ];
+		$link               = get_admin_url( null, 'admin.php?page=seeds_transactions&transaction_detail=' . $transaction->id );
 		$transactionViews[] = array(
 			'id'          => "<a href='$link'>" . $transaction->transaction_id . '</a>',
 			'fromAccount' => $fromUser->data->user_nicename . ' (' . $fromUser->data->user_email . ')',
 			'toAccount'   => $toUser->data->user_nicename . ' (' . $toUser->data->user_email . ')',
 			'amount'      => $transaction->amount,
-			'timestamp'   => date("Y-m-d H:m:s",$transaction->timestamp)
+			'timestamp'   => date( 'Y-m-d H:m:s', $transaction->timestamp ),
 		);
 	}
-	$table->set_title("Transactions");
+	$table->set_title( 'Transactions' );
 	$table->set_data( $transactionViews );
 
 	$table->display();
@@ -150,7 +161,7 @@ function wps_admin_menu() {
 		'Seeds',
 		'manage_options',
 		'seeds_accounts',
-		NULL,
+		null,
 		'dashicons-money',
 		71
 	);
@@ -176,32 +187,38 @@ function wps_register_transaction_form() {
 	/**
 	 * Registers options page menu item and form.
 	 */
-	$cmb_group=new_cmb2_box( array(
-		'id'           => 'create_transaction',
-		'title'        => esc_html__( 'Create Transaction', 'cmb2' ),
-		'object_types' => array( 'options-page' ),
-		'option_key'      => 'seeds_accounts',
-		'parent_slug'     => 'admin.php', 
-		'save_button'     => esc_html__( 'Create Transaction', 'cmb2' )
-	) );
+	$cmb_group = new_cmb2_box(
+		array(
+			'id'           => 'create_transaction',
+			'title'        => esc_html__( 'Create Transaction', 'cmb2' ),
+			'object_types' => array( 'options-page' ),
+			'option_key'   => 'seeds_accounts',
+			'parent_slug'  => 'admin.php',
+			'save_button'  => esc_html__( 'Create Transaction', 'cmb2' ),
+		)
+	);
 
-	$users=array();
-	foreach (get_users() as $wpuser)
-		$users[$wpuser->ID]=$wpuser->display_name;
+	$users = array();
+	foreach ( get_users() as $wpuser ) {
+		$users[ $wpuser->ID ] = $wpuser->display_name;
+	}
 
-	$cmb_group->add_field(array(
+	$cmb_group->add_field(
+		array(
 			'name'             => esc_html__( 'Sender', 'cmb2' ),
 			'description'      => esc_html__( 'Who will send the seeds?', 'cmb2' ),
-			'id'               => 'sender',		
+			'id'               => 'sender',
 			'type'             => 'select',
 			'attributes'       => array(
 				'required' => 'required',
 			),
 			'show_option_none' => __( 'Please select', 'wp-seeds' ),
 			'options'          => $users,
-	));
+		)
+	);
 
-	$cmb_group->add_field(array(
+	$cmb_group->add_field(
+		array(
 			'name'             => esc_html__( 'Receiver', 'cmb2' ),
 			'description'      => esc_html__( 'Who will send the seeds?', 'cmb2' ),
 			'id'               => 'receiver',
@@ -211,37 +228,40 @@ function wps_register_transaction_form() {
 			),
 			'show_option_none' => __( 'Please select', 'wp-seeds' ),
 			'options'          => $users,
-	));
+		)
+	);
 
-	$cmb_group->add_field(array(
-		'name'    => esc_html__( 'Amount', 'cmb2' ),
-		'desc'    => esc_html__( 'What is the amount for the transaction?', 'cmb2' ),
-		'id'      => 'amount',
-		'type'    => 'text_money',
-		'default' => '123123'
-	));
+	$cmb_group->add_field(
+		array(
+			'name'    => esc_html__( 'Amount', 'cmb2' ),
+			'desc'    => esc_html__( 'What is the amount for the transaction?', 'cmb2' ),
+			'id'      => 'amount',
+			'type'    => 'text_money',
+			'default' => '123123',
+		)
+	);
 }
 add_action( 'cmb2_admin_init', 'wps_register_transaction_form' );
 
 function wps_handle_save_transaction() {
-	$t = new Transaction();
-	$t->sender = $_REQUEST["sender"];
-	$t->receiver = $_REQUEST["receiver"];
-	$t->amount = $_REQUEST["amount"];
+	$t            = new Transaction();
+	$t->sender    = $_REQUEST['sender'];
+	$t->receiver  = $_REQUEST['receiver'];
+	$t->amount    = $_REQUEST['amount'];
 	$t->timestamp = time();
 	$t->save();
 }
-add_action("cmb2_save_options-page_fields_create_transaction","wps_handle_save_transaction");
+add_action( 'cmb2_save_options-page_fields_create_transaction', 'wps_handle_save_transaction' );
 
 function wps_activate() {
 	Transaction::install();
 }
-register_activation_hook(__FILE__,'wps_activate');
+register_activation_hook( __FILE__, 'wps_activate' );
 
 function wps_deactivate() {
 	Transaction::uninstall();
 }
-register_deactivation_hook(__FILE__,'wps_deactivate');
+register_deactivation_hook( __FILE__, 'wps_deactivate' );
 
 /**
  * Get the url where to find cmb2 resources. We hook into this function
@@ -251,9 +271,9 @@ register_deactivation_hook(__FILE__,'wps_deactivate');
  * @since 1.0.0
  * @return string
  */
-function wps_cmb2_meta_box_url($url) {
-	$new_url=trailingslashit(plugin_dir_url(__FILE__).'ext/cmb2');
+function wps_cmb2_meta_box_url( $url ) {
+	$new_url = trailingslashit( plugin_dir_url( __FILE__ ) . 'ext/cmb2' );
 
 	return $new_url;
 }
-add_filter('cmb2_meta_box_url','wps_cmb2_meta_box_url');
+add_filter( 'cmb2_meta_box_url', 'wps_cmb2_meta_box_url' );
