@@ -15,6 +15,8 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
+require_once __DIR__ . '/lib.php';
+
 /**
  * Class for simplifying the usage of WP_List_Table.
  */
@@ -146,9 +148,10 @@ class Custom_List_Table extends WP_List_Table {
 					foreach ( $this->filters as $filter_spec ) {
 						echo "<select name='" . esc_attr( $filter_spec['key'] ) . "'>";
 						echo "<option value=''>" . esc_html( $filter_spec['allLabel'] ) . '</option>';
-						// phpcs:disable
-						$current = $_REQUEST[ $filter_spec['key'] ];
-						// phpcs:enable
+						$current = '';
+						if ( is_req_var( $filter_spec['key'] ) ) {
+							$current = get_req_str( $filter_spec['key'] );
+						}
 						display_select_options( $filter_spec['options'], $current );
 						echo '</select>';
 					}
@@ -252,9 +255,10 @@ class Custom_List_Table extends WP_List_Table {
 		echo '<h1 class="wp-heading-inline">' . esc_attr( $this->title ) . '</h1>';
 		echo "<form action='" . esc_attr( $admin_url ) . "' method='get'>";
 
-		// phpcs:disable
-		$page = $_REQUEST['page'];
-		// phpcs:enable
+		$page = '';
+		if ( is_req_var( 'page' ) ) {
+			$page = get_req_str( 'page' );
+		}
 
 		echo "<input type='hidden' name='page' value='" . esc_attr( $page ) . "'/>";
 		parent::display();

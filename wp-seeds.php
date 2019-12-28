@@ -30,7 +30,10 @@ require_once plugin_dir_path( __FILE__ ) . '/ext/cmb2/init.php';
 require_once plugin_dir_path( __FILE__ ) . '/models/class-transaction.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-custom-list-table.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
+
 /*
+Old stuff
+
 require_once dirname( __FILE__ ) . '/inc/transaction.php';
 require_once dirname( __FILE__ ) . '/inc/transactions-all.php';
 require_once dirname( __FILE__ ) . '/inc/users-all.php';
@@ -38,7 +41,8 @@ require_once dirname( __FILE__ ) . '/inc/users-profile.php';
 require_once dirname( __FILE__ ) . '/inc/wps-cpt-transaction.php';
 require_once dirname( __FILE__ ) . '/inc/wps-metaboxes.php';
 require_once dirname( __FILE__ ) . '/inc/wps-roles-and-caps.php';
-require_once dirname( __FILE__ ) . '/inc/wps-shortcodes.php';*/
+require_once dirname( __FILE__ ) . '/inc/wps-shortcodes.php';
+*/
 
 /**
  * Load admin styles
@@ -51,12 +55,17 @@ function wps_admin_style() {
 }
 add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
 
+/**
+ * Show the list of transactions.
+ *
+ * @return void
+ */
 function seeds_transactions_page() {
-	$userById        = array();
-	$userdisplayById = array();
+	$user_by_id        = array();
+	$userdisplay_by_id = array();
 	foreach ( get_users() as $user ) {
-		$userById[ $user->ID ]        = $user;
-		$userdisplayById[ $user->ID ] =
+		$user_by_id[ $user->ID ]        = $user;
+		$userdisplay_by_id[ $user->ID ] =
 			$user->data->user_nicename . ' (' . $user->data->user_email . ')';
 	}
 
@@ -65,7 +74,7 @@ function seeds_transactions_page() {
 	$table->add_filter(
 		array(
 			'key'      => 'account',
-			'options'  => $userdisplayById,
+			'options'  => $userdisplay_by_id,
 			'allLabel' => 'All Accounts',
 		)
 	);
@@ -107,21 +116,21 @@ function seeds_transactions_page() {
 		)
 	);
 
-	if ( isset( $_REQUEST['orderby'] ) ) {
-		$order = esc_sql( $_REQUEST['orderby'] ) . ' ' . esc_sql( $_REQUEST['order'] );
+	if ( is_req_var( 'orderby' ) ) {
+		$order = esc_sql( get_req_str( 'orderby' ) ) . ' ' . esc_sql( get_req_str( 'order' ) );
 	} else {
 		$order = 'timestamp desc';
 	}
 
-	if ( isset( $_REQUEST['account'] ) && $_REQUEST['account'] ) {
+	if ( is_req_var( 'account' ) && get_req_str( 'account' ) ) {
 		$transactions = Transaction::findAllByQuery(
 			'SELECT   * ' .
 			'FROM     :table ' .
 			'WHERE    sender=%s ' .
 			'OR       receiver=%s ' .
-			"ORDER BY $order",
-			$_REQUEST['account'],
-			$_REQUEST['account']
+			'ORDER BY ' . $order,
+			get_req_str( 'account' ),
+			get_req_str( 'account' )
 		);
 	} else {
 		$transactions = Transaction::findAllByQuery(
@@ -131,20 +140,21 @@ function seeds_transactions_page() {
 		);
 	}
 
+	$transaction_views = array();
 	foreach ( $transactions as $transaction ) {
-		$fromUser           = $userById[ $transaction->sender ];
-		$toUser             = $userById[ $transaction->receiver ];
+		$from_user          = $user_by_id[ $transaction->sender ];
+		$to_user            = $user_by_id[ $transaction->receiver ];
 		$link               = get_admin_url( null, 'admin.php?page=seeds_transactions&transaction_detail=' . $transaction->id );
-		$transactionViews[] = array(
+		$transaction_views[] = array(
 			'id'          => "<a href='$link'>" . $transaction->transaction_id . '</a>',
-			'fromAccount' => $fromUser->data->user_nicename . ' (' . $fromUser->data->user_email . ')',
-			'toAccount'   => $toUser->data->user_nicename . ' (' . $toUser->data->user_email . ')',
+			'fromAccount' => $userdisplay_by_id[ $transaction->sender ],
+			'toAccount'   => $userdisplay_by_id[ $transaction->receiver ],
 			'amount'      => $transaction->amount,
 			'timestamp'   => date( 'Y-m-d H:m:s', $transaction->timestamp ),
 		);
 	}
 	$table->set_title( 'Transactions' );
-	$table->set_data( $transactionViews );
+	$table->set_data( $transaction_views );
 
 	$table->display();
 }
@@ -183,6 +193,11 @@ function wps_admin_menu() {
 }
 add_action( 'admin_menu', 'wps_admin_menu' );
 
+/**
+ * Create the transaction form.
+ *
+ * @return void
+ */
 function wps_register_transaction_form() {
 	/**
 	 * Registers options page menu item and form.
@@ -243,21 +258,36 @@ function wps_register_transaction_form() {
 }
 add_action( 'cmb2_admin_init', 'wps_register_transaction_form' );
 
+/**
+ * Save transaction.
+ *
+ * @return void
+ */
 function wps_handle_save_transaction() {
 	$t            = new Transaction();
-	$t->sender    = $_REQUEST['sender'];
-	$t->receiver  = $_REQUEST['receiver'];
-	$t->amount    = $_REQUEST['amount'];
+	$t->sender    = get_req_str( 'sender' );
+	$t->receiver  = get_req_str( 'receiver' );
+	$t->amount    = get_req_str( 'amount' );
 	$t->timestamp = time();
 	$t->save();
 }
 add_action( 'cmb2_save_options-page_fields_create_transaction', 'wps_handle_save_transaction' );
 
+/**
+ * Handle plugin activation.
+ *
+ * @return void
+ */
 function wps_activate() {
 	Transaction::install();
 }
 register_activation_hook( __FILE__, 'wps_activate' );
 
+/**
+ * Handle plugin deactivation.
+ *
+ * @return void
+ */
 function wps_deactivate() {
 	Transaction::uninstall();
 }
@@ -268,6 +298,7 @@ register_deactivation_hook( __FILE__, 'wps_deactivate' );
  * because the original implementation of cmb2 fails if the plugin is inside
  * a sym-linked directory.
  *
+ * @param string $url The auto generated url.
  * @since 1.0.0
  * @return string
  */

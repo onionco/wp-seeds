@@ -93,3 +93,31 @@ function display_notices( $notices ) {
 		}
 	}
 }
+
+/**
+ * Is this a $_REQUEST variable?
+ *
+ * @param string $name The variable name.
+ *
+ * @return boolean Weather or not the variable exists.
+ */
+function is_req_var( $name ) {
+	return isset( $_REQUEST[ $name ] );
+}
+
+/**
+ * Get and unslash $_REQUEST variable.
+ * The variable needs to exist, otherwise an exception will
+ * thrown.
+ *
+ * @param string $name The variable name.
+ * @return string The string value for the variable.
+ * @throws Exception If the variable doesn't exist.
+ */
+function get_req_str( $name ) {
+	if ( ! isset( $_REQUEST[ $name ] ) ) {
+		throw new Exception( 'Expected request variable: ' . $name );
+	}
+
+	return sanitize_text_field( wp_unslash( $_REQUEST[ $name ] ) );
+}
