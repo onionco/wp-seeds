@@ -55,14 +55,15 @@ function render_template( $fn, $vars = array() ) {
  * @return void
  */
 function display_select_options( $options, $current = null ) {
-	if (!$options)
+	if ( ! $options ) {
 		return;
+	}
 
 	foreach ( $options as $key => $label ) {
 		printf(
 			'<option value="%s" %s>%s</option>',
 			esc_attr( $key ),
-			( ( strval($current) === strval($key) ) ? 'selected' : '' ),
+			( ( strval( $current ) === strval( $key ) ) ? 'selected' : '' ),
 			esc_html( $label )
 		);
 	}
@@ -91,4 +92,32 @@ function display_notices( $notices ) {
 			echo '</div>';
 		}
 	}
+}
+
+/**
+ * Is this a $_REQUEST variable?
+ *
+ * @param string $name The variable name.
+ *
+ * @return boolean Weather or not the variable exists.
+ */
+function is_req_var( $name ) {
+	return isset( $_REQUEST[ $name ] );
+}
+
+/**
+ * Get and unslash $_REQUEST variable.
+ * The variable needs to exist, otherwise an exception will
+ * thrown.
+ *
+ * @param string $name The variable name.
+ * @return string The string value for the variable.
+ * @throws Exception If the variable doesn't exist.
+ */
+function get_req_str( $name ) {
+	if ( ! isset( $_REQUEST[ $name ] ) ) {
+		throw new Exception( 'Expected request variable: ' . $name );
+	}
+
+	return sanitize_text_field( wp_unslash( $_REQUEST[ $name ] ) );
 }
