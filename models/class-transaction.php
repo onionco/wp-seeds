@@ -29,6 +29,7 @@ class Transaction extends WpRecord {
 	 */
 	public static function initialize() {
 		self::field( 'id', 'integer not null auto_increment' );
+		self::field( 'transaction_id', 'varchar(255) not null' );
 		self::field( 'sender', 'integer not null' );
 		self::field( 'receiver', 'integer not null' );
 		self::field( 'amount', 'integer not null' );
@@ -37,8 +38,16 @@ class Transaction extends WpRecord {
 	}
 
 	/**
+	 * Generate a random id.
+	 *
+	 * @return string The random id.
+	 */
+	public static function generate_random_id() {
+		return substr( md5( microtime() ), 0, 16 );
+	}
+
+	/**
 	 * Actually perform the transaction.
-	 * TODO: Test this function! This is totally old and untested.
 	 *
 	 * @return void
 	 * @throws Exception If the transaction can't be performed.
@@ -49,9 +58,14 @@ class Transaction extends WpRecord {
 		}
 		$from_balance = intval( get_user_meta( $this->sender, 'seeds_balance', true ) );
 		$to_balance   = intval( get_user_meta( $this->receiver, 'seeds_balance', true ) );
+
+		/*
+		TODO: Enable me!
 		if ( $from_balance < $this->amount ) {
 			throw new Exception( 'Insufficient funds on account.' );
 		}
+		*/
+
 		$this->amount = intval( $this->amount );
 		if ( $this->amount <= 0 ) {
 			throw new Exception( 'Amount cannot be zero or negative.' );
@@ -62,7 +76,7 @@ class Transaction extends WpRecord {
 		if ( $this->sender === $this->receiver ) {
 			throw new Exception( 'The accounts cannot be the same.' );
 		}
-		$this->transaction_id = rand_chars( 8 );
+		$this->transaction_id = self::generate_random_id();
 		$from_balance        -= $this->amount;
 		$to_balance          += $this->amount;
 		update_user_meta( $this->sender, 'seeds_balance', $from_balance );
