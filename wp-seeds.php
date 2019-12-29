@@ -30,6 +30,7 @@ require_once plugin_dir_path( __FILE__ ) . '/ext/cmb2/init.php';
 require_once plugin_dir_path( __FILE__ ) . '/models/class-transaction.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-custom-list-table.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
+require_once plugin_dir_path( __FILE__ ) . '/inc/class-cmb2-custom-handler.php';
 
 /*
 Old stuff
@@ -194,24 +195,37 @@ function wps_admin_menu() {
 add_action( 'admin_menu', 'wps_admin_menu' );
 
 /**
+ * Save the transaction.
+ */
+function wps_handle_save_transaction() {
+	$t = new Transaction();
+	$t->sender    = get_req_str( 'sender' );
+	$t->receiver  = get_req_str( 'receiver' );
+	$t->amount    = get_req_str( 'amount' );
+	$t->timestamp = time();
+	$t->perform();
+}
+
+/**
  * Create the transaction form.
  *
  * @return void
  */
 function wps_register_transaction_form() {
-	/**
-	 * Registers options page menu item and form.
-	 */
 	$cmb_group = new_cmb2_box(
 		array(
 			'id'           => 'create_transaction',
-			'title'        => esc_html__( 'Create Transaction', 'cmb2' ),
+			'title'        => esc_html__( 'Create Transaction', 'wp-seeds' ),
 			'object_types' => array( 'options-page' ),
 			'option_key'   => 'seeds_accounts',
 			'parent_slug'  => 'admin.php',
-			'save_button'  => esc_html__( 'Create Transaction', 'cmb2' ),
+			'save_button'  => esc_html__( 'Create Transaction', 'wp-seeds' ),
+			'save_cb'      => 'wps_handle_save_transaction',
+			'save_message' => esc_html__( 'Transaction Created', 'wp-seeds' ),
 		)
 	);
+
+	CMB2_Custom_Handler::hookup( $cmb_group );
 
 	$users = array();
 	foreach ( get_users() as $wpuser ) {
@@ -220,13 +234,10 @@ function wps_register_transaction_form() {
 
 	$cmb_group->add_field(
 		array(
-			'name'             => esc_html__( 'Sender', 'cmb2' ),
-			'description'      => esc_html__( 'Who will send the seeds?', 'cmb2' ),
+			'name'             => esc_html__( 'Sender', 'wp-seeds' ),
+			'description'      => esc_html__( 'Who will send the seeds?', 'wp-seeds' ),
 			'id'               => 'sender',
 			'type'             => 'select',
-			'attributes'       => array(
-				'required' => 'required',
-			),
 			'show_option_none' => __( 'Please select', 'wp-seeds' ),
 			'options'          => $users,
 		)
@@ -234,13 +245,10 @@ function wps_register_transaction_form() {
 
 	$cmb_group->add_field(
 		array(
-			'name'             => esc_html__( 'Receiver', 'cmb2' ),
-			'description'      => esc_html__( 'Who will send the seeds?', 'cmb2' ),
+			'name'             => esc_html__( 'Receiver', 'seeds' ),
+			'description'      => esc_html__( 'Who will send the seeds?', 'seeds' ),
 			'id'               => 'receiver',
 			'type'             => 'select',
-			'attributes'       => array(
-				'required' => 'required',
-			),
 			'show_option_none' => __( 'Please select', 'wp-seeds' ),
 			'options'          => $users,
 		)
@@ -252,26 +260,10 @@ function wps_register_transaction_form() {
 			'desc'    => esc_html__( 'What is the amount for the transaction?', 'cmb2' ),
 			'id'      => 'amount',
 			'type'    => 'text_money',
-			'default' => '123123',
 		)
 	);
 }
 add_action( 'cmb2_admin_init', 'wps_register_transaction_form' );
-
-/**
- * Save transaction.
- *
- * @return void
- */
-function wps_handle_save_transaction() {
-	$t            = new Transaction();
-	$t->sender    = get_req_str( 'sender' );
-	$t->receiver  = get_req_str( 'receiver' );
-	$t->amount    = get_req_str( 'amount' );
-	$t->timestamp = time();
-	$t->save();
-}
-add_action( 'cmb2_save_options-page_fields_create_transaction', 'wps_handle_save_transaction' );
 
 /**
  * Handle plugin activation.
