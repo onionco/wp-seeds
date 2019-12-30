@@ -10,9 +10,9 @@
  */
 
 ?>
-<div class="wrap">
+<div class="qr-wrap">
 
-	<h1>Request Transaction</h1>
+	<h3>Request Transaction</h3>
 
 	<?php if ( isset( $notice_success ) ) : ?>
 		<div class="notice notice-success is-dismissible">
@@ -20,6 +20,17 @@
 		</div>
 	<?php endif; ?>
 
-	<?php printf( '<p><img src="https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=%s"></p>', esc_html( $qr_code_url ) ); ?>
+	<div id="qrcode"></div>
+	<script type="text/javascript">
+	var qrcode = new QRCode("test", {
+		text: "http://jindo.dev.naver.com/collie",
+		width: 128,
+		height: 128,
+		colorDark : "#000000",
+		colorLight : "#ffffff",
+		correctLevel : QRCode.CorrectLevel.H
+	});
+		new QRCode(document.getElementById("qrcode"),"<?php echo $qr_code_url ?>"); 
+	</script>
 
 </div>

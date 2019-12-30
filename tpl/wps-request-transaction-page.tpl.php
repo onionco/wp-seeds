@@ -12,7 +12,7 @@
 ?>
 <div class="wrap">
 
-	<h1>Request Transaction</h1>
+	<h3>Request Transaction</h3>
 
 	<?php if ( isset( $notice_success ) ) : ?>
 		<div class="notice notice-success is-dismissible">
