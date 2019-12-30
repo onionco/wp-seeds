@@ -17,6 +17,7 @@
  * @since 1.0.0
  */
 require_once plugin_dir_path( __FILE__ ) . '/../ext/wprecord/WpRecord.php';
+require_once plugin_dir_path( __FILE__ ) . '/../inc/class-cmb2-form-exception.php';
 
 /**
  * Represents one transaction on the system.
@@ -50,37 +51,42 @@ class Transaction extends WpRecord {
 	 * Actually perform the transaction.
 	 *
 	 * @return void
-	 * @throws Exception If the transaction can't be performed.
+	 * @throws CMB2_Form_Exception If the transaction can't be performed due to a form error.
+	 * @throws Exception If the transaction can't be performed for an unknown reason.
 	 */
 	public function perform() {
 		if ( $this->transaction_id ) {
 			throw new Exception( 'This transaction already has an id!' );
 		}
-		$from_balance = intval( get_user_meta( $this->sender, 'seeds_balance', true ) );
-		$to_balance   = intval( get_user_meta( $this->receiver, 'seeds_balance', true ) );
+		$from_balance = intval( get_user_meta( $this->sender, 'wps_balance', true ) );
+		$to_balance   = intval( get_user_meta( $this->receiver, 'wps_balance', true ) );
 
 		/*
 		TODO: Enable me!
 		if ( $from_balance < $this->amount ) {
-			throw new Exception( 'Insufficient funds on account.' );
+			throw new CMB2_Form_Exception( 'Insufficient funds on account.', 'amount' );
 		}
 		*/
 
 		$this->amount = intval( $this->amount );
-		if ( $this->amount <= 0 ) {
-			throw new Exception( 'Amount cannot be zero or negative.' );
+
+		if ( ! $this->sender ) {
+			throw new CMB2_Form_Exception( 'Please select sender.', 'sender' );
 		}
-		if ( ! $this->sender || ! $this->receiver ) {
-			throw new Exception( "The user doesn't exist." );
+		if ( ! $this->receiver ) {
+			throw new CMB2_Form_Exception( 'Please select receiver.', 'receiver' );
 		}
 		if ( $this->sender === $this->receiver ) {
-			throw new Exception( 'The accounts cannot be the same.' );
+			throw new CMB2_Form_Exception( 'The accounts cannot be the same.', 'receiver' );
+		}
+		if ( $this->amount <= 0 ) {
+			throw new CMB2_Form_Exception( 'Amount cannot be zero or negative.', 'amount' );
 		}
 		$this->transaction_id = self::generate_random_id();
 		$from_balance        -= $this->amount;
 		$to_balance          += $this->amount;
-		update_user_meta( $this->sender, 'seeds_balance', $from_balance );
-		update_user_meta( $this->receiver, 'seeds_balance', $to_balance );
+		update_user_meta( $this->sender, 'wps_balance', $from_balance );
+		update_user_meta( $this->receiver, 'wps_balance', $to_balance );
 		$this->save();
 	}
 }
