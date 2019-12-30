@@ -383,7 +383,7 @@ function wps_new_transaction_save() {
 function wps_new_transaction_form() {
 	$cmb = new_cmb2_box(
 		array(
-			'id'           => 'create_transaction',
+			'id'           => 'wps_new_transaction',
 			'title'        => esc_html__( 'Create Transaction', 'wp-seeds' ),
 			'object_types' => array( 'options-page' ),
 			'option_key'   => 'wps_new_transaction',
