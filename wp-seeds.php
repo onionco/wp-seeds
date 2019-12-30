@@ -573,7 +573,7 @@ add_filter( 'cmb2_meta_box_url', 'wps_cmb2_meta_box_url' );
  *
  * @param array $atts The shortcode attributes.
  */
-function send_seed_form_shortcode( $atts = array() ) {
+function request_seeds_form_shortcode( $atts = array() ) {
 	global $post;
 
 	/**
@@ -633,7 +633,7 @@ function send_seed_form_shortcode( $atts = array() ) {
 	<?php
 
 }
-add_shortcode( 'seeds_send', 'send_seed_form_shortcode' );
+add_shortcode( 'seeds_receive', 'request_seeds_form_shortcode' );
 
 
 /**
@@ -642,7 +642,7 @@ add_shortcode( 'seeds_send', 'send_seed_form_shortcode' );
  * @param array $atts The shortcode attrs.
  * @return void
  */
-function receive_seed_form_shortcode( $atts = array() ) {
+function send_seeds_form_shortcode( $atts = array() ) {
 	global $post;
 
 	/**
@@ -681,4 +681,4 @@ function receive_seed_form_shortcode( $atts = array() ) {
 	<?php
 
 }
-add_shortcode( 'seeds_receive', 'receive_seed_form_shortcode' );
+add_shortcode( 'seeds_send', 'send_seeds_form_shortcode' );
