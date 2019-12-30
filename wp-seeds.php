@@ -378,6 +378,60 @@ function wps_new_transaction_form() {
 add_action( 'cmb2_admin_init', 'wps_new_transaction_form' );
 
 /**
+ * Show info on the user profile page.
+ *
+ * @param WP_User $user The user to show info for.
+ * @return void
+ */
+function wps_show_user_profile( $user ) {
+	?>
+	<h2>Seeds</h2>
+	<table class='form-table'>
+		<th>Seeds Balance</th>
+		<td><?php echo intval( get_user_meta( $user->ID, 'wps_balance', true ) ); ?></td>
+	</table>
+	<?php
+}
+add_action( 'show_user_profile', 'wps_show_user_profile' );
+
+
+/**
+ * Register new column on the user list page.
+ *
+ * @param array $column The columns.
+ * @return array The updated columns.
+ */
+function wps_manage_users_columns( $column ) {
+	$column['wps_balance'] = 'Seeds';
+	return $column;
+}
+add_filter( 'manage_users_columns', 'wps_manage_users_columns' );
+
+/**
+ * Show info in the seeds balance column.
+ *
+ * @param string $val Not sure what it is for.
+ * @param string $column_name The column name.
+ * @param string $user_id The user id.
+ * @return string The value for the column.
+ */
+function wps_manage_users_custom_column( $val, $column_name, $user_id ) {
+	switch ( $column_name ) {
+		case 'wps_balance':
+			$url = get_admin_url( null, 'admin.php?page=wps_transactions&account=' . $user_id );
+			$balance = intval( get_user_meta( $user_id, 'wps_balance', true ) );
+			return sprintf(
+				'<a href="%s">%s</a>',
+				esc_attr( $url ),
+				esc_html( $balance )
+			);
+		default:
+			return $val;
+	}
+}
+add_filter( 'manage_users_custom_column', 'wps_manage_users_custom_column', 10, 3 );
+
+/**
  * Admin menu hook, add menu.
  *
  * @since 1.0.0
@@ -406,21 +460,24 @@ function wps_admin_menu() {
 		'New Transaction',
 		'New Transaction',
 		'manage_options',
-		'wps_new_transaction'
+		'wps_new_transaction',
+		'__no_func'
 	);
 	add_submenu_page(
 		'wps_transactions',
 		'Create Seeds',
 		'Create Seeds',
 		'manage_options',
-		'wps_create_seeds'
+		'wps_create_seeds',
+		'__no_func'
 	);
 	add_submenu_page(
 		'wps_transactions',
 		'Burn Seeds',
 		'Burn Seeds',
 		'manage_options',
-		'wps_burn_seeds'
+		'wps_burn_seeds',
+		'__no_func'
 	);
 }
 add_action( 'admin_menu', 'wps_admin_menu' );

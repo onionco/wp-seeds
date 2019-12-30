@@ -61,12 +61,9 @@ class Transaction extends WpRecord {
 		$from_balance = intval( get_user_meta( $this->sender, 'wps_balance', true ) );
 		$to_balance   = intval( get_user_meta( $this->receiver, 'wps_balance', true ) );
 
-		/*
-		TODO: Enable me!
 		if ( $from_balance < $this->amount ) {
 			throw new CMB2_Form_Exception( 'Insufficient funds on account.', 'amount' );
 		}
-		*/
 
 		$this->amount = intval( $this->amount );
 
