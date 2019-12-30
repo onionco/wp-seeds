@@ -378,6 +378,23 @@ function wps_new_transaction_form() {
 add_action( 'cmb2_admin_init', 'wps_new_transaction_form' );
 
 /**
+ * Show info on the user profile page.
+ *
+ * @param WP_User $user The user to show info for.
+ * @return void
+ */
+function wps_show_user_profile( $user ) {
+	?>
+	<h2>Seeds</h2>
+	<table class='form-table'>
+		<th>Seeds Balance</th>
+		<td><?php echo intval( get_user_meta( $user->ID, 'wps_balance', true ) ); ?></td>
+	</table>
+	<?php
+}
+add_action( 'show_user_profile', 'wps_show_user_profile' );
+
+/**
  * Admin menu hook, add menu.
  *
  * @since 1.0.0
