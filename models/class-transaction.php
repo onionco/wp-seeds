@@ -67,14 +67,18 @@ class Transaction extends WpRecord {
 		*/
 
 		$this->amount = intval( $this->amount );
-		if ( $this->amount <= 0 ) {
-			throw new Exception( 'Amount cannot be zero or negative.' );
+
+		if ( ! $this->sender ) {
+			throw new Exception( 'Please select sender.' );
 		}
-		if ( ! $this->sender || ! $this->receiver ) {
-			throw new Exception( "The user doesn't exist." );
+		if ( ! $this->receiver ) {
+			throw new Exception( 'Please select receiver.' );
 		}
 		if ( $this->sender === $this->receiver ) {
 			throw new Exception( 'The accounts cannot be the same.' );
+		}
+		if ( $this->amount <= 0 ) {
+			throw new Exception( 'Amount cannot be zero or negative.' );
 		}
 		$this->transaction_id = self::generate_random_id();
 		$from_balance        -= $this->amount;

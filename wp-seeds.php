@@ -260,6 +260,9 @@ function wps_register_transaction_form() {
 			'desc'    => esc_html__( 'What is the amount for the transaction?', 'cmb2' ),
 			'id'      => 'amount',
 			'type'    => 'text_money',
+			'attributes' => array(
+				'autocomplete' => 'off',
+			),
 		)
 	);
 }
