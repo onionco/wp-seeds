@@ -11,7 +11,7 @@
  * Plugin Name:       WP Seeds
  * Plugin URI:        https://github.com/limikael/wp-seeds
  * Description:       Allows users to hold, send and receive tokens named seeds.
- * Version:           1.0
+ * Version:           3.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Mikael Lindqvist, Niels Lange & Derek Smith
@@ -105,7 +105,7 @@ add_filter( 'cmb2_meta_box_url', 'wps_cmb2_meta_box_url' );
  *
  * @param array $atts The shortcode attributes.
  */
-function send_seed_form_shortcode( $atts = array() ) {
+function request_seeds_form_shortcode( $atts = array() ) {
 	global $post;
 
 	/**
@@ -165,7 +165,7 @@ function send_seed_form_shortcode( $atts = array() ) {
 	<?php
 
 }
-add_shortcode( 'seeds_send', 'send_seed_form_shortcode' );
+add_shortcode( 'seeds_receive', 'request_seeds_form_shortcode' );
 
 
 /**
@@ -174,7 +174,7 @@ add_shortcode( 'seeds_send', 'send_seed_form_shortcode' );
  * @param array $atts The shortcode attrs.
  * @return void
  */
-function receive_seed_form_shortcode( $atts = array() ) {
+function send_seeds_form_shortcode( $atts = array() ) {
 	global $post;
 
 	/**
@@ -213,4 +213,4 @@ function receive_seed_form_shortcode( $atts = array() ) {
 	<?php
 
 }
-add_shortcode( 'seeds_receive', 'receive_seed_form_shortcode' );
+add_shortcode( 'seeds_send', 'send_seeds_form_shortcode' );
