@@ -56,8 +56,8 @@ class Transaction extends WpRecord {
 		if ( $this->transaction_id ) {
 			throw new Exception( 'This transaction already has an id!' );
 		}
-		$from_balance = intval( get_user_meta( $this->sender, 'seeds_balance', true ) );
-		$to_balance   = intval( get_user_meta( $this->receiver, 'seeds_balance', true ) );
+		$from_balance = intval( get_user_meta( $this->sender, 'wps_balance', true ) );
+		$to_balance   = intval( get_user_meta( $this->receiver, 'wps_balance', true ) );
 
 		/*
 		TODO: Enable me!
@@ -83,8 +83,8 @@ class Transaction extends WpRecord {
 		$this->transaction_id = self::generate_random_id();
 		$from_balance        -= $this->amount;
 		$to_balance          += $this->amount;
-		update_user_meta( $this->sender, 'seeds_balance', $from_balance );
-		update_user_meta( $this->receiver, 'seeds_balance', $to_balance );
+		update_user_meta( $this->sender, 'wps_balance', $from_balance );
+		update_user_meta( $this->receiver, 'wps_balance', $to_balance );
 		$this->save();
 	}
 }
