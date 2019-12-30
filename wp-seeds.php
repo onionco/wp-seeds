@@ -4,8 +4,8 @@
  *
  * @package   wp-seeds
  * @link      https://github.com/limikael/wp-seeds
- * @author    Mikael Lindqvist & Niels Lange
- * @copyright 2019 Mikael Lindqvist & Niels Lange
+ * @author    Mikael Lindqvist, Niels Lange & Derek Smith
+ * @copyright 2019 Mikael Lindqvist, Niels Lange & Derek Smith
  * @license   GPL v2 or later
 
  * Plugin Name:       WP Seeds
@@ -14,7 +14,7 @@
  * Version:           1.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
- * Author:            Mikael Lindqvist & Niels Lange
+ * Author:            Mikael Lindqvist, Niels Lange & Derek Smith
  * Author URI:        https://github.com/limikael/wp-seeds
  * Text Domain:       wp-seeds
  * License:           GPL v2 or later
@@ -50,6 +50,29 @@ function wps_admin_style() {
 }
 add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
 
+function wps_enqueue_style() {
+	global $post;
+	if ( (isset($post->post_content) && has_shortcode( $post->post_content, 'seeds_send')) || (isset($post->post_content) && has_shortcode( $post->post_content, 'seeds_receive')) ) {
+        wp_enqueue_style( 'front-styles', plugin_dir_url( __FILE__ ) . '/front-styles.css', null, '1.0', 'screen' );
+	}
+	if ( (isset($post->post_content) && has_shortcode( $post->post_content, 'seeds_send')) ) {
+		wp_enqueue_script( 'qr-generator', plugin_dir_url( __FILE__ ) . 'ext/qrcodejs/qrcode.js', 'jquery', null, false );
+	}
+}
+add_action('wp_enqueue_scripts', 'wps_enqueue_style');
+
+
+/* Create Seeds Balance User Meta */
+function add_user_balance() {
+	$users = get_users( ['fields' => ['ID'] ] );
+		foreach ( $users as $user ) {
+			$user_update = update_user_meta($user->ID, 'seeds_balance', 0);
+		}
+}
+add_action('init','add_user_balance');
+
+
+/* Admin Transaction Page */
 function seeds_transactions_page() {
 	$userById = array();
 	$userdisplayById = array();
@@ -172,6 +195,7 @@ function wps_admin_menu() {
 }
 add_action( 'admin_menu', 'wps_admin_menu' );
 
+/* Admin Transaction Form */
 function wps_register_transaction_form() {
 	/**
 	 * Registers options page menu item and form.
@@ -179,7 +203,7 @@ function wps_register_transaction_form() {
 	$cmb_group=new_cmb2_box( array(
 		'id'           => 'create_transaction',
 		'title'        => esc_html__( 'Create Transaction', 'cmb2' ),
-		'object_types' => array( 'options-page' ),
+		'object_types' => array( 'options-page', 'post' ),
 		'option_key'      => 'seeds_accounts',
 		'parent_slug'     => 'admin.php', 
 		'save_button'     => esc_html__( 'Create Transaction', 'cmb2' )
@@ -218,30 +242,10 @@ function wps_register_transaction_form() {
 		'desc'    => esc_html__( 'What is the amount for the transaction?', 'cmb2' ),
 		'id'      => 'amount',
 		'type'    => 'text_money',
-		'default' => '123123'
+		'default' => '0'
 	));
 }
-add_action( 'cmb2_admin_init', 'wps_register_transaction_form' );
-
-function wps_handle_save_transaction() {
-	$t = new Transaction();
-	$t->sender = $_REQUEST["sender"];
-	$t->receiver = $_REQUEST["receiver"];
-	$t->amount = $_REQUEST["amount"];
-	$t->timestamp = time();
-	$t->save();
-}
-add_action("cmb2_save_options-page_fields_create_transaction","wps_handle_save_transaction");
-
-function wps_activate() {
-	Transaction::install();
-}
-register_activation_hook(__FILE__,'wps_activate');
-
-function wps_deactivate() {
-	Transaction::uninstall();
-}
-register_deactivation_hook(__FILE__,'wps_deactivate');
+add_action( 'cmb2_init', 'wps_register_transaction_form' );
 
 /**
  * Get the url where to find cmb2 resources. We hook into this function
@@ -257,3 +261,115 @@ function wps_cmb2_meta_box_url($url) {
 	return $new_url;
 }
 add_filter('cmb2_meta_box_url','wps_cmb2_meta_box_url');
+
+
+/* Send Seeds Shortcode */
+function send_seed_form_shortcode( $atts = array() ) {
+	global $post;
+
+	/**
+	 * Depending on your setup, check if the user has permissions to edit_posts
+	 */
+	if ( ! is_user_logged_in() ) {
+		return __( 'You do not have permissions to be here.', 'lang_domain' );
+	}
+
+	$user_id = get_current_user_id();
+	$user_meta = get_user_meta( $user_id );
+
+	$user_info = get_userdata($user_id);
+	$user_email = $user_info->user_email;
+
+	$user_first = $user_meta['first_name'][0];
+	$user_last = $user_meta['last_name'][0];
+	$user_balance = $user_meta['seeds_balance'][0];
+
+	//var_dump($user_meta);
+	//var_dump($user_info);
+	?>
+	<div class="seeds">
+
+		<h2>Welcome <?php echo $user_first;?> <?php echo $user_last ?></h2>
+
+		<div class="seeds-balance">
+			<p>Your Current Balance is:</p>
+			<p class="CurrSeeds"><?php echo "{$user_balance} Seed".($user_balance == 1 ? "" : "s"); ?></p>
+		</div>
+
+		<?php
+		$vars    = array();
+		$show_qr = false;
+
+		if ( isset( $_REQUEST['do_request'] ) ) {
+			if ( ! empty( $_REQUEST['amount'] ) ) {
+				$to_user                = (int) get_current_user_id();
+				$amount                 = (int) $_REQUEST['amount'];
+				$home					= get_site_url();
+				$vars['notice_success'] = __( 'Your QR has been created successfully. Please ask the sender to scan this QR code to transfer seeds to you.', 'wp-seeds' );
+				$vars['qr_code_url']    = sprintf( '%3$s/transactions?to_user=2&amount=1', $to_user, $amount, $home );
+				$show_qr                = true;
+
+			} else {
+				$vars['notice_error'] = __( 'Please provide an amount to request.', 'wp-seeds' );
+			}
+		}
+
+		if ( $show_qr ) {
+			display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-code.tpl.php', $vars );
+		} else {
+			display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-page.tpl.php', $vars );
+		}
+		?>
+
+
+	</div>
+
+	<?php
+
+}
+add_shortcode( 'seeds_send', 'send_seed_form_shortcode' );
+
+
+/* Receive Seeds Shortcode */
+function receive_seed_form_shortcode( $atts = array() ) {
+	global $post;
+
+	/**
+	 * Depending on your setup, check if the user has permissions to edit_posts
+	 */
+	if ( ! is_user_logged_in() ) {
+		return __( 'You do not have permissions to be here.', 'lang_domain' );
+	}
+
+	$user_id = get_current_user_id();
+	$user_meta = get_user_meta( $user_id );
+
+	$user_info = get_userdata($user_id);
+	$user_email = $user_info->user_email;
+
+	$user_first = $user_meta['first_name'][0];
+	$user_last = $user_meta['last_name'][0];
+	$user_balance = $user_meta['seeds_balance'][0];
+
+	//var_dump($user_meta);
+	//var_dump($user_info);
+
+	?>
+
+	<div class="seeds">
+
+		<h2>Welcome <?php echo $user_first;?> <?php echo $user_last ?></h2>
+
+		<div class="seeds-balance">
+			<p>Your Current Balance is:</p>
+			<p class="CurrSeeds"><?php echo "{$user_balance} Seed".($user_balance == 1 ? "" : "s"); ?></p>
+		</div>
+
+	</div>
+	
+	<?php
+
+}
+add_shortcode( 'seeds_receive', 'receive_seed_form_shortcode' );
+
+
