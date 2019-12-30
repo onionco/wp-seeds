@@ -460,21 +460,24 @@ function wps_admin_menu() {
 		'New Transaction',
 		'New Transaction',
 		'manage_options',
-		'wps_new_transaction'
+		'wps_new_transaction',
+		'__no_func'
 	);
 	add_submenu_page(
 		'wps_transactions',
 		'Create Seeds',
 		'Create Seeds',
 		'manage_options',
-		'wps_create_seeds'
+		'wps_create_seeds',
+		'__no_func'
 	);
 	add_submenu_page(
 		'wps_transactions',
 		'Burn Seeds',
 		'Burn Seeds',
 		'manage_options',
-		'wps_burn_seeds'
+		'wps_burn_seeds',
+		'__no_func'
 	);
 }
 add_action( 'admin_menu', 'wps_admin_menu' );
