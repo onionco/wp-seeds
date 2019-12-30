@@ -27,24 +27,11 @@
  * @since 1.0.0
  */
 require_once plugin_dir_path( __FILE__ ) . '/ext/cmb2/init.php';
-require_once plugin_dir_path( __FILE__ ) . '/models/class-transaction.php';
+require_once plugin_dir_path( __FILE__ ) . '/inc/class-transaction.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-custom-list-table.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-cmb2-custom-handler.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-cmb2-form-exception.php';
-
-/*
-Old stuff
-
-require_once dirname( __FILE__ ) . '/inc/transaction.php';
-require_once dirname( __FILE__ ) . '/inc/transactions-all.php';
-require_once dirname( __FILE__ ) . '/inc/users-all.php';
-require_once dirname( __FILE__ ) . '/inc/users-profile.php';
-require_once dirname( __FILE__ ) . '/inc/wps-cpt-transaction.php';
-require_once dirname( __FILE__ ) . '/inc/wps-metaboxes.php';
-require_once dirname( __FILE__ ) . '/inc/wps-roles-and-caps.php';
-require_once dirname( __FILE__ ) . '/inc/wps-shortcodes.php';
-*/
 
 /**
  * Uniform display of users.
