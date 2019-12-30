@@ -22,15 +22,7 @@
 
 	<div id="qrcode"></div>
 	<script type="text/javascript">
-	var qrcode = new QRCode("test", {
-		text: "http://jindo.dev.naver.com/collie",
-		width: 128,
-		height: 128,
-		colorDark : "#000000",
-		colorLight : "#ffffff",
-		correctLevel : QRCode.CorrectLevel.H
-	});
-		new QRCode(document.getElementById("qrcode"),"<?php echo $qr_code_url ?>"); 
+		new QRCode(document.getElementById("qrcode"),"<?php echo $qr_code_url; ?>"); 
 	</script>
 
 </div>
