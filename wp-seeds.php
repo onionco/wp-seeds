@@ -438,7 +438,7 @@ add_action( 'cmb2_admin_init', 'wps_new_transaction_form' );
  * @param WP_User $user The user to show info for.
  * @return void
  */
-function wps_show_user_profile( $user ) {
+function wps_user_profile( $user ) {
 	?>
 	<h2>Seeds</h2>
 	<table class='form-table'>
@@ -447,8 +447,8 @@ function wps_show_user_profile( $user ) {
 	</table>
 	<?php
 }
-add_action( 'show_user_profile', 'wps_show_user_profile' );
-
+add_action( 'show_user_profile', 'wps_user_profile' );
+add_action( 'edit_user_profile', 'wps_user_profile' );
 
 /**
  * Register new column on the user list page.
