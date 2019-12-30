@@ -79,6 +79,39 @@ add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
  * @return void
  */
 function wps_transactions_page() {
+	if ( is_req_var( 'transaction_detail' ) ) {
+		$transaction = Transaction::findOne( get_req_str( 'transaction_detail' ) );
+		$user_display_by_id = wps_user_display_by_id()
+		?>
+			<div class='wrap'>
+				<h1><?php esc_html_e( 'Transaction', 'wp-seeds' ); ?></h1>
+				<table class='form-table'>
+					<tr>
+						<th><?php esc_html_e( 'Time', 'wp-seeds' ); ?></th>
+						<td><?php echo esc_html( date( 'Y-m-d H:m:s', $transaction->timestamp ) ); ?></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'Transaction ID', 'wp-seeds' ); ?></th>
+						<td><?php echo esc_html( $transaction->transaction_id ); ?></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'From Account', 'wp-seeds' ); ?></th>
+						<td><?php echo esc_html( $user_display_by_id[ $transaction->sender ] ); ?></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'To Account', 'wp-seeds' ); ?></th>
+						<td><?php echo esc_html( $user_display_by_id[ $transaction->receiver ] ); ?></td>
+					</tr>
+					<tr>
+						<th><?php esc_html_e( 'Amount', 'wp-seeds' ); ?></th>
+						<td><?php echo esc_html( $transaction->amount ); ?></td>
+					</tr>
+				</table>
+			</div>
+		<?php
+		return;
+	}
+
 	$table = new Custom_List_Table();
 
 	$table->add_filter(
@@ -153,7 +186,7 @@ function wps_transactions_page() {
 	$user_display_by_id = wps_user_display_by_id();
 	$transaction_views = array();
 	foreach ( $transactions as $transaction ) {
-		$link               = get_admin_url( null, 'admin.php?page=seeds_transactions&transaction_detail=' . $transaction->id );
+		$link               = get_admin_url( null, 'admin.php?page=wps_transactions&transaction_detail=' . $transaction->id );
 		$transaction_views[] = array(
 			'id'          => "<a href='$link'>" . $transaction->transaction_id . '</a>',
 			'fromAccount' => $user_display_by_id[ $transaction->sender ],
