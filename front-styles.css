@@ -1,30 +1,30 @@
 /* WPSeeds Frontend Stylesheet */
 
 .seeds {
-    text-align: center;
+	text-align: center;
 }
 
 .seeds-balance {
-    max-width: 300px;
-    margin: 0 auto 30px;
-    padding: 15px 10px;
-    border: 2px solid rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.5);
-    font-size: 1.2em;
-    text-align: center;
+	max-width: 300px;
+	margin: 0 auto 30px;
+	padding: 15px 10px;
+	border: 2px solid rgba(0, 0, 0, 0.5);
+	border-radius: 10px;
+	background-color: rgba(255, 255, 255, 0.5);
+	font-size: 1.2em;
+	text-align: center;
 }
 
 .entry-content .seeds-balance p {
-    margin: 0 auto 10px;
+	margin: 0 auto 10px;
 }
 
 .entry-content .seeds-balance p.CurrSeeds {
-    margin: 0 auto;
-    font-weight: 600;
+	margin: 0 auto;
+	font-weight: 600;
 }
 
 
 .qr-wrap img {
-    margin: 0 auto;
+	margin: 0 auto;
 }

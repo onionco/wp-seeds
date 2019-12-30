@@ -63,7 +63,7 @@ function wps_user_display_by_id() {
 }
 
 /**
- * Load admin styles
+ * Load admin styles.
  *
  * @since 1.0.0
  * @return void
@@ -73,27 +73,34 @@ function wps_admin_style() {
 }
 add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
 
+/**
+ * Enqueue styles.
+ *
+ * @return void
+ */
 function wps_enqueue_style() {
 	global $post;
-	if ( (isset($post->post_content) && has_shortcode( $post->post_content, 'seeds_send')) || (isset($post->post_content) && has_shortcode( $post->post_content, 'seeds_receive')) ) {
-        wp_enqueue_style( 'front-styles', plugin_dir_url( __FILE__ ) . '/front-styles.css', null, '1.0', 'screen' );
+	if ( ( isset( $post->post_content ) && has_shortcode( $post->post_content, 'seeds_send' ) ) || ( isset( $post->post_content ) && has_shortcode( $post->post_content, 'seeds_receive' ) ) ) {
+		wp_enqueue_style( 'front-styles', plugin_dir_url( __FILE__ ) . '/front-styles.css', null, '1.0', 'screen' );
 	}
-	if ( (isset($post->post_content) && has_shortcode( $post->post_content, 'seeds_send')) ) {
-		wp_enqueue_script( 'qr-generator', plugin_dir_url( __FILE__ ) . 'ext/qrcodejs/qrcode.js', 'jquery', null, false );
+	if ( ( isset( $post->post_content ) && has_shortcode( $post->post_content, 'seeds_send' ) ) ) {
+		wp_enqueue_script( 'qr-generator', plugin_dir_url( __FILE__ ) . 'ext/qrcodejs/qrcode.js', 'jquery', '0.0.1', false );
 	}
 }
-add_action('wp_enqueue_scripts', 'wps_enqueue_style');
+add_action( 'wp_enqueue_scripts', 'wps_enqueue_style' );
 
-
-/* Create Seeds Balance User Meta */
+/**
+ * Create Seeds Balance User Meta.
+ *
+ * @return void
+ */
 function add_user_balance() {
-	$users = get_users( ['fields' => ['ID'] ] );
-		foreach ( $users as $user ) {
-			$user_update = update_user_meta($user->ID, 'seeds_balance', 0);
-		}
+	$users = get_users( [ 'fields' => [ 'ID' ] ] );
+	foreach ( $users as $user ) {
+		$user_update = update_user_meta( $user->ID, 'seeds_balance', 0 );
+	}
 }
-add_action('init','add_user_balance');
-
+add_action( 'init', 'add_user_balance' );
 
 /**
  * Show the list of transactions.
@@ -438,7 +445,7 @@ add_action( 'cmb2_admin_init', 'wps_new_transaction_form' );
  * @param WP_User $user The user to show info for.
  * @return void
  */
-function wps_show_user_profile( $user ) {
+function wps_user_profile( $user ) {
 	?>
 	<h2>Seeds</h2>
 	<table class='form-table'>
@@ -447,8 +454,8 @@ function wps_show_user_profile( $user ) {
 	</table>
 	<?php
 }
-add_action( 'show_user_profile', 'wps_show_user_profile' );
-
+add_action( 'show_user_profile', 'wps_user_profile' );
+add_action( 'edit_user_profile', 'wps_user_profile' );
 
 /**
  * Register new column on the user list page.
@@ -537,57 +544,6 @@ function wps_admin_menu() {
 }
 add_action( 'admin_menu', 'wps_admin_menu' );
 
-/* Admin Transaction Form */
-function wps_register_transaction_form() {
-	/**
-	 * Registers options page menu item and form.
-	 */
-	$cmb_group=new_cmb2_box( array(
-		'id'           => 'create_transaction',
-		'title'        => esc_html__( 'Create Transaction', 'cmb2' ),
-		'object_types' => array( 'options-page', 'post' ),
-		'option_key'      => 'seeds_accounts',
-		'parent_slug'     => 'admin.php', 
-		'save_button'     => esc_html__( 'Create Transaction', 'cmb2' )
-	) );
-
-	$users=array();
-	foreach (get_users() as $wpuser)
-		$users[$wpuser->ID]=$wpuser->display_name;
-
-	$cmb_group->add_field(array(
-			'name'             => esc_html__( 'Sender', 'cmb2' ),
-			'description'      => esc_html__( 'Who will send the seeds?', 'cmb2' ),
-			'id'               => 'sender',		
-			'type'             => 'select',
-			'attributes'       => array(
-				'required' => 'required',
-			),
-			'show_option_none' => __( 'Please select', 'wp-seeds' ),
-			'options'          => $users,
-	));
-
-	$cmb_group->add_field(array(
-			'name'             => esc_html__( 'Receiver', 'cmb2' ),
-			'description'      => esc_html__( 'Who will send the seeds?', 'cmb2' ),
-			'id'               => 'receiver',
-			'type'             => 'select',
-			'attributes'       => array(
-				'required' => 'required',
-			),
-			'show_option_none' => __( 'Please select', 'wp-seeds' ),
-			'options'          => $users,
-	));
-
-	$cmb_group->add_field(array(
-		'name'    => esc_html__( 'Amount', 'cmb2' ),
-		'desc'    => esc_html__( 'What is the amount for the transaction?', 'cmb2' ),
-		'id'      => 'amount',
-		'type'    => 'text_money',
-		'default' => '0'
-	));
-}
-add_action( 'cmb2_init', 'wps_register_transaction_form' );
 /**
  * Handle plugin activation.
  *
@@ -622,10 +578,14 @@ function wps_cmb2_meta_box_url( $url ) {
 
 	return $new_url;
 }
-add_filter('cmb2_meta_box_url','wps_cmb2_meta_box_url');
+add_filter( 'cmb2_meta_box_url', 'wps_cmb2_meta_box_url' );
 
 
-/* Send Seeds Shortcode */
+/**
+ * Send Seeds Shortcode.
+ *
+ * @param array $atts The shortcode attributes.
+ */
 function send_seed_form_shortcode( $atts = array() ) {
 	global $post;
 
@@ -639,23 +599,20 @@ function send_seed_form_shortcode( $atts = array() ) {
 	$user_id = get_current_user_id();
 	$user_meta = get_user_meta( $user_id );
 
-	$user_info = get_userdata($user_id);
+	$user_info = get_userdata( $user_id );
 	$user_email = $user_info->user_email;
 
 	$user_first = $user_meta['first_name'][0];
 	$user_last = $user_meta['last_name'][0];
 	$user_balance = $user_meta['seeds_balance'][0];
-
-	//var_dump($user_meta);
-	//var_dump($user_info);
 	?>
 	<div class="seeds">
 
-		<h2>Welcome <?php echo $user_first;?> <?php echo $user_last ?></h2>
+		<h2>Welcome <?php echo $user_first; ?> <?php echo $user_last; ?></h2>
 
 		<div class="seeds-balance">
 			<p>Your Current Balance is:</p>
-			<p class="CurrSeeds"><?php echo "{$user_balance} Seed".($user_balance == 1 ? "" : "s"); ?></p>
+			<p class="CurrSeeds"><?php echo "{$user_balance} Seed" . ( $user_balance == 1 ? '' : 's' ); ?></p>
 		</div>
 
 		<?php
@@ -666,7 +623,7 @@ function send_seed_form_shortcode( $atts = array() ) {
 			if ( ! empty( $_REQUEST['amount'] ) ) {
 				$to_user                = (int) get_current_user_id();
 				$amount                 = (int) $_REQUEST['amount'];
-				$home					= get_site_url();
+				$home                   = get_site_url();
 				$vars['notice_success'] = __( 'Your QR has been created successfully. Please ask the sender to scan this QR code to transfer seeds to you.', 'wp-seeds' );
 				$vars['qr_code_url']    = sprintf( '%3$s/transactions?to_user=2&amount=1', $to_user, $amount, $home );
 				$show_qr                = true;
@@ -692,7 +649,12 @@ function send_seed_form_shortcode( $atts = array() ) {
 add_shortcode( 'seeds_send', 'send_seed_form_shortcode' );
 
 
-/* Receive Seeds Shortcode */
+/**
+ * Receive Seeds Shortcode.
+ *
+ * @param array $atts The shortcode attrs.
+ * @return void
+ */
 function receive_seed_form_shortcode( $atts = array() ) {
 	global $post;
 
@@ -706,25 +668,25 @@ function receive_seed_form_shortcode( $atts = array() ) {
 	$user_id = get_current_user_id();
 	$user_meta = get_user_meta( $user_id );
 
-	$user_info = get_userdata($user_id);
+	$user_info = get_userdata( $user_id );
 	$user_email = $user_info->user_email;
 
 	$user_first = $user_meta['first_name'][0];
 	$user_last = $user_meta['last_name'][0];
 	$user_balance = $user_meta['seeds_balance'][0];
 
-	//var_dump($user_meta);
-	//var_dump($user_info);
+	// var_dump($user_meta);
+	// var_dump($user_info);
 
 	?>
 
 	<div class="seeds">
 
-		<h2>Welcome <?php echo $user_first;?> <?php echo $user_last ?></h2>
+		<h2>Welcome <?php echo $user_first; ?> <?php echo $user_last; ?></h2>
 
 		<div class="seeds-balance">
 			<p>Your Current Balance is:</p>
-			<p class="CurrSeeds"><?php echo "{$user_balance} Seed".($user_balance == 1 ? "" : "s"); ?></p>
+			<p class="CurrSeeds"><?php echo "{$user_balance} Seed" . ( $user_balance == 1 ? '' : 's' ); ?></p>
 		</div>
 
 	</div>
