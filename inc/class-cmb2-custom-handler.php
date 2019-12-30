@@ -73,7 +73,7 @@ class CMB2_Custom_Handler {
 				call_user_func( $cb );
 				$this->save_success = true;
 			} catch ( Exception $e ) {
-				$this->save_error = $e->getMessage();
+				$this->save_error = $e;
 			}
 		}
 	}
@@ -115,7 +115,7 @@ class CMB2_Custom_Handler {
 		}
 
 		if ( $this->save_error ) {
-			add_settings_error( $args['setting'], '', $this->save_error, 'error' );
+			add_settings_error( $args['setting'], '', $this->save_error->getMessage(), 'error' );
 		}
 	}
 
@@ -136,6 +136,13 @@ class CMB2_Custom_Handler {
 				<h2><?php echo wp_kses_post( $hookup->cmb->prop( 'title' ) ); ?></h2>
 			<?php endif; ?>
 			<?php if ( ! $this->save_success ) { ?>
+				<?php if ( $this->save_error instanceof CMB2_Form_Exception ) { ?>
+					<style>
+						form.cmb-form [name="<?php echo esc_attr( $this->save_error->field ); ?>"] {
+							border-color: #f00 !important;
+						}
+					</style>
+				<?php } ?>
 				<?php if ( ! empty( $tabs ) ) : ?>
 					<h2 class="nav-tab-wrapper">
 						<?php foreach ( $tabs as $option_key => $tab_title ) : ?>

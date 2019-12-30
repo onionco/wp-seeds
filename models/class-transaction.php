@@ -17,6 +17,7 @@
  * @since 1.0.0
  */
 require_once plugin_dir_path( __FILE__ ) . '/../ext/wprecord/WpRecord.php';
+require_once plugin_dir_path( __FILE__ ) . '/../inc/class-cmb2-form-exception.php';
 
 /**
  * Represents one transaction on the system.
@@ -50,7 +51,8 @@ class Transaction extends WpRecord {
 	 * Actually perform the transaction.
 	 *
 	 * @return void
-	 * @throws Exception If the transaction can't be performed.
+	 * @throws CMB2_Form_Exception If the transaction can't be performed due to a form error.
+	 * @throws Exception If the transaction can't be performed for an unknown reason.
 	 */
 	public function perform() {
 		if ( $this->transaction_id ) {
@@ -62,23 +64,23 @@ class Transaction extends WpRecord {
 		/*
 		TODO: Enable me!
 		if ( $from_balance < $this->amount ) {
-			throw new Exception( 'Insufficient funds on account.' );
+			throw new CMB2_Form_Exception( 'Insufficient funds on account.', 'amount' );
 		}
 		*/
 
 		$this->amount = intval( $this->amount );
 
 		if ( ! $this->sender ) {
-			throw new Exception( 'Please select sender.' );
+			throw new CMB2_Form_Exception( 'Please select sender.', 'sender' );
 		}
 		if ( ! $this->receiver ) {
-			throw new Exception( 'Please select receiver.' );
+			throw new CMB2_Form_Exception( 'Please select receiver.', 'receiver' );
 		}
 		if ( $this->sender === $this->receiver ) {
-			throw new Exception( 'The accounts cannot be the same.' );
+			throw new CMB2_Form_Exception( 'The accounts cannot be the same.', 'receiver' );
 		}
 		if ( $this->amount <= 0 ) {
-			throw new Exception( 'Amount cannot be zero or negative.' );
+			throw new CMB2_Form_Exception( 'Amount cannot be zero or negative.', 'amount' );
 		}
 		$this->transaction_id = self::generate_random_id();
 		$from_balance        -= $this->amount;

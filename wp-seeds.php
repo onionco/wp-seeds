@@ -31,6 +31,7 @@ require_once plugin_dir_path( __FILE__ ) . '/models/class-transaction.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-custom-list-table.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-cmb2-custom-handler.php';
+require_once plugin_dir_path( __FILE__ ) . '/inc/class-cmb2-form-exception.php';
 
 /*
 Old stuff
@@ -171,22 +172,22 @@ function wps_transactions_page() {
  * Handle burning of seeds.
  *
  * @return void
- * @throws Exception If there is an error.
+ * @throws CMB2_Form_Exception If there is an error.
  */
 function wps_burn_seeds_save() {
 	$user = get_user_by( 'id', get_req_str( 'sender' ) );
 	if ( ! $user ) {
-		throw new Exception( 'Please select a user to send the burned seeds.' );
+		throw new CMB2_Form_Exception( 'Please select a user to send the burned seeds.', 'sender' );
 	}
 
 	$amount = intval( get_req_str( 'amount' ) );
 	if ( $amount <= 0 ) {
-		throw new Exception( 'Amount needs to be greater than zero' );
+		throw new CMB2_Form_Exception( 'Amount needs to be greater than zero', 'amount' );
 	}
 
 	$balance = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
 	if ( $amount > $balance ) {
-		throw new Exception( 'Not enough seeds on that account' );
+		throw new CMB2_Form_Exception( 'Not enough seeds on that account', 'amount' );
 	}
 
 	$balance -= $amount;
@@ -243,17 +244,17 @@ add_action( 'cmb2_admin_init', 'wps_burn_seeds_form' );
  * Handle creation of new seeds.
  *
  * @return void
- * @throws Exception If there is an error.
+ * @throws CMB2_Form_Exception If there is an error.
  */
 function wps_create_seeds_save() {
 	$user = get_user_by( 'id', get_req_str( 'receiver' ) );
 	if ( ! $user ) {
-		throw new Exception( 'Please select a user to receive the created seeds.' );
+		throw new CMB2_Form_Exception( 'Please select a user to receive the created seeds.', 'receiver' );
 	}
 
 	$amount = intval( get_req_str( 'amount' ) );
 	if ( $amount <= 0 ) {
-		throw new Exception( 'Amount needs to be greater than zero' );
+		throw new CMB2_Form_Exception( 'Amount needs to be greater than zero', 'amount' );
 	}
 
 	$balance = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
