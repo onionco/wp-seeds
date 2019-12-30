@@ -11,7 +11,7 @@
  * Plugin Name:       WP Seeds
  * Plugin URI:        https://github.com/limikael/wp-seeds
  * Description:       Allows users to hold, send and receive tokens named seeds.
- * Version:           1.0
+ * Version:           3.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Mikael Lindqvist, Niels Lange & Derek Smith
