@@ -15,7 +15,7 @@
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Mikael Lindqvist, Niels Lange & Derek Smith
- * Author URI:        https://github.com/limikael/wp-seeds
+ * Author URI:        https://www.theonionco.com
  * Text Domain:       wp-seeds
  * License:           GPL v2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
