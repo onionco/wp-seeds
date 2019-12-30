@@ -394,6 +394,43 @@ function wps_show_user_profile( $user ) {
 }
 add_action( 'show_user_profile', 'wps_show_user_profile' );
 
+
+/**
+ * Register new column on the user list page.
+ *
+ * @param array $column The columns.
+ * @return array The updated columns.
+ */
+function wps_manage_users_columns( $column ) {
+	$column['wps_balance'] = 'Seeds';
+	return $column;
+}
+add_filter( 'manage_users_columns', 'wps_manage_users_columns' );
+
+/**
+ * Show info in the seeds balance column.
+ *
+ * @param string $val Not sure what it is for.
+ * @param string $column_name The column name.
+ * @param string $user_id The user id.
+ * @return string The value for the column.
+ */
+function wps_manage_users_custom_column( $val, $column_name, $user_id ) {
+	switch ( $column_name ) {
+		case 'wps_balance':
+			$url = get_admin_url( null, 'admin.php?page=wps_transactions&account=' . $user_id );
+			$balance = intval( get_user_meta( $user_id, 'wps_balance', true ) );
+			return sprintf(
+				'<a href="%s">%s</a>',
+				esc_attr( $url ),
+				esc_html( $balance )
+			);
+		default:
+			return $val;
+	}
+}
+add_filter( 'manage_users_custom_column', 'wps_manage_users_custom_column', 10, 3 );
+
 /**
  * Admin menu hook, add menu.
  *
