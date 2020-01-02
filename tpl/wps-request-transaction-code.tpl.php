@@ -22,7 +22,7 @@
 
 	<div id="qrcode"></div>
 	<script type="text/javascript">
-		new QRCode(document.getElementById("qrcode"),"<?php echo $qr_code_url; ?>"); 
+		new QRCode(document.getElementById("qrcode"), "<?php echo $qr_code_url; ?>"); 
 	</script>
 
 </div>

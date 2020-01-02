@@ -13,7 +13,7 @@
 
 ?>
 <div class='wrap'>
-	<h1><?php esc_html_e( 'Transaction', 'wp-seeds' ); ?></h1>
+	<h2><?php esc_html_e( 'Transaction', 'wp-seeds' ); ?></h2>
 	<table class='form-table'>
 		<tr>
 			<th><?php esc_html_e( 'Time', 'wp-seeds' ); ?></th>

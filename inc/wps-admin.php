@@ -34,7 +34,7 @@ function wps_user_display_by_id() {
  * @return void
  */
 function wps_admin_style() {
-	wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . '/admin.css', null, '1.0', 'screen' );
+	wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . 'css/admin.css', null, '1.0', 'screen' );
 }
 add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
 
@@ -306,7 +306,7 @@ function wps_new_transaction_form() {
 		array(
 			'id'           => 'wps_new_transaction',
 			'title'        => esc_html__( 'Create Transaction', 'wp-seeds' ),
-			'object_types' => array( 'options-page' ),
+			'object_types' => array( 'options-page', 'post' ),
 			'option_key'   => 'wps_new_transaction',
 			'parent_slug'  => 'admin.php',
 			'save_button'  => esc_html__( 'Create Transaction', 'wp-seeds' ),
@@ -351,7 +351,7 @@ function wps_new_transaction_form() {
 		)
 	);
 }
-add_action( 'cmb2_admin_init', 'wps_new_transaction_form' );
+add_action( 'cmb2_init', 'wps_new_transaction_form' );
 
 /**
  * Show info on the user profile page.
