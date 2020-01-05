@@ -1,4 +1,32 @@
-span.cmb2-metabox-description {
+.wps-admin-form {
+	border: 1px solid #e9e9e9;
+	border-bottom: 1px solid #e0e0e0;
+	background: #fff;
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+
+.wps-admin-form label {
+	font-size: 14px;
+	width: 200px;
+	display: inline-block;
+	vertical-align: top;
+	margin-bottom: 1em;
+	color: #222;
+	padding-top: 5px;
+}
+
+.wps-admin-form .row {
+	padding: 1em;
+	border-bottom: 1px solid #e9e9e9;
+}
+
+.wps-admin-form .description {
+	color: #757575;
 	display: block;
-	padding-top: 0.5em;
+	margin-top: 0.5em;
+}
+
+.wps-admin-form .field {
+	display: inline-block;
 }

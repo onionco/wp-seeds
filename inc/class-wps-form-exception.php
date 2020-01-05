@@ -14,7 +14,7 @@
 /**
  * Exception to be thrown in form validation.
  */
-class CMB2_Form_Exception extends Exception {
+class WPS_Form_Exception extends Exception {
 
 	/**
 	 * Constructor.
