@@ -53,19 +53,6 @@ function wps_enqueue_style() {
 add_action( 'wp_enqueue_scripts', 'wps_enqueue_style' );
 
 /**
- * Create Seeds Balance User Meta.
- *
- * @return void
- */
-function add_user_balance() {
-	$users = get_users( [ 'fields' => [ 'ID' ] ] );
-	foreach ( $users as $user ) {
-		$user_update = update_user_meta( $user->ID, 'seeds_balance', 0 );
-	}
-}
-add_action( 'init', 'add_user_balance' );
-
-/**
  * Handle plugin activation.
  *
  * @return void
