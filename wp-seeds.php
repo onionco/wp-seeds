@@ -31,6 +31,7 @@ require_once plugin_dir_path( __FILE__ ) . '/inc/class-custom-list-table.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-wps-form-exception.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/wps-admin.php';
+require_once plugin_dir_path( __FILE__ ) . '/inc/wps-frontend.php';
 
 /**
  * Enqueue styles.
