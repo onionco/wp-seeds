@@ -1,4 +1,15 @@
 <?php
+/**
+ * WP Seeds 🌱
+ *
+ * Custom functionality for transactions overview page.
+ *
+ * @package   wp-seeds/tpl
+ * @link      https://github.com/limikael/wp-seeds
+ * @author    Mikael Lindqvist & Niels Lange
+ * @copyright 2019 Mikael Lindqvist & Niels Lange
+ * @license   GPL v2 or later
+ */
 
 $seeds_account = intval( get_query_var( 'wpsaccount' ) );
 $send_seeds = intval( get_query_var( 'wpssend' ) );
@@ -27,27 +38,36 @@ $request = 'request';
 	<ul>
 		<li class="seeds-account-link 
 		<?php
-		if ( $active == 1 ) {
+		if ( 1 == $active ) {
 			echo 'active';}
 		?>
 		">
-			<a href="<?php echo get_site_url() . '/' . $account . '/'; ?>" title="Seeds Account">Seeds Account</a>
+			<a href="<?php echo esc_attr( get_site_url() . '/' . $account . '/' ); ?>"
+					title="Seeds Account">
+				Seeds Account
+			</a>
 		</li>
 		<li class="seeds-account-link 
 		<?php
-		if ( $active == 2 ) {
+		if ( 2 == $active ) {
 			echo 'active';}
 		?>
 		">
-			<a href="<?php echo get_site_url() . '/' . $account . '/' . $send . '/'; ?>" title="Send Seeds">Send Seeds</a>
+			<a href="<?php echo esc_attr( get_site_url() . '/' . $account . '/' . $send . '/' ); ?>"
+					title="Send Seeds">
+				Send Seeds
+			</a>
 		</li>
 		<li class="seeds-account-link 
 		<?php
-		if ( $active == 3 ) {
+		if ( 3 == $active ) {
 			echo 'active';}
 		?>
 		">
-			<a href="<?php echo get_site_url() . '/' . $account . '/' . $request . '/'; ?>" title="Send Seeds">Request Seeds</a>
+			<a href="<?php echo esc_attr( get_site_url() . '/' . $account . '/' . $request . '/' ); ?>"
+					title="Send Seeds">
+				Request Seeds
+			</a>
 		</li>
 	</ul>
 </nav>
