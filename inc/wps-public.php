@@ -59,12 +59,13 @@ add_action(
  * Show transaction history for the current user.
  *
  * @param array $args The shortcode args.
- * @return string The rendered shortcode.
+ * @return void.
  */
 function wps_history_sc( $args ) {
 	$user = wp_get_current_user();
 	if ( ! $user || ! $user->ID ) {
-		return __( 'You need to be logged in to view this page', 'wp-seeds' );
+		esc_html_e( 'You need to be logged in to view this page', 'wp-seeds' );
+		return;
 	}
 
 	$user_display_by_id = wps_user_display_by_id();
@@ -96,6 +97,7 @@ function wps_history_sc( $args ) {
 
 		$vars['transactions'][] = $view;
 	}
-	return render_template( __DIR__ . '/../tpl/wps-history.tpl.php', $vars );
+
+	display_template( __DIR__ . '/../tpl/wps-history.tpl.php', $vars );
 }
 add_shortcode( 'seeds-history', 'wps_history_sc' );

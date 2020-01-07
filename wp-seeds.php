@@ -25,7 +25,6 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Include required classes and files.
- * x
  *
  * @since 1.0.0
  */
@@ -35,7 +34,6 @@ require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-wps-form-exception.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/wps-admin.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/wps-public.php';
-require_once plugin_dir_path( __FILE__ ) . '/inc/wps-frontend.php';
 
 
 /**
@@ -106,9 +104,15 @@ function create_account_page() {
 }
 
 /**
- * Create account page
- * @param string $slug The slug for the page
- * @return string
+ * Create seeds pages on installation.
+ *
+ * @param string $slug The slug for the page.
+ * @param string $option The option.
+ * @param string $page_title The title for the page.
+ * @param string $page_content The content for the page.
+ * @param string $post_parent The parent.
+ *
+ * @return int The page id.
  */
 function wps_create_page( $slug, $option = '', $page_title = '', $page_content = '', $post_parent = 0 ) {
 
@@ -206,7 +210,10 @@ if ( ! function_exists( 'is_wpsaccount_page' ) ) {
 }
 
 /**
- * Account pages body class
+ * Add body class by listening to the body_class filter.
+ *
+ * @param array $classes The current classes.
+ * @return array The resulting classes.
  */
 function wpseeds_body_class( $classes ) {
 
@@ -237,12 +244,12 @@ function wps_enqueue_style() {
 }
 add_action( 'wp_enqueue_scripts', 'wps_enqueue_style' );
 
-
 /**
+ *
  * Seeds Account Shortcode.
  *
  * @param array $atts The shortcode attrs.
- * @return string
+ * @return string The shortcode content.
  */
 function seeds_account_shortcode( $atts = array() ) {
 
@@ -258,16 +265,14 @@ function seeds_account_shortcode( $atts = array() ) {
 		?>
 
 		<div class="wpseeds-account wps-account">
-
 			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
 
-		<div class="wpseeds-account-content">
+			<div class="wpseeds-account-content">
+				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
 			
-			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
-			
-			<?php echo wps_history_sc( array() ); ?>
+				<?php wps_history_sc( array() ); ?>
+			</div>
 		</div>
-	</div>
 
 		<?php
 	}
@@ -333,12 +338,12 @@ function request_seeds_form_shortcode( $atts = array() ) {
 add_shortcode( 'seeds-request', 'request_seeds_form_shortcode' );
 
 
-/*
-* Send Seeds Shortcode
-*
-* @param array $atts The shortcode attrs.
-* @return string
-*/
+/**
+ * Send Seeds Shortcode
+ *
+ * @param array $atts The shortcode attrs.
+ * @return string
+ */
 function send_seeds_form_shortcode( $atts = array() ) {
 
 	if ( ! is_admin() ) {
