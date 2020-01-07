@@ -27,6 +27,7 @@ function wps_user_display_by_id() {
 	return $users;
 }
 
+
 /**
  * Show the list of transactions.
  *
