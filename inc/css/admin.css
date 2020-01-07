@@ -40,14 +40,13 @@
 
 
 .wrap.cmb2-options-page.option-wps_new_transaction h2:before {
-    content: "\e900";
-    color: #5eaf00;
-    font-family: 'icomoon' !important;
-    padding-right: 10px;
+	content: "\e900";
+	color: #5eaf00;
+	font-family: 'icomoon' !important;
+	padding-right: 10px;
 }
 
 span.cmb2-metabox-description {
 	display: block;
 	padding-top: 0.5em;
 }
-

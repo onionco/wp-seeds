@@ -60,23 +60,23 @@
 }
 
 .entry-content .seeds-balance p.CurrSeeds {
-    margin: 0 auto;
-    font-size: 1.2em;
-    line-height: 1.2;
-    font-weight: 600;
+	margin: 0 auto;
+	font-size: 1.2em;
+	line-height: 1.2;
+	font-weight: 600;
 }
 .seeds .CurrSeeds:before, .seeds .CurrSeeds:after {
-    content: "\e900";
-    color: #5ba900;
-    font-family: 'icomoon' !important;
-    font-size: .8em;
-    padding: 0 8px;
-    text-shadow: 0.5px 1px 0px #2d5400;
+	content: "\e900";
+	color: #5ba900;
+	font-family: 'icomoon' !important;
+	font-size: .8em;
+	padding: 0 8px;
+	text-shadow: 0.5px 1px 0px #2d5400;
 }
 
 /* Send Seeds */
 form#wps_new_transaction .cmb-th {
-    width: 80px;
+	width: 80px;
 }
 
 form#wps_new_transaction select {
@@ -99,16 +99,16 @@ form#wps_new_transaction select {
 
 
 form#wps_new_transaction input#amount {
-    box-shadow: 0 0 0 transparent;
-    border-radius: 4px;
-    border: 1px solid #7e8993;
-    background-color: #fff;
-    color: #32373c;
-    display: inline-block;
+	box-shadow: 0 0 0 transparent;
+	border-radius: 4px;
+	border: 1px solid #7e8993;
+	background-color: #fff;
+	color: #32373c;
+	display: inline-block;
 }
 
 form#wps_new_transaction .cmb-td {
-    float: none;
+	float: none;
 }
 
 form#wps_new_transaction span.cmb2-metabox-description {
