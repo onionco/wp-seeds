@@ -22,9 +22,10 @@
  */
 
 defined( 'ABSPATH' ) || exit;
- 
+
 /**
  * Include required classes and files.
+ * x
  *
  * @since 1.0.0
  */
@@ -82,7 +83,7 @@ if ( ! is_admin() ) {
 
 
 /**
- * Activation 
+ * Activation
  */
 
 define( 'WPSEEDS_PLUGIN_FILE', __FILE__ );
@@ -101,7 +102,7 @@ function create_account_page() {
 			'content' => '[seeds-account]',
 		),
 	);
-	
+
 	foreach ( $pages as $key => $page ) {
 		wps_create_page( esc_sql( $page['name'] ), 'wpseeds_' . $key . '_page_id', $page['title'], $page['content'], ! empty( $page['parent'] ) ? wc_get_page_id( $page['parent'] ) : '' );
 	}
@@ -109,9 +110,11 @@ function create_account_page() {
 
 
 function wps_create_page( $slug, $option = '', $page_title = '', $page_content = '', $post_parent = 0 ) {
-  
-	if ( ! current_user_can( 'activate_plugins' ) ) return;
-  
+
+	if ( ! current_user_can( 'activate_plugins' ) ) {
+		return;
+	}
+
 	global $wpdb;
 
 	$option_value = get_option( $option );
@@ -124,7 +127,7 @@ function wps_create_page( $slug, $option = '', $page_title = '', $page_content =
 			return $page_object->ID;
 		}
 	}
-	
+
 	if ( strlen( $page_content ) > 0 ) {
 		// Search for an existing page with the specified page content (typically a shortcode).
 		$shortcode = str_replace( array( '<!-- wp:shortcode -->', '<!-- /wp:shortcode -->' ), '', $page_content );
@@ -194,23 +197,22 @@ if ( ! function_exists( 'is_wpsaccount_page' ) ) {
 		$request_seeds = intval( get_query_var( 'wpsrequest' ) );
 
 		if ( $seeds_account || $send_seeds || $request_seeds ) {
-			return true; 
+			return true;
 		} else {
 			return false;
 		}
 	}
-
 }
 
 
 function wpseeds_body_class( $classes ) {
 
-    global $post;
+	global $post;
 
-    if ( is_wpseeds_page() ) {
-        $classes[] = 'wpseeds';
-    }
-    return $classes;
+	if ( is_wpseeds_page() ) {
+		$classes[] = 'wpseeds';
+	}
+	return $classes;
 }
 add_filter( 'body_class', 'wpseeds_body_class' );
 
@@ -234,10 +236,10 @@ add_action( 'wp_enqueue_scripts', 'wps_enqueue_style' );
 
 
 /**
-* Create Seeds Balance User Meta.
-*
-* @return void
-*/
+ * Create Seeds Balance User Meta.
+ *
+ * @return void
+ */
 function add_user_balance() {
 	$users = get_users( [ 'fields' => [ 'ID' ] ] );
 	return $new_url;
@@ -246,15 +248,15 @@ add_filter( 'cmb2_meta_box_url', 'wps_cmb2_meta_box_url' );
 
 
 /**
-*
-* Seeds Account Shortcode.
-*
-* @param array $atts The shortcode attrs.
-* @return void
-*/
+ *
+ * Seeds Account Shortcode.
+ *
+ * @param array $atts The shortcode attrs.
+ * @return void
+ */
 function seeds_account_shortcode( $atts = array() ) {
 
-	if( !is_admin() ) {
+	if ( ! is_admin() ) {
 		global $post;
 
 		/**
@@ -278,7 +280,7 @@ function seeds_account_shortcode( $atts = array() ) {
 		</div>
 	</div>
 
-	<?php
+		<?php
 	}
 }
 add_shortcode( 'seeds-account', 'seeds_account_shortcode' );
@@ -290,7 +292,7 @@ add_shortcode( 'seeds-account', 'seeds_account_shortcode' );
  * @param array $atts The shortcode attributes.
  */
 function request_seeds_form_shortcode( $atts = array() ) {
-	if( !is_admin() ) {
+	if ( ! is_admin() ) {
 		global $post;
 
 		/**
@@ -337,10 +339,10 @@ function request_seeds_form_shortcode( $atts = array() ) {
 					display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-part.tpl.php', $vars );
 				}
 
-			?>
+				?>
 			</div>
 		</div>
-	<?php
+		<?php
 	}
 }
 add_shortcode( 'seeds-request', 'request_seeds_form_shortcode' );
@@ -354,7 +356,7 @@ add_shortcode( 'seeds-request', 'request_seeds_form_shortcode' );
 */
 function send_seeds_form_shortcode( $atts = array() ) {
 
-   if( !is_admin() ) { 
+	if ( ! is_admin() ) {
 		/**
 		 * Depending on your setup, check if the user has permissions to edit_posts
 		 */
@@ -373,7 +375,7 @@ function send_seeds_form_shortcode( $atts = array() ) {
 			</div>
 
 		</div>
-	<?php
+		<?php
 	}
 
 }

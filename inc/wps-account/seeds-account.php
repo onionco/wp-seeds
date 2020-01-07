@@ -21,7 +21,7 @@ get_header();
 				</header>
 
 				<?php
-				switch (1) {
+				switch ( 1 ) {
 					case $seeds_account:
 						do_shortcode( '[seeds-account]' );
 						break;
