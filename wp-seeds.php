@@ -21,6 +21,8 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
+defined( 'ABSPATH' ) || exit;
+ 
 /**
  * Include required classes and files.
  *
@@ -31,28 +33,10 @@ require_once plugin_dir_path( __FILE__ ) . '/inc/class-custom-list-table.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-wps-form-exception.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/wps-admin.php';
-<<<<<<< HEAD
 require_once plugin_dir_path( __FILE__ ) . '/inc/wps-public.php';
 
-=======
 require_once plugin_dir_path( __FILE__ ) . '/inc/wps-frontend.php';
->>>>>>> e325dd3256d8acc1e145f762ae7862eb40cf524f
 
-/**
- * Enqueue styles.
- *
- * @return void
- */
-function wps_enqueue_style() {
-	global $post;
-	if ( ( isset( $post->post_content ) && has_shortcode( $post->post_content, 'seeds_send' ) ) || ( isset( $post->post_content ) && has_shortcode( $post->post_content, 'seeds_receive' ) ) ) {
-		wp_enqueue_style( 'front-styles', plugin_dir_url( __FILE__ ) . 'inc/css/front-styles.css', null, '1.0', 'screen' );
-	}
-	if ( ( isset( $post->post_content ) && has_shortcode( $post->post_content, 'seeds_receive' ) ) ) {
-		wp_enqueue_script( 'qr-generator', plugin_dir_url( __FILE__ ) . 'ext/qrcodejs/qrcode.js', 'jquery', '0.0.1', false );
-	}
-}
-add_action( 'wp_enqueue_scripts', 'wps_enqueue_style' );
 
 /**
  * Handle plugin activation.
@@ -74,142 +58,6 @@ function wps_deactivate() {
 }
 register_deactivation_hook( __FILE__, 'wps_deactivate' );
 
-/**
- * Get the url where to find cmb2 resources. We hook into this function
- * because the original implementation of cmb2 fails if the plugin is inside
- * a sym-linked directory.
- *
- * @param string $url The auto generated url.
- * @since 1.0.0
- * @return string
- */
-function wps_cmb2_meta_box_url( $url ) {
-	$new_url = trailingslashit( plugin_dir_url( __FILE__ ) . 'ext/cmb2' );
-
-	return $new_url;
-}
-add_filter( 'cmb2_meta_box_url', 'wps_cmb2_meta_box_url' );
-
-
-/**
- * Send Seeds Shortcode.
- *
- * @param array $atts The shortcode attributes.
- */
-function request_seeds_form_shortcode( $atts = array() ) {
-
-	if( !is_admin() ) {
-		global $post;
-
-		/**
-		 * Depending on your setup, check if the user has permissions to edit_posts
-		 */
-		if ( ! is_user_logged_in() ) {
-			return __( 'You do not have permissions to be here.', 'lang_domain' );
-		}
-
-		$user_id = get_current_user_id();
-		$user_meta = get_user_meta( $user_id );
-
-		$user_info = get_userdata( $user_id );
-		$user_email = $user_info->user_email;
-
-		$user_first = $user_meta['first_name'][0];
-		$user_last = $user_meta['last_name'][0];
-		$user_balance = $user_meta['wps_balance'][0];
-		?>
-		<div class="seeds">
-
-			<h2>Welcome <?php echo $user_first; ?> <?php echo $user_last; ?></h2>
-
-			<div class="seeds-balance">
-				<p>Your Current Balance is:</p>
-				<p class="CurrSeeds"><?php echo "{$user_balance} Seed" . ( $user_balance == 1 ? '' : 's' ); ?></p>
-			</div>
-
-			<?php
-			$vars    = array();
-			$show_qr = false;
-
-			if ( isset( $_REQUEST['do_request'] ) ) {
-				if ( ! empty( $_REQUEST['amount'] ) ) {
-					$to_user                = (int) get_current_user_id();
-					$amount                 = (int) $_REQUEST['amount'];
-					$home                   = get_site_url();
-					$vars['notice_success'] = __( 'Your QR has been created successfully. Please ask the sender to scan this QR code to transfer seeds to you.', 'wp-seeds' );
-					$vars['qr_code_url']    = sprintf( '%3$s/send-seeds?to_user=2&amount=1', $to_user, $amount, $home );
-					$show_qr                = true;
-
-				} else {
-					$vars['notice_error'] = __( 'Please provide an amount to request.', 'wp-seeds' );
-				}
-			}
-
-			if ( $show_qr ) {
-				display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-code.tpl.php', $vars );
-			} else {
-				display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-page.tpl.php', $vars );
-			}
-			?>
-
-
-		</div>
-
-		<?php
-	}
-
-}
-add_shortcode( 'seeds_receive', 'request_seeds_form_shortcode' );
-
-
-/**
- * Receive Seeds Shortcode.
- *
- * @param array $atts The shortcode attrs.
- * @return void
- */
-function send_seeds_form_shortcode( $atts = array() ) {
-
-	if( !is_admin() ) {
-		global $post;
-
-		/**
-		 * Depending on your setup, check if the user has permissions to edit_posts
-		 */
-		if ( ! is_user_logged_in() ) {
-			return __( 'You do not have permissions to be here.', 'lang_domain' );
-		}
-
-		$user_id = get_current_user_id();
-		$user_meta = get_user_meta( $user_id );
-
-		$user_info = get_userdata( $user_id );
-		$user_email = $user_info->user_email;
-
-		$user_first = $user_meta['first_name'][0];
-		$user_last = $user_meta['last_name'][0];
-		$user_balance = $user_meta['wps_balance'][0];
-
-		// var_dump($user_meta);
-		// var_dump($user_info);
-
-		?>
-
-		<div class="seeds">
-			<h2>Welcome <?php echo $user_first; ?> <?php echo $user_last; ?></h2>
-
-			<div class="seeds-balance">
-				<p>Your Current Balance is:</p>
-				<p class="CurrSeeds"><?php echo "{$user_balance} Seed" . ( $user_balance == 1 ? '' : 's' ); ?></p>
-			</div>
-		</div>
-		
-		<?php
-
-		display_template( dirname( __FILE__ ) . '/tpl/wps-send-transaction-page.tpl.php' );
-	}
-}
-add_shortcode( 'seeds_send', 'send_seeds_form_shortcode' );
 
 /**
  * Load admin styles.
@@ -222,3 +70,298 @@ function wps_admin_style() {
 	wp_enqueue_style( 'cmb2-styles-css', plugin_dir_url( __FILE__ ) . '/ext/cmb2/css/cmb2.min.css', null, '5.3.2', 'screen' );
 }
 add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
+
+
+if ( is_admin() ) {
+	require_once plugin_dir_path( __FILE__ ) . '/inc/wps-admin.php';
+}
+if ( ! is_admin() ) {
+	require_once plugin_dir_path( __FILE__ ) . '/inc/wps-public.php';
+}
+
+
+
+/**
+ * Activation 
+ */
+
+define( 'WPSEEDS_PLUGIN_FILE', __FILE__ );
+register_activation_hook( 'WPSEEDS_PLUGIN_FILE', 'create_account_page' );
+
+
+/**
+ * Create pages that the plugin relies on, storing page IDs in variables.
+ */
+function create_account_page() {
+
+	$pages = array(
+		'wpsaccount' => array(
+			'name'    => _x( 'seeds-account', 'Page slug', 'wpseeds' ),
+			'title'   => _x( 'Seeds Account', 'Page title', 'wpseeds' ),
+			'content' => '[seeds-account]',
+		),
+	);
+	
+	foreach ( $pages as $key => $page ) {
+		wps_create_page( esc_sql( $page['name'] ), 'wpseeds_' . $key . '_page_id', $page['title'], $page['content'], ! empty( $page['parent'] ) ? wc_get_page_id( $page['parent'] ) : '' );
+	}
+}
+
+
+function wps_create_page( $slug, $option = '', $page_title = '', $page_content = '', $post_parent = 0 ) {
+  
+	if ( ! current_user_can( 'activate_plugins' ) ) return;
+  
+	global $wpdb;
+
+	$option_value = get_option( $option );
+
+	if ( $option_value > 0 ) {
+		$page_object = get_post( $option_value );
+
+		if ( $page_object && 'page' === $page_object->post_type && ! in_array( $page_object->post_status, array( 'pending', 'trash', 'future', 'auto-draft' ), true ) ) {
+			// Valid page is already in place.
+			return $page_object->ID;
+		}
+	}
+	
+	if ( strlen( $page_content ) > 0 ) {
+		// Search for an existing page with the specified page content (typically a shortcode).
+		$shortcode = str_replace( array( '<!-- wp:shortcode -->', '<!-- /wp:shortcode -->' ), '', $page_content );
+		$valid_page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type='page' AND post_status NOT IN ( 'pending', 'trash', 'future', 'auto-draft' ) AND post_content LIKE %s LIMIT 1;", "%{$shortcode}%" ) );
+	} else {
+		// Search for an existing page with the specified page slug.
+		$valid_page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type='page' AND post_status NOT IN ( 'pending', 'trash', 'future', 'auto-draft' )  AND post_name = %s LIMIT 1;", $slug ) );
+	}
+
+	if ( $valid_page_found ) {
+		if ( $option ) {
+			update_option( $option, $valid_page_found );
+		}
+		return $valid_page_found;
+	}
+
+	// Search for a matching valid trashed page.
+	if ( strlen( $page_content ) > 0 ) {
+		// Search for an existing page with the specified page content (typically a shortcode).
+		$trashed_page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type='page' AND post_status = 'trash' AND post_content LIKE %s LIMIT 1;", "%{$page_content}%" ) );
+	} else {
+		// Search for an existing page with the specified page slug.
+		$trashed_page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type='page' AND post_status = 'trash' AND post_name = %s LIMIT 1;", $slug ) );
+	}
+
+	if ( $trashed_page_found ) {
+		$page_id   = $trashed_page_found;
+		$page_data = array(
+			'ID'          => $page_id,
+			'post_status' => 'publish',
+		);
+		wp_update_post( $page_data );
+	} else {
+		$page_data = array(
+			'post_status'    => 'publish',
+			'post_type'      => 'page',
+			'post_author'    => 1,
+			'post_name'      => $slug,
+			'post_title'     => $page_title,
+			'post_content'   => $page_content,
+			'post_parent'    => $post_parent,
+			'comment_status' => 'closed',
+		);
+		$page_id   = wp_insert_post( $page_data );
+	}
+
+	if ( $option ) {
+		update_option( $option, $page_id );
+	}
+
+	return $page_id;
+}
+
+
+if ( ! function_exists( 'is_wpsaccount_page' ) ) {
+
+	/**
+	 * Is_account_page - Returns true when viewing an account page.
+	 *
+	 * @return bool
+	 */
+	function is_wpseeds_page() {
+		$seeds_account = intval( get_query_var( 'wpsaccount' ) );
+		$send_seeds = intval( get_query_var( 'wpssend' ) );
+		$request_seeds = intval( get_query_var( 'wpsrequest' ) );
+
+		if ( $seeds_account || $send_seeds || $request_seeds ) {
+			return true; 
+		} else {
+			return false;
+		}
+	}
+
+}
+
+
+function wpseeds_body_class( $classes ) {
+
+    global $post;
+
+    if ( is_wpseeds_page() ) {
+        $classes[] = 'wpseeds';
+    }
+    return $classes;
+}
+add_filter( 'body_class', 'wpseeds_body_class' );
+
+
+
+
+/**
+ * Enqueue styles.
+ *
+ * @return void
+ */
+function wps_enqueue_style() {
+	global $post;
+	if ( is_wpseeds_page() ) {
+		wp_enqueue_style( 'front-styles', plugin_dir_url( __FILE__ ) . 'inc/css/front-styles.css', null, '1.0', 'screen' );
+		wp_enqueue_style( 'list-tables' );
+	}
+	if ( is_wpseeds_page() ) {
+		wp_enqueue_script( 'qr-generator', plugin_dir_url( __FILE__ ) . 'ext/qrcodejs/qrcode.js', 'jquery', '0.0.1', false );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'wps_enqueue_style' );
+
+
+/**
+* Create Seeds Balance User Meta.
+*
+* @return void
+*/
+function add_user_balance() {
+$users = get_users( [ 'fields' => [ 'ID' ] ] );
+return $new_url;
+}
+add_filter( 'cmb2_meta_box_url', 'wps_cmb2_meta_box_url' );
+
+
+/**
+*
+* Seeds Account Shortcode.
+*
+* @param array $atts The shortcode attrs.
+* @return void
+*/
+
+
+function seeds_account_shortcode( $atts = array() ) {
+
+	if( !is_admin() ) {
+		global $post;
+
+		/**
+		 * Depending on your setup, check if the user has permissions to edit_posts
+		 */
+		if ( ! is_user_logged_in() ) {
+			return __( 'You do not have permissions to be here.', 'lang_domain' );
+		}
+
+?>
+<div class="wpseeds-account wps-account">
+	<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
+	<div class="wpseeds-account-content">
+		<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
+<?php wps_front_transactions_page(); ?>
+</div>
+</div>
+<?php
+}
+}
+add_shortcode( 'seeds-account', 'seeds_account_shortcode' );
+
+
+/**
+ * Request Seeds Shortcode.
+ *
+ * @param array $atts The shortcode attributes.
+ */
+function request_seeds_form_shortcode( $atts = array() ) {
+if( !is_admin() ) {
+	global $post;
+
+/**
+		 * Depending on your setup, check if the user has permissions to edit_posts
+		 */
+		if ( ! is_user_logged_in() ) {
+			return __( 'You do not have permissions to be here.', 'lang_domain' );
+		}
+// global $wp_query;
+		// $query_vars = $wp_query->query_vars;
+		// var_dump($query_vars);
+?>
+		<div class="wpseeds-account wps-request">
+			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
+			<div class="wpseeds-account-content">
+				<?php
+
+				display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' );
+
+				$vars    = array();
+				$show_qr = false;
+
+				if ( isset( $_REQUEST['do_request'] ) ) {
+					if ( ! empty( $_REQUEST['amount'] ) ) {
+						$to_user                = (int) get_current_user_id();
+						$amount                 = (int) $_REQUEST['amount'];
+						$home                   = get_site_url();
+						$vars['notice_success'] = __( 'Your QR has been created successfully. Please ask the sender to scan this QR code to transfer seeds to you.', 'wp-seeds' );
+						$vars['qr_code_url']    = sprintf( '%3$s/send-seeds?to_user=2&amount=1', $to_user, $amount, $home );
+						$show_qr                = true;
+
+					} else {
+						$vars['notice_error'] = __( 'Please provide an amount to request.', 'wp-seeds' );
+					}
+				}
+if ( $show_qr ) {
+	display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-code.tpl.php', $vars );
+} else {
+	display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-part.tpl.php', $vars );
+}
+
+?>
+</div>
+</div>
+<?php
+}
+
+}
+add_shortcode( 'seeds-request', 'request_seeds_form_shortcode' );
+
+
+/*
+* Send Seeds Shortcode
+*
+* @param array $atts The shortcode attrs.
+* @return void
+*/
+function send_seeds_form_shortcode( $atts = array() ) {
+
+   if( !is_admin() ) {
+/**
+		 * Depending on your setup, check if the user has permissions to edit_posts
+		 */
+		if ( ! is_user_logged_in() ) {
+			return __( 'You do not have permissions to be here.', 'lang_domain' );
+		}
+?>
+		<div class="wpseeds-account wps-send">
+<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
+<div class="wpseeds-account-content">
+<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
+<?php display_template( dirname( __FILE__ ) . '/tpl/wps-send-transaction-part.tpl.php' ); ?>
+</div>
+		</div>
+		<?php
+}
+}
+add_shortcode( 'seeds-send', 'send_seeds_form_shortcode' );

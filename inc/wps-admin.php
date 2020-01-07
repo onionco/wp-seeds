@@ -27,16 +27,6 @@ function wps_user_display_by_id() {
 	return $users;
 }
 
-/**
- * Load admin styles.
- *
- * @since 1.0.0
- * @return void
- */
-function wps_admin_style() {
-	wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . 'css/admin.css', null, '1.0', 'screen' );
-}
-add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
 
 /**
  * Show the list of transactions.
