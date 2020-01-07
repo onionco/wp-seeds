@@ -1,4 +1,15 @@
 <?php
+/**
+ * WP Seeds 🌱
+ *
+ * Custom functionality for transactions overview page.
+ *
+ * @package   wp-seeds/inc
+ * @link      https://github.com/limikael/wp-seeds
+ * @author    Mikael Lindqvist & Niels Lange
+ * @copyright 2019 Mikael Lindqvist & Niels Lange
+ * @license   GPL v2 or later
+ */
 
 register_activation_hook( __FILE__, 'flush_rewrite_rules' );
 
