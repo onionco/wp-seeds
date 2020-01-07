@@ -35,6 +35,7 @@ require_once plugin_dir_path( __FILE__ ) . '/inc/class-wps-form-exception.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/wps-admin.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/wps-public.php';
 
+
 /**
  * Handle plugin activation.
  *
@@ -64,7 +65,6 @@ register_deactivation_hook( __FILE__, 'wps_deactivate' );
  */
 function wps_admin_style() {
 	wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . '/admin.css', null, '1.3', 'screen' );
-	wp_enqueue_style( 'cmb2-styles-css', plugin_dir_url( __FILE__ ) . '/ext/cmb2/css/cmb2.min.css', null, '5.3.2', 'screen' );
 }
 add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
 
@@ -75,7 +75,6 @@ if ( is_admin() ) {
 if ( ! is_admin() ) {
 	require_once plugin_dir_path( __FILE__ ) . '/inc/wps-public.php';
 }
-
 
 
 /**
@@ -269,9 +268,8 @@ function seeds_account_shortcode( $atts = array() ) {
 			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
 
 			<div class="wpseeds-account-content">
-			
 				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
-
+			
 				<?php echo wps_history_sc( array() ); ?>
 			</div>
 		</div>
@@ -297,10 +295,6 @@ function request_seeds_form_shortcode( $atts = array() ) {
 		if ( ! is_user_logged_in() ) {
 			return __( 'You do not have permissions to be here.', 'lang_domain' );
 		}
-
-		// global $wp_query;
-		// $query_vars = $wp_query->query_vars;
-		// var_dump($query_vars);
 
 		?>
 		<div class="wpseeds-account wps-request">
@@ -344,12 +338,12 @@ function request_seeds_form_shortcode( $atts = array() ) {
 add_shortcode( 'seeds-request', 'request_seeds_form_shortcode' );
 
 
-/*
-* Send Seeds Shortcode
-*
-* @param array $atts The shortcode attrs.
-* @return void
-*/
+/**
+ * Send Seeds Shortcode
+ *
+ * @param array $atts The shortcode attrs.
+ * @return string
+ */
 function send_seeds_form_shortcode( $atts = array() ) {
 
 	if ( ! is_admin() ) {
