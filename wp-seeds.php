@@ -104,7 +104,17 @@ function create_account_page() {
 	}
 }
 
-
+/**
+ * Create seeds pages on installation.
+ *
+ * @param string $slug The slug for the page.
+ * @param string $option The option.
+ * @param string $page_title The title for the page.
+ * @param string $page_content The content for the page.
+ * @param string $post_parent The parent.
+ *
+ * @return int The page id.
+ */
 function wps_create_page( $slug, $option = '', $page_title = '', $page_content = '', $post_parent = 0 ) {
 
 	if ( ! current_user_can( 'activate_plugins' ) ) {
@@ -200,7 +210,12 @@ if ( ! function_exists( 'is_wpsaccount_page' ) ) {
 	}
 }
 
-
+/**
+ * Add body class by listening to the body_class filter.
+ *
+ * @param array $classes The current classes.
+ * @return array The resulting classes.
+ */
 function wpseeds_body_class( $classes ) {
 
 	global $post;
@@ -230,25 +245,12 @@ function wps_enqueue_style() {
 }
 add_action( 'wp_enqueue_scripts', 'wps_enqueue_style' );
 
-
-/**
- * Create Seeds Balance User Meta.
- *
- * @return void
- */
-function add_user_balance() {
-	$users = get_users( [ 'fields' => [ 'ID' ] ] );
-	return $new_url;
-}
-add_filter( 'cmb2_meta_box_url', 'wps_cmb2_meta_box_url' );
-
-
 /**
  *
  * Seeds Account Shortcode.
  *
  * @param array $atts The shortcode attrs.
- * @return void
+ * @return string The shortcode content.
  */
 function seeds_account_shortcode( $atts = array() ) {
 
@@ -264,16 +266,15 @@ function seeds_account_shortcode( $atts = array() ) {
 		?>
 
 		<div class="wpseeds-account wps-account">
-
 			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
 
-		<div class="wpseeds-account-content">
+			<div class="wpseeds-account-content">
 			
-			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
+				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
 
-			<?php echo wps_history_sc( array() ); ?>
+				<?php echo wps_history_sc( array() ); ?>
+			</div>
 		</div>
-	</div>
 
 		<?php
 	}
