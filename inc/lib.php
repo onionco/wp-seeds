@@ -82,8 +82,9 @@ function is_req_var( $name ) {
 
 /**
  * Get and unslash $_REQUEST variable.
- * The variable needs to exist, otherwise an exception will
- * thrown.
+ * You can specify a default value that should be returned if the request
+ * variable doesn't exist. If no default value is specified and the variable
+ * doesn't exist, an exception will be thrown.
  *
  * @param string $name The variable name.
  * @param string $default The default value.
