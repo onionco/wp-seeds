@@ -25,7 +25,6 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Include required classes and files.
- * x
  *
  * @since 1.0.0
  */
@@ -35,9 +34,6 @@ require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-wps-form-exception.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/wps-admin.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/wps-public.php';
-
-require_once plugin_dir_path( __FILE__ ) . '/inc/wps-frontend.php';
-
 
 /**
  * Handle plugin activation.
@@ -275,8 +271,7 @@ function seeds_account_shortcode( $atts = array() ) {
 			
 			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
 
-			<?php // wps_front_transactions_page(); ?>
-
+			<?php echo wps_history_sc( array() ); ?>
 		</div>
 	</div>
 
