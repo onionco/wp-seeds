@@ -70,31 +70,6 @@ function display_select_options( $options, $current = null ) {
 }
 
 /**
- * Display notices.
- *
- * @param array $notices The notices to display.
- *
- * @return void
- */
-function display_notices( $notices ) {
-	foreach ( $notices as $notice_class => $class_notices ) {
-		foreach ( $class_notices as $notice_text ) {
-			printf(
-				'<div class="notice notice-%s">',
-				esc_attr( $notice_class )
-			);
-
-			printf(
-				'<p><strong>%s</strong></p>',
-				esc_html( $notice_text )
-			);
-
-			echo '</div>';
-		}
-	}
-}
-
-/**
  * Is this a $_REQUEST variable?
  *
  * @param string $name The variable name.
@@ -111,13 +86,76 @@ function is_req_var( $name ) {
  * thrown.
  *
  * @param string $name The variable name.
+ * @param string $default The default value.
+ * @throws Exception If the variable doesn't exist, and no default value is provided.
  * @return string The string value for the variable.
- * @throws Exception If the variable doesn't exist.
  */
-function get_req_str( $name ) {
+function get_req_var( $name, $default = null ) {
 	if ( ! isset( $_REQUEST[ $name ] ) ) {
+		if ( null !== $default ) {
+			return $default;
+		}
+
 		throw new Exception( 'Expected request variable: ' . $name );
 	}
 
 	return sanitize_text_field( wp_unslash( $_REQUEST[ $name ] ) );
+}
+
+/**
+ * Process a form using the following scheme:
+ *
+ * - Check if the form is submitted, by checking if a request variable with
+ *   the name specified in the submit_var exists.
+ * - If the form is submitted, call the function specified by process_cb.
+ * - The the processing function runs successfully, the form is considered
+ *   to be successfuly submitted. Show success message and hide the form.
+ * - If the processing function throws an error, use the message from the
+ *   exception as error message. This exception can be a WPS_Form_Exception
+ *   in shich a css style is outputted to highlight the offending field.
+ *
+ * Options:
+ *
+ *   submit_var       - The variable to use to check for form submission.
+ *   success_message  - This message will be shown if the form could be
+ *                      successfully processed.
+ *   process_cb       - The function to call to process the form.
+ *   form_class       - Specify the class for the form. This is used to hide
+ *                      the form on successful submission.
+ *
+ * @param array $options The form options.
+ * @throws Exception If any options are missing.
+ * @return void
+ */
+function wps_process_form( $options ) {
+	if ( ! array_key_exists( 'success_message', $options ) ) {
+		$options['success_message'] = __( 'Form Processed.', 'wp-seeds' );
+	}
+
+	if ( ! array_key_exists( 'submit_var', $options ) ) {
+		$options['submit_var'] = 'submit';
+	}
+
+	if ( ! array_key_exists( 'process_cb', $options ) ) {
+		throw new Exception( 'Need a process_cb to process the form.' );
+	}
+
+	if ( is_req_var( $options['submit_var'] ) ) {
+		$vars = array();
+
+		if ( array_key_exists( 'form_class', $options ) ) {
+			$vars['form_css_selector'] = 'form.' . esc_html( $options['form_class'] );
+		} else {
+			$vars['form_css_selector'] = 'form';
+		}
+
+		try {
+			call_user_func( $options['process_cb'] );
+			$vars['success'] = $options['success_message'];
+		} catch ( Exception $e ) {
+			$vars['error'] = $e;
+		}
+
+		display_template( __DIR__ . '/../tpl/wps-admin-form-result.tpl.php', $vars );
+	}
 }

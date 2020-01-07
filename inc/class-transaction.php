@@ -17,7 +17,7 @@
  * @since 1.0.0
  */
 require_once plugin_dir_path( __FILE__ ) . '/../ext/wprecord/WpRecord.php';
-require_once plugin_dir_path( __FILE__ ) . '/../inc/class-cmb2-form-exception.php';
+require_once plugin_dir_path( __FILE__ ) . '/../inc/class-wps-form-exception.php';
 
 /**
  * Represents one transaction on the system.
@@ -51,7 +51,7 @@ class Transaction extends WpRecord {
 	 * Actually perform the transaction.
 	 *
 	 * @return void
-	 * @throws CMB2_Form_Exception If the transaction can't be performed due to a form error.
+	 * @throws WPS_Form_Exception If the transaction can't be performed due to a form error.
 	 * @throws Exception If the transaction can't be performed for an unknown reason.
 	 */
 	public function perform() {
@@ -62,22 +62,22 @@ class Transaction extends WpRecord {
 		$to_balance   = intval( get_user_meta( $this->receiver, 'wps_balance', true ) );
 
 		if ( $from_balance < $this->amount ) {
-			throw new CMB2_Form_Exception( 'Insufficient funds on account.', 'amount' );
+			throw new WPS_Form_Exception( 'Insufficient funds on account.', 'amount' );
 		}
 
 		$this->amount = intval( $this->amount );
 
 		if ( ! $this->sender ) {
-			throw new CMB2_Form_Exception( 'Please select sender.', 'sender' );
+			throw new WPS_Form_Exception( 'Please select sender.', 'sender' );
 		}
 		if ( ! $this->receiver ) {
-			throw new CMB2_Form_Exception( 'Please select receiver.', 'receiver' );
+			throw new WPS_Form_Exception( 'Please select receiver.', 'receiver' );
 		}
 		if ( $this->sender === $this->receiver ) {
-			throw new CMB2_Form_Exception( 'The accounts cannot be the same.', 'receiver' );
+			throw new WPS_Form_Exception( 'The accounts cannot be the same.', 'receiver' );
 		}
 		if ( $this->amount <= 0 ) {
-			throw new CMB2_Form_Exception( 'Amount cannot be zero or negative.', 'amount' );
+			throw new WPS_Form_Exception( 'Amount cannot be zero or negative.', 'amount' );
 		}
 		$this->transaction_id = self::generate_random_id();
 		$from_balance        -= $this->amount;

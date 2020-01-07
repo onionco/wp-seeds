@@ -26,13 +26,12 @@
  *
  * @since 1.0.0
  */
-require_once plugin_dir_path( __FILE__ ) . '/ext/cmb2/init.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-transaction.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-custom-list-table.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
-require_once plugin_dir_path( __FILE__ ) . '/inc/class-cmb2-custom-handler.php';
-require_once plugin_dir_path( __FILE__ ) . '/inc/class-cmb2-form-exception.php';
+require_once plugin_dir_path( __FILE__ ) . '/inc/class-wps-form-exception.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/wps-admin.php';
+require_once plugin_dir_path( __FILE__ ) . '/inc/wps-frontend.php';
 
 /**
  * Enqueue styles.
@@ -201,3 +200,15 @@ function send_seeds_form_shortcode( $atts = array() ) {
 
 }
 add_shortcode( 'seeds_send', 'send_seeds_form_shortcode' );
+
+/**
+ * Load admin styles.
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function wps_admin_style() {
+	wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . '/admin.css', null, '1.3', 'screen' );
+	wp_enqueue_style( 'cmb2-styles-css', plugin_dir_url( __FILE__ ) . '/ext/cmb2/css/cmb2.min.css', null, '5.3.2', 'screen' );
+}
+add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
