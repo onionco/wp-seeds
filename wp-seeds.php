@@ -213,8 +213,6 @@ function wpseeds_body_class( $classes ) {
 add_filter( 'body_class', 'wpseeds_body_class' );
 
 
-
-
 /**
  * Enqueue styles.
  *
@@ -239,8 +237,8 @@ add_action( 'wp_enqueue_scripts', 'wps_enqueue_style' );
 * @return void
 */
 function add_user_balance() {
-$users = get_users( [ 'fields' => [ 'ID' ] ] );
-return $new_url;
+	$users = get_users( [ 'fields' => [ 'ID' ] ] );
+	return $new_url;
 }
 add_filter( 'cmb2_meta_box_url', 'wps_cmb2_meta_box_url' );
 
@@ -252,8 +250,6 @@ add_filter( 'cmb2_meta_box_url', 'wps_cmb2_meta_box_url' );
 * @param array $atts The shortcode attrs.
 * @return void
 */
-
-
 function seeds_account_shortcode( $atts = array() ) {
 
 	if( !is_admin() ) {
@@ -265,17 +261,23 @@ function seeds_account_shortcode( $atts = array() ) {
 		if ( ! is_user_logged_in() ) {
 			return __( 'You do not have permissions to be here.', 'lang_domain' );
 		}
+		?>
 
-?>
-<div class="wpseeds-account wps-account">
-	<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
-	<div class="wpseeds-account-content">
-		<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
-<?php wps_front_transactions_page(); ?>
-</div>
-</div>
-<?php
-}
+		<div class="wpseeds-account wps-account">
+
+			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
+
+		<div class="wpseeds-account-content">
+			
+			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
+
+			<?php // wps_front_transactions_page(); ?>
+
+		</div>
+	</div>
+
+	<?php
+	}
 }
 add_shortcode( 'seeds-account', 'seeds_account_shortcode' );
 
@@ -286,24 +288,28 @@ add_shortcode( 'seeds-account', 'seeds_account_shortcode' );
  * @param array $atts The shortcode attributes.
  */
 function request_seeds_form_shortcode( $atts = array() ) {
-if( !is_admin() ) {
-	global $post;
+	if( !is_admin() ) {
+		global $post;
 
-/**
+		/**
 		 * Depending on your setup, check if the user has permissions to edit_posts
 		 */
 		if ( ! is_user_logged_in() ) {
 			return __( 'You do not have permissions to be here.', 'lang_domain' );
 		}
-// global $wp_query;
+
+		// global $wp_query;
 		// $query_vars = $wp_query->query_vars;
 		// var_dump($query_vars);
-?>
-		<div class="wpseeds-account wps-request">
-			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
-			<div class="wpseeds-account-content">
-				<?php
 
+		?>
+		<div class="wpseeds-account wps-request">
+
+			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
+
+			<div class="wpseeds-account-content">
+
+				<?php
 				display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' );
 
 				$vars    = array();
@@ -322,18 +328,18 @@ if( !is_admin() ) {
 						$vars['notice_error'] = __( 'Please provide an amount to request.', 'wp-seeds' );
 					}
 				}
-if ( $show_qr ) {
-	display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-code.tpl.php', $vars );
-} else {
-	display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-part.tpl.php', $vars );
-}
 
-?>
-</div>
-</div>
-<?php
-}
+				if ( $show_qr ) {
+					display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-code.tpl.php', $vars );
+				} else {
+					display_template( dirname( __FILE__ ) . '/tpl/wps-request-transaction-part.tpl.php', $vars );
+				}
 
+			?>
+			</div>
+		</div>
+	<?php
+	}
 }
 add_shortcode( 'seeds-request', 'request_seeds_form_shortcode' );
 
@@ -346,22 +352,27 @@ add_shortcode( 'seeds-request', 'request_seeds_form_shortcode' );
 */
 function send_seeds_form_shortcode( $atts = array() ) {
 
-   if( !is_admin() ) {
-/**
+   if( !is_admin() ) { 
+		/**
 		 * Depending on your setup, check if the user has permissions to edit_posts
 		 */
 		if ( ! is_user_logged_in() ) {
 			return __( 'You do not have permissions to be here.', 'lang_domain' );
 		}
-?>
+		?>
+
 		<div class="wpseeds-account wps-send">
-<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
-<div class="wpseeds-account-content">
-<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
-<?php display_template( dirname( __FILE__ ) . '/tpl/wps-send-transaction-part.tpl.php' ); ?>
-</div>
+
+			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
+
+			<div class="wpseeds-account-content">
+				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
+				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-send-transaction-part.tpl.php' ); ?>
+			</div>
+
 		</div>
-		<?php
-}
+	<?php
+	}
+
 }
 add_shortcode( 'seeds-send', 'send_seeds_form_shortcode' );
