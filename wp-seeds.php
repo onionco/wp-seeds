@@ -82,7 +82,7 @@ if ( ! is_admin() ) {
  */
 
 define( 'WPSEEDS_PLUGIN_FILE', __FILE__ );
-register_activation_hook( 'WPSEEDS_PLUGIN_FILE', 'create_account_page' );
+register_activation_hook( WPSEEDS_PLUGIN_FILE , 'create_account_page' );
 
 
 /**
@@ -99,7 +99,7 @@ function create_account_page() {
 	);
 
 	foreach ( $pages as $key => $page ) {
-		wps_create_page( esc_sql( $page['name'] ), 'wpseeds_' . $key . '_page_id', $page['title'], $page['content'], ! empty( $page['parent'] ) ? wc_get_page_id( $page['parent'] ) : '' );
+		wps_create_page( esc_sql( $page['name'] ), 'wpseeds_' . $key . '_page_id', $page['title'], $page['content'], ! empty( $page['parent'] ) ? $page['parent'] : '' );
 	}
 }
 
@@ -141,8 +141,6 @@ function wps_create_page( $slug, $option = '', $page_title = '', $page_content =
 		// Search for an existing page with the specified page slug.
 		$valid_page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type='page' AND post_status NOT IN ( 'pending', 'trash', 'future', 'auto-draft' )  AND post_name = %s LIMIT 1;", $slug ) );
 	}
-
-	$valid_page_found = apply_filters( 'woocommerce_create_page_id', $valid_page_found, $slug, $page_content );
 
 	if ( $valid_page_found ) {
 		if ( $option ) {
@@ -268,10 +266,19 @@ function seeds_account_shortcode( $atts = array() ) {
 			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
 
 			<div class="wpseeds-account-content">
+<<<<<<< Updated upstream
 				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
 			
 				<?php wps_history_sc( array() ); ?>
 			</div>
+=======
+				
+				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
+				
+				<?php echo wps_history_sc( array() ); ?>
+			</div>
+			
+>>>>>>> Stashed changes
 		</div>
 
 		<?php

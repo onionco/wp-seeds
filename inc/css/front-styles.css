@@ -2,7 +2,11 @@
 
 /* Global */
 article#wps-account .entry-header h1 {
+<<<<<<< Updated upstream
 	text-align: center;
+=======
+    text-align: center;
+>>>>>>> Stashed changes
 }
 
 /* WPSeeds Icons */
@@ -46,6 +50,7 @@ article#wps-account .entry-header h1 {
 
 
 body.wpseeds .entry-content .wpseeds-account {
+<<<<<<< Updated upstream
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
@@ -61,11 +66,24 @@ body.wpseeds .entry-content .wpseeds-account {
 body.wpseeds h1.entry-title {
 	font-size: 2em;
 	text-align: center;
+=======
+    display: flex;
+    flex-flow: row nowrap;
+    max-width: 1300px !important;
+    width: 95% !important;
+    margin: 0 auto;
+}
+
+body.wpseeds h1.entry-title {
+    font-size: 2em;
+    text-align: center;
+>>>>>>> Stashed changes
 }
 
 
 /* Account Navigation */
 .seeds-account-navigation {
+<<<<<<< Updated upstream
 	-webkit-box-flex: 0;
 	-ms-flex: 0 0 180px;
 	flex: 0 0 180px;
@@ -103,10 +121,39 @@ body.wpseeds h1.entry-title {
 
 .seeds-account-navigation li.seeds-account-link.active {
 	-webkit-transform: translateX(1px);
+=======
+    flex: 0 0 180px;
+    position: relative;
+    z-index: 4;
+    margin: 30px 0 0;
+}
+
+.seeds-account-navigation ul {
+    list-style: none;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-evenly;
+    align-content: stretch;
+    margin: 0 auto;
+    text-align: center;
+    margin-left: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.seeds-account-navigation li.seeds-account-link {
+    display: block;
+    width: 100%;
+    border: 0 none;
+    margin: 0 0 8px;
+}
+
+.seeds-account-navigation li.seeds-account-link.active {
+>>>>>>> Stashed changes
 	transform: translateX(1px);
 }
 
 .seeds-account-navigation li.seeds-account-link a {
+<<<<<<< Updated upstream
 	display: block;
 	width: 100%;
 	padding: 5px 10px;
@@ -142,6 +189,40 @@ li.seeds-account-link.active a {
 .wpseeds-account-content h2 {
 	font-weight: 400;
 	font-size: 1.8em;
+=======
+    display: block;
+    width: 100%;
+    padding: 5px 10px;
+    text-decoration: none;
+    text-align: center;
+    color: #00a906;
+    background-color: #f0fdf9;
+    border: 1px solid #00a906;
+    border-right: 0 none;
+    border-radius: 10px 0 0 10px / 50px;
+    overflow: hidden;
+    transition: .5s ease-in-out 0s;
+}
+
+li.seeds-account-link.active a {
+    background-color: #f8feff;
+}
+
+.wpseeds-account-content {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 100%;
+    border: 1px solid #00a906;
+    margin: 1px 0 0 0;
+    padding: 0 6% 60px;
+    border-radius: 4px;
+    background-color: #f8feff;
+}
+
+.wpseeds-account-content h2 {
+    font-weight: 400;
+    font-size: 1.8em;
+>>>>>>> Stashed changes
 }
 
 
