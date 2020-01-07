@@ -1,0 +1,53 @@
+/******************************** WPSeeds Admin Stylesheet ********************************/
+
+/* WPSeeds Icons */
+@font-face {
+	font-family: 'icomoon';
+	src: url('fonts/icomoon.eot?2so5eq');
+	src: url('fonts/icomoon.eot?2so5eq#iefix') format('embedded-opentype'),
+		url('fonts/icomoon.ttf?2so5eq') format('truetype'),
+		url('fonts/icomoon.woff?2so5eq') format('woff'),
+		url('fonts/icomoon.svg?2so5eq#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+	font-display: block;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+	/* use !important to prevent issues with browser extensions that change fonts */
+	font-family: 'icomoon' !important;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-Seeds-Icon:before {
+	content: "\e900";
+	color: #5eaf00;
+}
+
+.icon-fire:before {
+	content: "\e9a9";
+}
+/* end */
+
+
+.wrap.cmb2-options-page.option-wps_new_transaction h2:before {
+    content: "\e900";
+    color: #5eaf00;
+    font-family: 'icomoon' !important;
+    padding-right: 10px;
+}
+
+span.cmb2-metabox-description {
+	display: block;
+	padding-top: 0.5em;
+}
+
