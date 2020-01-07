@@ -270,7 +270,7 @@ function seeds_account_shortcode( $atts = array() ) {
 			<div class="wpseeds-account-content">
 				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
 			
-				<?php echo wps_history_sc( array() ); ?>
+				<?php wps_history_sc( array() ); ?>
 			</div>
 		</div>
 
