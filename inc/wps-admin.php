@@ -48,7 +48,7 @@ function wps_transactions_page() {
 		display_template(
 			__DIR__ . '/../tpl/wps-transaction-detail.tpl.php',
 			array(
-				'transaction' => Transaction::findOne( get_req_str( 'transaction_detail' ) ),
+				'transaction' => Transaction::findOne( get_req_var( 'transaction_detail' ) ),
 				'user_display_by_id' => wps_user_display_by_id(),
 			)
 		);
@@ -103,20 +103,20 @@ function wps_transactions_page() {
 	);
 
 	if ( is_req_var( 'orderby' ) ) {
-		$order = esc_sql( get_req_str( 'orderby' ) ) . ' ' . esc_sql( get_req_str( 'order' ) );
+		$order = esc_sql( get_req_var( 'orderby' ) ) . ' ' . esc_sql( get_req_var( 'order' ) );
 	} else {
 		$order = 'timestamp desc';
 	}
 
-	if ( is_req_var( 'account' ) && get_req_str( 'account' ) ) {
+	if ( is_req_var( 'account' ) && get_req_var( 'account' ) ) {
 		$transactions = Transaction::findAllByQuery(
 			'SELECT   * ' .
 			'FROM     :table ' .
 			'WHERE    sender=%s ' .
 			'OR       receiver=%s ' .
 			'ORDER BY ' . $order,
-			get_req_str( 'account' ),
-			get_req_str( 'account' )
+			get_req_var( 'account' ),
+			get_req_var( 'account' )
 		);
 	} else {
 		$transactions = Transaction::findAllByQuery(
@@ -145,92 +145,20 @@ function wps_transactions_page() {
 }
 
 /**
- * Handle burning of seeds.
- *
- * @return void
- * @throws CMB2_Form_Exception If there is an error.
- */
-function wps_burn_seeds_save() {
-	$user = get_user_by( 'id', get_req_str( 'sender' ) );
-	if ( ! $user ) {
-		throw new CMB2_Form_Exception( 'Please select a user to send the burned seeds.', 'sender' );
-	}
-
-	$amount = intval( get_req_str( 'amount' ) );
-	if ( $amount <= 0 ) {
-		throw new CMB2_Form_Exception( 'Amount needs to be greater than zero', 'amount' );
-	}
-
-	$balance = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
-	if ( $amount > $balance ) {
-		throw new CMB2_Form_Exception( 'Not enough seeds on that account', 'amount' );
-	}
-
-	$balance -= $amount;
-	update_user_meta( $user->ID, 'wps_balance', $balance );
-}
-
-/**
- * Form for burning seeds.
- *
- * @return void
- */
-function wps_burn_seeds_form() {
-	$cmb = new_cmb2_box(
-		array(
-			'id'           => 'wps_burn_seeds_form',
-			'title'        => esc_html__( 'Burn Seeds', 'wp-seeds' ),
-			'object_types' => array( 'options-page' ),
-			'option_key'   => 'wps_burn_seeds',
-			'parent_slug'  => 'admin.php',
-			'save_button'  => esc_html__( 'Burn Seeds', 'wp-seeds' ),
-			'save_cb'      => 'wps_burn_seeds_save',
-			'save_message' => esc_html__( 'Seeds Burned', 'wp-seeds' ),
-		)
-	);
-
-	CMB2_Custom_Handler::hookup( $cmb );
-
-	$cmb->add_field(
-		array(
-			'name'             => esc_html__( 'Sender', 'wp-seeds' ),
-			'description'      => esc_html__( 'Where should the seeds be taken from?', 'wp-seeds' ),
-			'id'               => 'sender',
-			'type'             => 'select',
-			'show_option_none' => __( 'Please select', 'wp-seeds' ),
-			'options'          => wps_user_display_by_id(),
-		)
-	);
-
-	$cmb->add_field(
-		array(
-			'name'    => esc_html__( 'Amount', 'wp-seeds' ),
-			'desc'    => esc_html__( 'How many seeds should be burned?', 'wp-seeds' ),
-			'id'      => 'amount',
-			'type'    => 'text_money',
-			'attributes' => array(
-				'autocomplete' => 'off',
-			),
-		)
-	);
-}
-add_action( 'cmb2_admin_init', 'wps_burn_seeds_form' );
-
-/**
  * Handle creation of new seeds.
  *
  * @return void
- * @throws CMB2_Form_Exception If there is an error.
+ * @throws WPS_Form_Exception If there is an error.
  */
 function wps_create_seeds_save() {
-	$user = get_user_by( 'id', get_req_str( 'receiver' ) );
+	$user = get_user_by( 'id', get_req_var( 'receiver' ) );
 	if ( ! $user ) {
-		throw new CMB2_Form_Exception( 'Please select a user to receive the created seeds.', 'receiver' );
+		throw new WPS_Form_Exception( 'Please select a user to receive the created seeds.', 'receiver' );
 	}
 
-	$amount = intval( get_req_str( 'amount' ) );
+	$amount = intval( get_req_var( 'amount' ) );
 	if ( $amount <= 0 ) {
-		throw new CMB2_Form_Exception( 'Amount needs to be greater than zero', 'amount' );
+		throw new WPS_Form_Exception( 'Amount needs to be greater than zero', 'amount' );
 	}
 
 	$balance = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
@@ -239,59 +167,68 @@ function wps_create_seeds_save() {
 }
 
 /**
- * Form for creating seeds.
+ * Handle burning of seeds.
  *
  * @return void
+ * @throws WPS_Form_Exception If there is an error.
  */
-function wps_create_seeds_form() {
-	$cmb = new_cmb2_box(
-		array(
-			'id'           => 'wps_create_seeds',
-			'title'        => esc_html__( 'Create Seeds', 'wp-seeds' ),
-			'object_types' => array( 'options-page' ),
-			'option_key'   => 'wps_create_seeds',
-			'parent_slug'  => 'admin.php',
-			'save_button'  => esc_html__( 'Create Seeds', 'wp-seeds' ),
-			'save_cb'      => 'wps_create_seeds_save',
-			'save_message' => esc_html__( 'Seeds Created', 'wp-seeds' ),
-		)
-	);
+function wps_burn_seeds_save() {
+	$user = get_user_by( 'id', get_req_var( 'sender' ) );
+	if ( ! $user ) {
+		throw new WPS_Form_Exception( 'Please select a user where the seeds should be taken from.', 'sender' );
+	}
 
-	CMB2_Custom_Handler::hookup( $cmb );
+	$amount = intval( get_req_var( 'amount' ) );
+	if ( $amount <= 0 ) {
+		throw new WPS_Form_Exception( 'Amount needs to be greater than zero', 'amount' );
+	}
 
-	$cmb->add_field(
-		array(
-			'name'             => esc_html__( 'Receiver', 'wp-seeds' ),
-			'description'      => esc_html__( 'Who will send the new seeds?', 'wp-seeds' ),
-			'id'               => 'receiver',
-			'type'             => 'select',
-			'show_option_none' => __( 'Please select', 'wp-seeds' ),
-			'options'          => wps_user_display_by_id(),
-		)
-	);
+	$balance = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
+	if ( $amount > $balance ) {
+		throw new WPS_Form_Exception( 'Not enough seeds on that account', 'amount' );
+	}
 
-	$cmb->add_field(
-		array(
-			'name'    => esc_html__( 'Amount', 'wp-seeds' ),
-			'desc'    => esc_html__( 'How many seeds should be created?', 'wp-seeds' ),
-			'id'      => 'amount',
-			'type'    => 'text_money',
-			'attributes' => array(
-				'autocomplete' => 'off',
-			),
-		)
-	);
+	$balance -= $amount;
+	update_user_meta( $user->ID, 'wps_balance', $balance );
 }
-add_action( 'cmb2_admin_init', 'wps_create_seeds_form' );
+
+/**
+ * Settings.
+ */
+function wps_settings_page() {
+	wps_process_form(
+		array(
+			'submit_var' => 'submit-create',
+			'process_cb' => 'wps_create_seeds_save',
+			'success_message' => __( 'Seeds Created.', 'wp-seeds' ),
+		)
+	);
+
+	wps_process_form(
+		array(
+			'submit_var' => 'submit-burn',
+			'process_cb' => 'wps_burn_seeds_save',
+			'success_message' => __( 'Seeds Burned.', 'wp-seeds' ),
+		)
+	);
+
+	$vars = array(
+		'user_display_by_id' => wps_user_display_by_id(),
+		'url' => admin_url( 'admin.php?page=wps_settings' ),
+		'tab' => get_req_var( 'tab', 'about' ),
+	);
+
+	display_template( __DIR__ . '/../tpl/wps-admin-settings.tpl.php', $vars );
+}
 
 /**
  * Save the transaction.
  */
 function wps_new_transaction_save() {
 	$t = new Transaction();
-	$t->sender    = get_req_str( 'sender' );
-	$t->receiver  = get_req_str( 'receiver' );
-	$t->amount    = get_req_str( 'amount' );
+	$t->sender    = get_req_var( 'sender' );
+	$t->receiver  = get_req_var( 'receiver' );
+	$t->amount    = get_req_var( 'amount' );
 	$t->timestamp = time();
 	$t->perform();
 }
@@ -301,57 +238,20 @@ function wps_new_transaction_save() {
  *
  * @return void
  */
-function wps_new_transaction_form() {
-	$cmb = new_cmb2_box(
+function wps_new_transaction_page() {
+	wps_process_form(
 		array(
-			'id'           => 'wps_new_transaction',
-			'title'        => esc_html__( 'Create Transaction', 'wp-seeds' ),
-			'object_types' => array( 'options-page', 'post' ),
-			'option_key'   => 'wps_new_transaction',
-			'parent_slug'  => 'admin.php',
-			'save_button'  => esc_html__( 'Create Transaction', 'wp-seeds' ),
-			'save_cb'      => 'wps_new_transaction_save',
-			'save_message' => esc_html__( 'Transaction Created', 'wp-seeds' ),
+			'process_cb' => 'wps_new_transaction_save',
+			'success_message' => __( 'Transaction Created.', 'wp-seeds' ),
 		)
 	);
 
-	CMB2_Custom_Handler::hookup( $cmb );
-
-	$cmb->add_field(
-		array(
-			'name'             => esc_html__( 'Sender', 'wp-seeds' ),
-			'description'      => esc_html__( 'Who will send the seeds?', 'wp-seeds' ),
-			'id'               => 'sender',
-			'type'             => 'select',
-			'show_option_none' => __( 'Please select', 'wp-seeds' ),
-			'options'          => wps_user_display_by_id(),
-		)
+	$vars = array(
+		'user_display_by_id' => wps_user_display_by_id(),
 	);
 
-	$cmb->add_field(
-		array(
-			'name'             => esc_html__( 'Receiver', 'wp-seeds' ),
-			'description'      => esc_html__( 'Who will send the seeds?', 'wp-seeds' ),
-			'id'               => 'receiver',
-			'type'             => 'select',
-			'show_option_none' => __( 'Please select', 'wp-seeds' ),
-			'options'          => wps_user_display_by_id(),
-		)
-	);
-
-	$cmb->add_field(
-		array(
-			'name'    => esc_html__( 'Amount', 'wp-seeds' ),
-			'desc'    => esc_html__( 'What is the amount for the transaction?', 'wp-seeds' ),
-			'id'      => 'amount',
-			'type'    => 'text_money',
-			'attributes' => array(
-				'autocomplete' => 'off',
-			),
-		)
-	);
+	display_template( __DIR__ . '/../tpl/wps-admin-new-transaction.tpl.php', $vars );
 }
-add_action( 'cmb2_init', 'wps_new_transaction_form' );
 
 /**
  * Show info on the user profile page.
@@ -437,23 +337,15 @@ function wps_admin_menu() {
 		'New Transaction',
 		'manage_options',
 		'wps_new_transaction',
-		'__no_func'
+		'wps_new_transaction_page'
 	);
 	add_submenu_page(
 		'wps_transactions',
-		'Create Seeds',
-		'Create Seeds',
+		'Settings',
+		'Settings',
 		'manage_options',
-		'wps_create_seeds',
-		'__no_func'
-	);
-	add_submenu_page(
-		'wps_transactions',
-		'Burn Seeds',
-		'Burn Seeds',
-		'manage_options',
-		'wps_burn_seeds',
-		'__no_func'
+		'wps_settings',
+		'wps_settings_page'
 	);
 }
 add_action( 'admin_menu', 'wps_admin_menu' );
