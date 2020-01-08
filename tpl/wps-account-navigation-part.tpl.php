@@ -36,38 +36,14 @@ $request = 'request';
 
 <nav class="seeds-account-navigation">
 	<ul>
-		<li class="seeds-account-link 
-		<?php
-		if ( 1 == $active ) {
-			echo 'active';}
-		?>
-		">
-			<a href="<?php echo esc_attr( get_site_url() . '/' . $account . '/' ); ?>"
-					title="Seeds Account">
-				Seeds Account
-			</a>
+		<li class="seeds-account-link <?php if ( 1 == $active ) { echo 'active';} ?>">
+			<a href="<?php echo esc_attr( get_site_url() . '/' . $account . '/' ); ?>" title="Seeds Account">Seeds <span>Account</span></a>
 		</li>
-		<li class="seeds-account-link 
-		<?php
-		if ( 2 == $active ) {
-			echo 'active';}
-		?>
-		">
-			<a href="<?php echo esc_attr( get_site_url() . '/' . $account . '/' . $send . '/' ); ?>"
-					title="Send Seeds">
-				Send Seeds
-			</a>
+		<li class="seeds-account-link <?php if ( 2 == $active ) {echo 'active';} ?>">
+			<a href="<?php echo esc_attr( get_site_url() . '/' . $account . '/' . $send . '/' ); ?>" title="Send Seeds">Send <span>Seeds</span></a>
 		</li>
-		<li class="seeds-account-link 
-		<?php
-		if ( 3 == $active ) {
-			echo 'active';}
-		?>
-		">
-			<a href="<?php echo esc_attr( get_site_url() . '/' . $account . '/' . $request . '/' ); ?>"
-					title="Send Seeds">
-				Request Seeds
-			</a>
+		<li class="seeds-account-link <?php if ( 3 == $active ) {echo 'active';} ?>">
+			<a href="<?php echo esc_attr( get_site_url() . '/' . $account . '/' . $request . '/' ); ?>" title="Send Seeds">Request <span>Seeds</span></a>
 		</li>
 	</ul>
 </nav>

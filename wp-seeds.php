@@ -266,19 +266,12 @@ function seeds_account_shortcode( $atts = array() ) {
 			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
 
 			<div class="wpseeds-account-content">
-<<<<<<< Updated upstream
-				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
-			
-				<?php wps_history_sc( array() ); ?>
-			</div>
-=======
 				
 				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
 				
 				<?php echo wps_history_sc( array() ); ?>
 			</div>
 			
->>>>>>> Stashed changes
 		</div>
 
 		<?php
@@ -318,13 +311,16 @@ function request_seeds_form_shortcode( $atts = array() ) {
 
 				if ( isset( $_REQUEST['do_request'] ) ) {
 					if ( ! empty( $_REQUEST['amount'] ) ) {
-						$to_user                = (int) get_current_user_id();
-						$amount                 = (int) $_REQUEST['amount'];
-						$home                   = get_site_url();
-						$vars['notice_success'] = __( 'Your QR has been created successfully. Please ask the sender to scan this QR code to transfer seeds to you.', 'wp-seeds' );
-						$vars['qr_code_url']    = sprintf( '%3$s/send-seeds?to_user=2&amount=1', $to_user, $amount, $home );
-						$show_qr                = true;
-
+						$to_user                	= (int) get_current_user_id();
+						$amount                 	= (int) $_REQUEST['amount'];
+						$home                   	= get_site_url();
+						$vars['notice_success_1'] 	= __( 'Your QR Code has been created successfully.', 'wp-seeds' );
+						$vars['notice_success_2'] 	= __( 'Please ask the sender to scan this QR code to transfer seeds to you.', 'wp-seeds' );
+						$vars['reader_prompt']		= __( 'Android users if you do not have a QR reader you may', 'wp-seeds' );
+						$vars['reader_link']		= 'https://play.google.com/store/apps/details?id=com.apple.qrcode.reader&hl=en';
+						$vars['qr_code_url']    	= sprintf( '%3$s/send-seeds?to_user=2&amount=1', $to_user, $amount, $home );
+						$show_qr                	= true;
+						
 					} else {
 						$vars['notice_error'] = __( 'Please provide an amount to request.', 'wp-seeds' );
 					}
