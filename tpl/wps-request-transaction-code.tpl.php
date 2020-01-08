@@ -35,7 +35,7 @@
 <?php if ( isset( $reader_prompt ) && isset( $reader_link ) ) : ?>
 	<div class="notice qr-reader is-dismissible">
 		<p><?php echo esc_html( $reader_prompt ); ?>
-			<a href="<?php echo esc_html( $reader_link ); ?>" title="Download QR Reader"><?php echo __('Download Here.'); ?></a>
+			<a href="<?php echo esc_html( $reader_link ); ?>" title="Download QR Reader"><?php echo esc_html_e( 'Download Here.', 'wp-seeds' ); ?></a>
 		</p>
 	</div>
 <?php endif; ?>

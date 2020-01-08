@@ -11,14 +11,14 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$current_user_id = get_current_user_id();
-$current_user = wp_get_current_user();
-$user_display_name = $current_user->data->display_name;
-$user_email = $current_user->user_email;
+$curr_user_id = get_current_user_id();
+$curr_user = wp_get_current_user();
+$curr_display_name = $curr_user->data->display_name;
+$curr_email = $curr_user->user_email;
 
 $users = array();
 foreach ( get_users() as $wpuser ) {
-	if( $wpuser->ID == $current_user_id ) {
+	if ( $wpuser->ID == $curr_user_id ) {
 		continue;
 	}
 	$other_users_by_id[ $wpuser->ID ] = $wpuser->data->user_nicename . ' (' . $wpuser->data->user_email . ')';
@@ -34,7 +34,7 @@ foreach ( get_users() as $wpuser ) {
 			<div class='row'>
 				<label for="sender">Sender</label>
 				<div class='field sender'>
-					<input type='text' value='<?php echo $user_display_name . ' (' . $user_email . ')'; ?>' disabled>
+					<input type='text' value='<?php echo esc_attr( $curr_display_name . ' (' . $curr_email . ')' ); ?>' disabled>
 				</div>
 			</div>
 			<div class='row'>

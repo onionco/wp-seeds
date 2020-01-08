@@ -29,7 +29,7 @@ $user_balance = $user_meta['wps_balance'][0];
 	<h2>Welcome <?php echo esc_html( $user_first . ' ' . $user_last ); ?></h2>
 
 	<div class="seeds-balance">
-		<p><?php echo __('Your Current Balance is', 'wp-seeds' ); ?></p>
+		<p><?php echo esc_html_e( 'Your Current Balance is', 'wp-seeds' ); ?></p>
 		<p class="CurrSeeds">
 			<?php echo esc_html( "{$user_balance} Seed" . ( 1 == $user_balance ? '' : 's' ) ); ?>
 		</p>
