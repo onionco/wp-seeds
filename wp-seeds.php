@@ -82,7 +82,7 @@ if ( ! is_admin() ) {
  */
 
 define( 'WPSEEDS_PLUGIN_FILE', __FILE__ );
-register_activation_hook( 'WPSEEDS_PLUGIN_FILE', 'create_account_page' );
+register_activation_hook( WPSEEDS_PLUGIN_FILE , 'create_account_page' );
 
 
 /**
@@ -99,7 +99,7 @@ function create_account_page() {
 	);
 
 	foreach ( $pages as $key => $page ) {
-		wps_create_page( esc_sql( $page['name'] ), 'wpseeds_' . $key . '_page_id', $page['title'], $page['content'], ! empty( $page['parent'] ) ? wc_get_page_id( $page['parent'] ) : '' );
+		wps_create_page( esc_sql( $page['name'] ), 'wpseeds_' . $key . '_page_id', $page['title'], $page['content'], ! empty( $page['parent'] ) ? $page['parent'] : '' );
 	}
 }
 
@@ -141,8 +141,6 @@ function wps_create_page( $slug, $option = '', $page_title = '', $page_content =
 		// Search for an existing page with the specified page slug.
 		$valid_page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type='page' AND post_status NOT IN ( 'pending', 'trash', 'future', 'auto-draft' )  AND post_name = %s LIMIT 1;", $slug ) );
 	}
-
-	$valid_page_found = apply_filters( 'woocommerce_create_page_id', $valid_page_found, $slug, $page_content );
 
 	if ( $valid_page_found ) {
 		if ( $option ) {
@@ -268,10 +266,12 @@ function seeds_account_shortcode( $atts = array() ) {
 			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
 
 			<div class="wpseeds-account-content">
+				
 				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
-			
-				<?php wps_history_sc( array() ); ?>
+				
+				<?php echo wps_history_sc( array() ); ?>
 			</div>
+			
 		</div>
 
 		<?php
@@ -311,13 +311,16 @@ function request_seeds_form_shortcode( $atts = array() ) {
 
 				if ( isset( $_REQUEST['do_request'] ) ) {
 					if ( ! empty( $_REQUEST['amount'] ) ) {
-						$to_user                = (int) get_current_user_id();
-						$amount                 = (int) $_REQUEST['amount'];
-						$home                   = get_site_url();
-						$vars['notice_success'] = __( 'Your QR has been created successfully. Please ask the sender to scan this QR code to transfer seeds to you.', 'wp-seeds' );
-						$vars['qr_code_url']    = sprintf( '%3$s/send-seeds?to_user=2&amount=1', $to_user, $amount, $home );
-						$show_qr                = true;
-
+						$to_user                	= (int) get_current_user_id();
+						$amount                 	= (int) $_REQUEST['amount'];
+						$home                   	= get_site_url();
+						$vars['notice_success_1'] 	= __( 'Your QR Code has been created successfully.', 'wp-seeds' );
+						$vars['notice_success_2'] 	= __( 'Please ask the sender to scan this QR code to transfer seeds to you.', 'wp-seeds' );
+						$vars['reader_prompt']		= __( 'Android users if you do not have a QR reader you may', 'wp-seeds' );
+						$vars['reader_link']		= 'https://play.google.com/store/apps/details?id=com.apple.qrcode.reader&hl=en';
+						$vars['qr_code_url']    	= sprintf( '%3$s/send-seeds?to_user=2&amount=1', $to_user, $amount, $home );
+						$show_qr                	= true;
+						
 					} else {
 						$vars['notice_error'] = __( 'Please provide an amount to request.', 'wp-seeds' );
 					}

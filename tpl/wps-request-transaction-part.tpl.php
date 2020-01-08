@@ -13,8 +13,6 @@
 
 <div class="wrap wps-request-form">
 
-	<h3>Request Transaction</h3>
-
 	<?php if ( isset( $notice_success ) ) : ?>
 		<div class="notice notice-success is-dismissible">
 			<p><?php echo esc_html( $notice_success ); ?></p>
@@ -27,21 +25,26 @@
 		</div>
 	<?php endif; ?>
 
-	<form method="post" class="form-table" action="<?php echo esc_attr( $action ); ?>">
-		<table>
-			<tr>
-				<th scope="row">
-					<label>Amount</label>
-				</th>
-				<td>
-					<input type="number" class="regular-text" name="amount" value="<?php echo esc_attr( $amount ); ?>"/>
-					<p class="description">How many seeds do you want to request?</p>
-				</td>
-			</tr>
-		</table>
-		<p class="submit">
-			<input name="do_request" type="submit" class="button button-primary" value="Request transaction"/>
-		</p>
-	</form>
+	<div class="wrap wps-front-form">
+		<h2><?php esc_html_e( 'Request Seeds', 'wp-seeds' ); ?></h2>
+		<form method="post">
+			<div class='wps-request-form'>
+				<div class='row'>
+					<label for="sender">Amount</label>
+					<div class='field amount'>
+						<input type="number"
+								name="amount"
+								value="<?php echo esc_attr( $amount ); ?>"
+								class='small-text'
+								autocomplete='off'/>
+						<span class="description">
+							<?php esc_html_e( 'How many seeds do you want to request?', 'wp-seeds' ); ?>
+						</span>
+					</div>
+				</div>
+			</div>
+		<input name="do_request" type="submit" class="button button-primary" value="Request transaction"/>
+		</form>
+	</div>
 
 </div>

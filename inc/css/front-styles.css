@@ -1,5 +1,10 @@
 /******************************** WPSeeds Frontend Stylesheet ********************************/
 
+/* Global */
+article#wps-account .entry-header h1 {
+	text-align: center;
+}
+
 /* WPSeeds Icons */
 @font-face {
 	font-family: 'icomoon';
@@ -40,6 +45,116 @@
 /* end */
 
 
+body.wpseeds .entry-content .wpseeds-account {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	-ms-flex-flow: row nowrap;
+	flex-flow: row nowrap;
+	max-width: 1300px !important;
+	width: 95% !important;
+	margin: 0 auto;
+}
+
+body.wpseeds h1.entry-title {
+	font-size: 2em;
+	text-align: center;
+}
+
+
+/* Account Navigation */
+.seeds-account-navigation {
+	-webkit-box-flex: 0;
+	-ms-flex: 0 0 180px;
+	flex: 0 0 180px;
+	position: relative;
+	z-index: 4;
+	margin: 30px 0 0;
+}
+
+.seeds-account-navigation ul {
+	list-style: none;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-ms-flex-flow: column nowrap;
+	flex-flow: column nowrap;
+	-webkit-box-pack: space-evenly;
+	-ms-flex-pack: space-evenly;
+	justify-content: space-evenly;
+	-ms-flex-line-pack: stretch;
+	align-content: stretch;
+	margin: 0 auto;
+	text-align: center;
+	margin-left: 0;
+	border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.seeds-account-navigation li.seeds-account-link {
+	display: block;
+	width: 100%;
+	border: 0 none;
+	margin: 0 0 8px;
+}
+
+.seeds-account-navigation li.seeds-account-link.active {
+	-webkit-transform: translateX(1px);
+	transform: translateX(1px);
+}
+
+.seeds-account-navigation li.seeds-account-link a {
+	display: block;
+	width: 100%;
+	padding: 6px 10px;
+	text-decoration: none;
+	text-align: center;
+	color: #537b54;
+	background-color: #fbfeff;
+	border: 1px solid #8ab2b3;
+	border-right: 0 none;
+	border-radius: 10px 0 0 10px / 50px;
+	overflow: hidden;
+	-webkit-transition: .5s ease-in-out 0s;
+	transition: .5s ease-in-out 0s;
+}
+
+.seeds-account-navigation li.seeds-account-link.active a {
+	background-color: #f8feff;
+	border-color: #538081;
+	color: #326033;
+	font-size: 1.05em;
+}
+
+.seeds-account-navigation li.seeds-account-link:not(.active) a:hover {
+	color: #326033;
+	border-color: #326033;
+}
+
+.wpseeds-account-content {
+	position: relative;
+	z-index: 1;
+	-webkit-box-flex: 1;
+	-ms-flex: 1 1 100%;
+	flex: 1 1 100%;
+	border: 1px solid #87a189;
+	margin: 1px 0 0 0;
+	padding: 40px 6% 60px;
+	border-radius: 4px;
+	background-color: #f8feff;
+}
+
+.entry-content .wpseeds-account-content h2 {
+	font-weight: 400;
+	font-size: 1.8em;
+	color: #538081;
+	margin: 0 auto 30px;
+}
+
+
 /* Seeds Balance */
 .seeds {
 	text-align: center;
@@ -48,16 +163,17 @@
 .seeds-balance {
 	max-width: 300px;
 	margin: 0 auto 30px;
-	padding: 15px 10px;
-	border: 2px solid rgba(0, 0, 0, 0.5);
+	padding: 12px;
+	background-color: #fbffff;
+	border: 1px solid #87a189;
 	border-radius: 10px;
-	background-color: rgba(255, 255, 255, 0.5);
 	font-size: 1.2em;
 	text-align: center;
 }
 
 .entry-content .seeds-balance p {
 	margin: 0 auto 10px;
+	color: #538081;
 }
 
 .entry-content .seeds-balance p.CurrSeeds {
@@ -65,14 +181,11 @@
 	font-size: 1.2em;
 	line-height: 1.2;
 	font-weight: 600;
+	color: #326133;
 }
-<<<<<<< Updated upstream
-.seeds .CurrSeeds:before, .seeds .CurrSeeds:after {
-=======
 
 .seeds .CurrSeeds:before,
 .seeds .CurrSeeds:after {
->>>>>>> Stashed changes
 	content: "\e900";
 	color: #5ba900;
 	font-family: 'icomoon' !important;
@@ -81,11 +194,108 @@
 	text-shadow: 0.5px 1px 0px #2d5400;
 }
 
-/* Send Seeds */
-form#wps_new_transaction .cmb-th {
-	width: 80px;
+
+/* Seeds Forms */
+.wps-front-form {
+	max-width: 500px;
+	margin: 40px auto;
+	padding: 20px 0 0;
+	background-color: #fbffff;
+	border: 1px solid #87a189;
+	border-radius: 10px;
+	-webkit-box-shadow: 0 6px 15px -5px rgba(173, 187, 187, 0.4);
+	box-shadow: 0 6px 15px -5px rgba(173, 187, 187, 0.4);
+	overflow: hidden;
 }
 
+.entry-content .wps-front-form h2 {
+	margin: 0 auto 25px;
+	font-size: 1.5em;
+	text-align: center;
+	color: #538082;
+}
+
+.wps-front-form .row {
+	margin: 0 auto 20px;
+	text-align: center;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-ms-flex-flow: column nowrap;
+	flex-flow: column nowrap;
+	-ms-flex-line-pack: center;
+	align-content: center;
+}
+
+.wps-front-form .row label {
+	font-size: 1em;
+	color: #405f40;
+}
+
+.wps-front-form input[type="text"],
+.wps-front-form select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	text-align: center;
+	padding: 7px;
+	margin: 0 auto;
+	width: 100%;
+	max-width: 400px;
+	border-radius: 0;
+	background-color: #ffffff;
+	background: #fff url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2…%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23555%22%2F%3E%3C%2Fsvg%3E) no-repeat right 5px top 55%;
+	border: 1px solid #87a189;
+	outline: none;
+	font-size: 1em;
+}
+
+.wps-front-form .sender input[type="text"] {
+	background: #f6faf8;
+	border-color: #b7c7b8;
+}
+
+.wps-front-form .amount.field input {
+	max-width: 100px;
+	margin: 0 auto;
+	padding: 6px 8px;
+	background-color: #FFF;
+	border: 1px solid #87a189;
+	font-size: 1em;
+	outline: none;
+}
+
+.wps-front-form .amount.field input:focus {
+	border-color: #1e3c1f;
+}
+
+.wps-front-form span.description {
+	display: block;
+	margin: 5px auto 0;
+	color: grey;
+}
+
+input.button.button-primary {
+	margin: 20px auto 0;
+	display: block;
+	width: 100%;
+	background-color: #538083;
+	padding: 10px 20px;
+	font-size: 1.1em;
+	font-weight: 500;
+	-webkit-transition: .5s ease-in-out 0s;
+	transition: .5s ease-in-out 0s;
+}
+
+input.button.button-primary:hover {
+	background-color: #7ca7a9;
+	text-decoration: none;
+}
+
+
+/* Send Seeds */
 form#wps_new_transaction select {
 	font-size: 14px;
 	line-height: 2;
@@ -106,12 +316,8 @@ form#wps_new_transaction select {
 	vertical-align: middle;
 }
 
-
 form#wps_new_transaction input#amount {
-<<<<<<< Updated upstream
-=======
 	-webkit-box-shadow: 0 0 0 transparent;
->>>>>>> Stashed changes
 	box-shadow: 0 0 0 transparent;
 	border-radius: 4px;
 	border: 1px solid #7e8993;
@@ -120,17 +326,122 @@ form#wps_new_transaction input#amount {
 	display: inline-block;
 }
 
-form#wps_new_transaction .cmb-td {
-	float: none;
-}
-
-form#wps_new_transaction span.cmb2-metabox-description {
-	display: block;
-	font-family: serif;
-	padding-top: .5em;
-}
 
 /* Receive Seeds */
+.qr-wrap.wps-front-form {
+	padding: 30px 20px;
+}
+
+.entry-content .qr-wrap.qr-success.wps-front-form h2 {
+	margin: 0 auto 15px;
+}
+
+.qr-wrap.wps-front-form p {
+	margin: 0 auto;
+	font-size: 1.2em;
+	text-align: center;
+	color: #3f6d6f;
+}
+
+#qrcode {
+	margin: 40px auto;
+	display: block;
+}
+
 .qr-wrap img {
 	margin: 0 auto;
+}
+
+.notice.notice-end p {
+	font-size: 1.3em;
+}
+
+.notice.qr-reader p {
+	margin: 0 auto;
+	font-size: 1.2em;
+	text-align: center;
+}
+
+
+/******************************** Responsive ********************************/
+@media screen and (max-width: 840px) {
+	body.wpseeds .entry-content .wpseeds-account {
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+		-ms-flex-flow: column nowrap;
+		flex-flow: column nowrap;
+	}
+
+	nav.seeds-account-navigation {
+		-webkit-box-flex: 1;
+		-ms-flex: 1 1 auto;
+		flex: 1 1 auto;
+		width: 98%;
+		margin: 0 auto;
+	}
+
+	.seeds-account-navigation ul {
+		border: none;
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+		-ms-flex-flow: row nowrap;
+		flex-flow: row nowrap;
+		-webkit-box-pack: justify;
+		-ms-flex-pack: justify;
+		justify-content: space-between;
+		-ms-flex-line-pack: stretch;
+		align-content: stretch;
+		-webkit-box-align: end;
+		-ms-flex-align: end;
+		align-items: flex-end;
+	}
+
+	.seeds-account-navigation li.seeds-account-link {
+		-webkit-box-flex: 0;
+		-ms-flex: 0 1 32%;
+		flex: 0 1 32%;
+		margin: 0 auto;
+	}
+
+	.seeds-account-navigation li.seeds-account-link.active {
+		-webkit-transform: translateY(1px);
+		transform: translateY(1px);
+	}
+
+	.seeds-account-navigation li.seeds-account-link a {
+		height: 100%;
+		padding: 5px 5px 4px;
+		line-height: 1.3;
+		border: 1px solid #8ab2b3;
+		border-radius: 10px 10px 0 0;
+		border-bottom: 0 none;
+	}
+
+	.seeds-account-navigation li.seeds-account-link.active a {
+		padding: 6px 5px 4px;
+	}
+
+	.wpseeds-account-content {
+		margin: 0;
+	}
+}
+
+@media screen and (max-width: 400px) {
+	.seeds-account-navigation li.seeds-account-link a {
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+		-ms-flex-flow: column;
+		flex-flow: column;
+		-webkit-box-pack: center;
+		-ms-flex-pack: center;
+		justify-content: center;
+		-webkit-box-align: center;
+		-ms-flex-align: center;
+		align-items: center;
+		line-height: 1.2;
+		padding: 4px 3px 3px;
+	}
 }
