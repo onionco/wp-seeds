@@ -11,7 +11,6 @@
  * @license   GPL v2 or later
  */
 
-register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
 register_activation_hook( __FILE__, 'flush_rewrite_rules' );
 
 add_filter(
@@ -26,31 +25,16 @@ add_filter(
 	}
 );
 
-/**
- * Register request seeds query vars.
- *
- * @param array $vars The query vars.
- * @return $vars.
- */
 add_filter(
 	'query_vars',
 	function( $query_vars ) {
 		$query_vars[] = 'wpsaccount';
 		$query_vars[] = 'wpssend';
 		$query_vars[] = 'wpsrequest';
-
-		$vars[] = 'to_user';
-		$vars[] = 'amount';
 		return $query_vars;
 	}
 );
 
-/**
- * Template redirect for account pages.
- *
- * @param array $seeds_account, $send_seeds, $request_seeds, $wps_id, $wps_post, $wps_content
- * @return void.
- */
 add_action(
 	'template_redirect',
 	function() {
@@ -60,6 +44,7 @@ add_action(
 
 		$wps_id = get_option( 'wpseeds_wpsaccount_page_id' );
 		$wps_post = get_post( $wps_id );
+		$wps_content = $wps_post->post_content;
 
 		if ( $seeds_account || $send_seeds || $request_seeds ) {
 
@@ -116,3 +101,17 @@ function wps_history_sc( $args ) {
 	display_template( __DIR__ . '/../tpl/wps-history.tpl.php', $vars );
 }
 add_shortcode( 'seeds-history', 'wps_history_sc' );
+
+
+/**
+ * Register request seeds query vars.
+ *
+ * @param array $vars The query vars.
+ * @return $vars.
+ */
+function wps_add_query_vars_filter( $vars ) {
+	$vars[] = 'to_user';
+	$vars[] = 'amount';
+	return $vars;
+}
+add_filter( 'query_vars', 'wps_add_query_vars_filter' );
