@@ -11,6 +11,10 @@
 
 ?>
 
+<?php
+$amount = 1;
+?>
+
 <div class="wrap wps-request-form">
 
 	<?php if ( isset( $notice_success ) ) : ?>
@@ -30,7 +34,7 @@
 		<form method="post">
 			<div class='wps-request-form'>
 				<div class='row'>
-					<label for="sender">Amount</label>
+					<label for="sender"><?php esc_html_e( 'Amount', 'wp-seeds' ); ?></label>
 					<div class='field amount'>
 						<input type="number"
 								name="amount"
@@ -38,12 +42,12 @@
 								class='small-text'
 								autocomplete='off'/>
 						<span class="description">
-							<?php esc_html_e( 'How many seeds do you want to request?', 'wp-seeds' ); ?>
+							<?php esc_html_e( 'How many seeds?', 'wp-seeds' ); ?>
 						</span>
 					</div>
 				</div>
 			</div>
-		<input name="do_request" type="submit" class="button button-primary" value="Request transaction"/>
+		<input name="do_request" type="submit" class="button button-primary" value="<?php esc_html_e( 'Request transaction', 'wp-seeds' ); ?>"/>
 		</form>
 	</div>
 
