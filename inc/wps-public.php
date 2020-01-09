@@ -11,6 +11,7 @@
  * @license   GPL v2 or later
  */
 
+register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
 register_activation_hook( __FILE__, 'flush_rewrite_rules' );
 
 add_filter(
@@ -25,16 +26,31 @@ add_filter(
 	}
 );
 
+/**
+ * Register request seeds query vars.
+ *
+ * @param array $vars The query vars.
+ * @return $vars.
+ */
 add_filter(
 	'query_vars',
 	function( $query_vars ) {
 		$query_vars[] = 'wpsaccount';
 		$query_vars[] = 'wpssend';
 		$query_vars[] = 'wpsrequest';
+
+		$vars[] = 'to_user';
+		$vars[] = 'amount';
 		return $query_vars;
 	}
 );
 
+/**
+ * Template redirect for account pages.
+ *
+ * @param array $seeds_account, $send_seeds, $request_seeds, $wps_id, $wps_post, $wps_content
+ * @return void.
+ */
 add_action(
 	'template_redirect',
 	function() {
@@ -44,7 +60,6 @@ add_action(
 
 		$wps_id = get_option( 'wpseeds_wpsaccount_page_id' );
 		$wps_post = get_post( $wps_id );
-		$wps_content = $wps_post->post_content;
 
 		if ( $seeds_account || $send_seeds || $request_seeds ) {
 
@@ -87,12 +102,12 @@ function wps_history_sc( $args ) {
 			// If we are the sender, show amount as negative, and the
 			// receiver in the to/from field...
 			$view['amount'] = -$transaction->amount;
-			$view['user'] = $user_display_by_id[ $transaction->receiver ];
+			$view['user'] = 'To: ' . $user_display_by_id[ $transaction->receiver ];
 		} else {
 			// ...otherwise, we are the receiver, so show the amount as
 			// positive and the sender in the to/from field.
 			$view['amount'] = $transaction->amount;
-			$view['user'] = $user_display_by_id[ $transaction->sender ];
+			$view['user'] = 'From: ' . $user_display_by_id[ $transaction->sender ];
 		}
 
 		$vars['transactions'][] = $view;

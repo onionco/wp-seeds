@@ -58,15 +58,15 @@ register_deactivation_hook( __FILE__, 'wps_deactivate' );
 
 
 /**
- * Load admin styles.
+ * Load styles.
  *
  * @since 1.0.0
  * @return void
  */
-function wps_admin_style() {
+function wps_enqueue_styles() {
 	wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . '/admin.css', null, '1.3', 'screen' );
 }
-add_action( 'admin_enqueue_scripts', 'wps_admin_style' );
+add_action( 'admin_enqueue_scripts', 'wps_enqueue_styles' );
 
 
 if ( is_admin() ) {

@@ -2,7 +2,7 @@
 /**
  * WP Seeds 🌱
  *
- * Custom functionality for transactions overview page.
+ * Custom functionality for send seeds page.
  *
  * @package   wp-seeds/tpl
  * @link      https://github.com/limikael/wp-seeds
