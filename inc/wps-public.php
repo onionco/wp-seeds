@@ -11,15 +11,12 @@
  * @license   GPL v2 or later
  */
 
-<<<<<<< Updated upstream
-=======
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Flush permalinks
  */
 register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
->>>>>>> Stashed changes
 register_activation_hook( __FILE__, 'flush_rewrite_rules' );
 
 /**
@@ -37,15 +34,12 @@ add_filter(
 	}
 );
 
-<<<<<<< Updated upstream
-=======
 /**
  * Register request seeds query vars.
  *
  * @param array $vars The query vars.
  * @return $query_vars.
  */
->>>>>>> Stashed changes
 add_filter(
 	'query_vars',
 	function( $query_vars ) {
