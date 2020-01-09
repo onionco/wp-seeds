@@ -37,7 +37,19 @@ if ( $req_user && $req_amount ) {
 
 <div class="wrap wps-front-form">
 	<h2><?php esc_html_e( 'Send Seeds', 'wp-seeds' ); ?></h2>
-	<form method="post">
+	<?php
+		echo wp_kses(
+			$send_form_result,
+			array(
+				'div' => array(
+					'class' => array(),
+				),
+				'p' => array(),
+				'style' => array(),
+			)
+		);
+		?>
+	<form method="post" class='wps-send-seeds-form'>
 		<div class='wps-send-form'>
 			<div class='row'>
 				<label for="sender">Sender</label>
@@ -81,7 +93,10 @@ if ( $req_user && $req_amount ) {
 				</div>
 			</div>
 		</div>
-		<input type="submit" value="<?php esc_attr_e( 'Send Seeds' ); ?>" name="submit" class='button button-primary'/>
+		<input type="submit" 
+			value="<?php esc_attr_e( 'Send Seeds' ); ?>"
+			name="submit-send-seeds"
+			class='button button-primary'/>
 	</form>
 </div>
 

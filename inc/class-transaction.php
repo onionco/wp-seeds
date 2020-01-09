@@ -65,6 +65,7 @@ class Transaction extends WpRecord {
 			throw new WPS_Form_Exception( 'Insufficient funds on account.', 'amount' );
 		}
 
+		$this->timestamp = time();
 		$this->amount = intval( $this->amount );
 
 		if ( ! $this->sender ) {

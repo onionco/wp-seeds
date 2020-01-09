@@ -340,6 +340,18 @@ function request_seeds_form_shortcode( $atts = array() ) {
 }
 add_shortcode( 'seeds-request', 'request_seeds_form_shortcode' );
 
+/**
+ * Handle the sending of seeds in the frontend.
+ *
+ * @return void
+ */
+function wps_send_seeds_form_process() {
+	$t = new Transaction();
+	$t->sender    = get_current_user_id();
+	$t->receiver  = get_req_var( 'receiver' );
+	$t->amount    = get_req_var( 'amount' );
+	$t->perform();
+}
 
 /**
  * Send Seeds Shortcode
@@ -348,7 +360,6 @@ add_shortcode( 'seeds-request', 'request_seeds_form_shortcode' );
  * @return string
  */
 function send_seeds_form_shortcode( $atts = array() ) {
-
 	if ( ! is_admin() ) {
 		/**
 		 * Depending on your setup, check if the user has permissions to edit_posts
@@ -356,15 +367,33 @@ function send_seeds_form_shortcode( $atts = array() ) {
 		if ( ! is_user_logged_in() ) {
 			return __( 'You do not have permissions to be here.', 'lang_domain' );
 		}
-		?>
 
+		$send_form_result = wps_process_form(
+			array(
+				'submit_var' => 'submit-send-seeds',
+				'form_class' => 'wps-send-seeds-form',
+				'process_cb' => 'wps_send_seeds_form_process',
+				'success_message' => __( 'The seeds have been sent.', 'wp-seeds' ),
+				'return_output' => true,
+			)
+		);
+
+		?>
 		<div class="wpseeds-account wps-send">
 
 			<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-navigation-part.tpl.php' ); ?>
 
 			<div class="wpseeds-account-content">
 				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-account-balance-part.tpl.php' ); ?>
-				<?php display_template( dirname( __FILE__ ) . '/tpl/wps-send-transaction-part.tpl.php' ); ?>
+				<?php
+					$vars = array(
+						'send_form_result' => $send_form_result,
+					);
+					display_template(
+						dirname( __FILE__ ) . '/tpl/wps-send-transaction-part.tpl.php',
+						$vars
+					);
+				?>
 			</div>
 
 		</div>

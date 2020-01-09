@@ -467,3 +467,26 @@ form#wps_new_transaction input#amount {
 		padding: 4px 3px 3px;
 	}
 }
+
+.wps-front-form .notice {
+	border: 1px solid;
+	margin: 1em;
+	border-radius: 10px;
+}
+
+.wps-front-form .notice p {
+	text-align: center;
+	font-weight: bold;
+}
+
+.wps-front-form .notice-error {
+	border-color: #800;
+	color: #800;
+	background-color: #f88;
+}
+
+.wps-front-form .notice-success {
+	border-color: #080;
+	color: #080;
+	background-color: #8f8;
+}
