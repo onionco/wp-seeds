@@ -9,9 +9,7 @@
  * @license   GPL v2 or later
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Display a template by making all data in the $vars

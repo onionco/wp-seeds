@@ -1,4 +1,13 @@
-/******************************** WPSeeds Frontend Stylesheet ********************************/
+/**
+ * WP Seeds 🌱
+ *
+ * @package   wp-seeds/inc/css
+ * @link      https://github.com/onionco/wp-seeds
+ * @author    Mikael Lindqvist, Niels Lange & Derek Smith
+ * @copyright 2020 Mikael Lindqvist, Niels Lange & Derek Smith
+ * @license   GPL v2 or later
+*/
+
 
 /* Global */
 article#wps-account .entry-header h1 {

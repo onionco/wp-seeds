@@ -5,9 +5,9 @@
  * Custom functionality for transactions overview page.
  *
  * @package   wp-seeds/inc
- * @link      https://github.com/limikael/wp-seeds
- * @author    Mikael Lindqvist & Niels Lange
- * @copyright 2019 Mikael Lindqvist & Niels Lange
+ * @link      https://github.com/onionco/wp-seeds
+ * @author    Mikael Lindqvist, Niels Lange & Derek Smith
+ * @copyright 2020 Mikael Lindqvist, Niels Lange & Derek Smith
  * @license   GPL v2 or later
  */
 
@@ -17,6 +17,9 @@
  *
  * @return array All users on the site.
  */
+
+defined( 'ABSPATH' ) || exit;
+
 function wps_user_display_by_id() {
 	$users = array();
 

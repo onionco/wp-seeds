@@ -5,14 +5,26 @@
  * Custom functionality for transactions overview page.
  *
  * @package   wp-seeds/inc
- * @link      https://github.com/limikael/wp-seeds
- * @author    Mikael Lindqvist & Niels Lange
- * @copyright 2019 Mikael Lindqvist & Niels Lange
+ * @link      https://github.com/onionco/wp-seeds
+ * @author    Mikael Lindqvist, Niels Lange & Derek Smith
+ * @copyright 2020 Mikael Lindqvist, Niels Lange & Derek Smith
  * @license   GPL v2 or later
  */
 
+<<<<<<< Updated upstream
+=======
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Flush permalinks
+ */
+register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
+>>>>>>> Stashed changes
 register_activation_hook( __FILE__, 'flush_rewrite_rules' );
 
+/**
+ * Rewrite rules
+ */
 add_filter(
 	'generate_rewrite_rules',
 	function ( $wp_rewrite ) {
@@ -25,6 +37,15 @@ add_filter(
 	}
 );
 
+<<<<<<< Updated upstream
+=======
+/**
+ * Register request seeds query vars.
+ *
+ * @param array $vars The query vars.
+ * @return $query_vars.
+ */
+>>>>>>> Stashed changes
 add_filter(
 	'query_vars',
 	function( $query_vars ) {
