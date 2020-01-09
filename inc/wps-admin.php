@@ -219,7 +219,6 @@ function wps_new_transaction_save() {
 	$t->sender    = get_req_var( 'sender' );
 	$t->receiver  = get_req_var( 'receiver' );
 	$t->amount    = get_req_var( 'amount' );
-	$t->timestamp = time();
 	$t->perform();
 }
 

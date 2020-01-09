@@ -123,10 +123,12 @@ function get_req_var( $name, $default = null ) {
  *   process_cb       - The function to call to process the form.
  *   form_class       - Specify the class for the form. This is used to hide
  *                      the form on successful submission.
+ *   return_output    - If true, output of the function will be returned.
+ *                      Otherwise, it will be outputted to the browser.
  *
  * @param array $options The form options.
  * @throws Exception If any options are missing.
- * @return void
+ * @return string The output of the processing if return_output is specified, otherwise void.
  */
 function wps_process_form( $options ) {
 	if ( ! array_key_exists( 'success_message', $options ) ) {
@@ -157,6 +159,10 @@ function wps_process_form( $options ) {
 			$vars['error'] = $e;
 		}
 
-		display_template( __DIR__ . '/../tpl/wps-admin-form-result.tpl.php', $vars );
+		if ( array_key_exists( 'return_output', $options ) && $options['return_output'] ) {
+			return render_template( __DIR__ . '/../tpl/wps-admin-form-result.tpl.php', $vars );
+		} else {
+			display_template( __DIR__ . '/../tpl/wps-admin-form-result.tpl.php', $vars );
+		}
 	}
 }
