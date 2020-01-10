@@ -54,7 +54,12 @@ add_filter(
 	}
 );
 
-
+/**
+ * Template redirect for account pages.
+ *
+ * @param array $seeds_account, $send_seeds, $request_seeds, $wps_id, $wps_post.
+ * @return void.
+ */
 add_action(
 	'template_redirect',
 	function() {
@@ -64,7 +69,6 @@ add_action(
 
 		$wps_id = get_option( 'wpseeds_wpsaccount_page_id' );
 		$wps_post = get_post( $wps_id );
-		$wps_content = $wps_post->post_content;
 
 		if ( $seeds_account || $send_seeds || $request_seeds ) {
 
