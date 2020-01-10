@@ -104,15 +104,19 @@ body.wpseeds h1.entry-title {
 }
 
 .seeds-account-navigation li.seeds-account-link {
-	display: block;
-	width: 100%;
-	border: 0 none;
-	margin: 0 0 8px;
+    display: block;
+    width: 100%;
+    border: 0 none;
+    margin: 0 0 10px auto;
 }
 
 .seeds-account-navigation li.seeds-account-link.active {
 	-webkit-transform: translateX(1px);
 	transform: translateX(1px);
+}
+
+.seeds-account-navigation li.seeds-account-link:not(.active) {
+    width: 170px;
 }
 
 .seeds-account-navigation li.seeds-account-link a {
@@ -484,14 +488,31 @@ form#wps_new_transaction input#amount {
 }
 
 .wps-front-form .notice {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-ms-flex-flow: column nowrap;
+	flex-flow: column nowrap;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	text-align: center;
 	border: 1px solid;
 	margin: 1em;
-	border-radius: 10px;
+	border-radius: 7px;
+	padding: 5px;
+	font-size: 1.1em;
 }
 
 .wps-front-form .notice p {
 	text-align: center;
 	font-weight: bold;
+	margin: 0;
 }
 
 .wps-front-form .notice-error {
@@ -501,7 +522,7 @@ form#wps_new_transaction input#amount {
 }
 
 .wps-front-form .notice-success {
-	border-color: #080;
-	color: #080;
-	background-color: #8f8;
+	border-color: #87a189;
+	color: #326033;
+	background-color: #aff1af;
 }

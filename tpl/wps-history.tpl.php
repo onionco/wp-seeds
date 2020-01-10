@@ -18,6 +18,7 @@ defined( 'ABSPATH' ) || exit;
 	<table class="wps-history-table">
 		<thead>
 			<tr>
+				<th><?php echo esc_html_e( 'Time of Transaction', 'wp-seeds' ); ?></th>
 				<th><?php echo esc_html_e( 'Transaction ID', 'wp-seeds' ); ?></th>
 				<th><?php echo esc_html_e( 'To / From', 'wp-seeds' ); ?></th>
 				<th class="amount"><?php echo esc_html_e( 'Seeds', 'wp-seeds' ); ?></th>
@@ -27,6 +28,9 @@ defined( 'ABSPATH' ) || exit;
 		<tbody>
 			<?php foreach ( $transactions as $transaction ) { ?>
 				<tr>
+					<td>
+						<?php echo esc_html( $transaction['timestamp'] ); ?>
+					</td>
 					<td>
 						<?php echo esc_html( $transaction['id'] ); ?>
 					</td>

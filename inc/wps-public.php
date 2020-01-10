@@ -46,9 +46,14 @@ add_filter(
 		$query_vars[] = 'wpsaccount';
 		$query_vars[] = 'wpssend';
 		$query_vars[] = 'wpsrequest';
+
+		$vars[] = 'to_user';
+		$vars[] = 'amount';
+
 		return $query_vars;
 	}
 );
+
 
 add_action(
 	'template_redirect',
@@ -96,18 +101,19 @@ function wps_history_sc( $args ) {
 	);
 	foreach ( $transactions as $transaction ) {
 		$view = array();
+		$view['timestamp'] = date( 'Y-m-d H:m:s', $transaction->timestamp );
 		$view['id'] = $transaction->transaction_id;
 
 		if ( $user->ID == $transaction->sender ) {
 			// If we are the sender, show amount as negative, and the
 			// receiver in the to/from field...
 			$view['amount'] = -$transaction->amount;
-			$view['user'] = 'To: ' . $user_display_by_id[ $transaction->receiver ];
+			$view['user'] = __('To: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->receiver ];
 		} else {
 			// ...otherwise, we are the receiver, so show the amount as
 			// positive and the sender in the to/from field.
 			$view['amount'] = $transaction->amount;
-			$view['user'] = 'From: ' . $user_display_by_id[ $transaction->sender ];
+			$view['user'] = __('From: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->sender ];
 		}
 
 		$vars['transactions'][] = $view;
@@ -116,17 +122,3 @@ function wps_history_sc( $args ) {
 	display_template( __DIR__ . '/../tpl/wps-history.tpl.php', $vars );
 }
 add_shortcode( 'seeds-history', 'wps_history_sc' );
-
-
-/**
- * Register request seeds query vars.
- *
- * @param array $vars The query vars.
- * @return $vars.
- */
-function wps_add_query_vars_filter( $vars ) {
-	$vars[] = 'to_user';
-	$vars[] = 'amount';
-	return $vars;
-}
-add_filter( 'query_vars', 'wps_add_query_vars_filter' );
