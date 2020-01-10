@@ -21,7 +21,9 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 	<?php endif; ?>
 
-	<div id="qrcode"></div>
+	<!-- <a href="<?php echo esc_attr( $qr_code_url ); ?>"> -->
+		<div id="qrcode"></div>
+	<!-- </a> -->
 	<script type="text/javascript">
 		new QRCode(document.getElementById("qrcode"),<?php echo wp_json_encode( $qr_code_url ); ?>); 
 	</script>

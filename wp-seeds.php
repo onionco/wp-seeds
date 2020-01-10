@@ -318,7 +318,12 @@ function request_seeds_form_shortcode( $atts = array() ) {
 						$vars['notice_success_2']   = __( 'Please ask the sender to scan this QR code to transfer seeds to you.', 'wp-seeds' );
 						$vars['reader_prompt']      = __( 'Android users if you do not have a QR reader you may', 'wp-seeds' );
 						$vars['reader_link']        = 'https://play.google.com/store/apps/details?id=com.apple.qrcode.reader&hl=en';
-						$vars['qr_code_url']        = sprintf( '%3$s/send-seeds?to_user=2&amount=1', $to_user, $amount, $home );
+						$vars['qr_code_url']        = sprintf(
+							'%s/seeds-account/send?receiver=%s&amount=%s',
+							$home,
+							$to_user,
+							$amount
+						);
 						$show_qr                    = true;
 
 					} else {
