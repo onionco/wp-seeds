@@ -19,6 +19,7 @@ defined( 'ABSPATH' ) || exit;
 register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
 register_activation_hook( __FILE__, 'flush_rewrite_rules' );
 
+
 /**
  * Rewrite rules
  */
@@ -26,13 +27,13 @@ add_filter(
 	'generate_rewrite_rules',
 	function ( $wp_rewrite ) {
 		$wp_rewrite->rules = array_merge(
-			[ 'seeds-account/?$' => 'index.php?wpsaccount=1' ],
 			[ 'seeds-account/send/?$' => 'index.php?wpssend=1' ],
 			[ 'seeds-account/request/?$' => 'index.php?wpsrequest=1' ],
 			$wp_rewrite->rules
 		);
 	}
 );
+
 
 /**
  * Register request seeds query vars.
@@ -54,30 +55,109 @@ add_filter(
 	}
 );
 
+
 /**
- * Template redirect for account pages.
- *
- * @param array $seeds_account, $send_seeds, $request_seeds, $wps_id, $wps_post.
- * @return void.
+ * Add /virtual/ endpoint permalink
+ * Must be appended to an existing URL structure
+ * You would replace this with your rewrite rule code.
  */
 add_action(
-	'template_redirect',
-	function() {
-		$seeds_account = intval( get_query_var( 'wpsaccount' ) );
-		$send_seeds = intval( get_query_var( 'wpssend' ) );
-		$request_seeds = intval( get_query_var( 'wpsrequest' ) );
-
-		$wps_id = get_option( 'wpseeds_wpsaccount_page_id' );
-		$wps_post = get_post( $wps_id );
-
-		if ( $seeds_account || $send_seeds || $request_seeds ) {
-
-			include( __DIR__ . '/wps-account/seeds-account.php' );
-
-			exit();
-		}
+	'init',
+	function () {
+		add_rewrite_endpoint( 'wpssend', EP_PERMALINK | EP_PAGES );
+		add_rewrite_endpoint( 'wpsrequest', EP_PERMALINK | EP_PAGES );
 	}
 );
+
+
+/**
+ * Create virtual page, prevent 404 and customize page title, etc.
+ */
+add_filter(
+	'the_posts',
+	function ( array $posts, \WP_Query $query ) {
+
+		if ( ! isset( $query->query_vars['wpssend'] ) && ! isset( $query->query_vars['wpsrequest'] ) ) {
+			return $posts;
+		}
+
+		if ( isset( $query->query_vars['wpssend'] ) ) {
+
+			$title = 'Send Seeds';
+			$content = '[seeds-send]';
+		}
+
+		if ( isset( $query->query_vars['wpsrequest'] ) ) {
+
+			$title = 'Request Seeds';
+			$content = '[seeds-request]';
+		}
+
+		$post = [
+			'ID'             => -100,
+			'post_title'     => $title,
+			'post_name'      => sanitize_title( $title ),
+			'post_content'   => $content,
+			'post_excerpt'   => '',
+			'post_parent'    => 0,
+			'menu_order'     => 0,
+			'post_type'      => 'page',
+			'is-singular'      => true,
+			'post_status'    => 'publish',
+			'comment_status' => 'closed',
+			'ping_status'    => 'closed',
+			'comment_count'  => 0,
+			'post_password'  => '',
+			'to_ping'        => '',
+			'pinged'         => '',
+			'guid'           => home_url( $query->getUrl() ),
+			'post_date'      => current_time( 'mysql' ),
+			'post_date_gmt'  => current_time( 'mysql', 1 ),
+			'post_author'    => 0,
+			'is_virtual'     => true,
+			'filter'         => 'raw',
+		];
+
+		return [
+			new \WP_Post( (object) $post ),
+		];
+
+	},
+	10,
+	2
+);
+
+
+/**
+ * Set virtual page variables.
+ *
+ * @param array $wp The post variables.
+ * @return void.
+ */
+function wps_account_pages_query( $wp ) {
+
+	if ( is_admin() || ! $wp->is_main_query() ) {
+		return;
+	}
+
+	if ( $wp->is_main_query() ) {
+		if ( get_query_var( 'wpssend' ) || get_query_var( 'wpsrequest' ) ) {
+			/* Set page variables. */
+			$wp->query_vars['post_type'] = 'page';
+			$wp->query_vars['is_single'] = false;
+			$wp->query_vars['is_singular'] = true;
+			$wp->query_vars['is_archive'] = false;
+
+			/* forces the page template. */
+			$wp->is_single = false;
+			$wp->is_singular = true;
+			$wp->is_archive = false;
+			$wp->is_post_type_archive = false;
+		}
+	}
+}
+add_action( 'pre_get_posts', 'wps_account_pages_query', 0, 2 );
+
 
 /**
  * Show transaction history for the current user.
@@ -112,12 +192,12 @@ function wps_history_sc( $args ) {
 			// If we are the sender, show amount as negative, and the
 			// receiver in the to/from field...
 			$view['amount'] = -$transaction->amount;
-			$view['user'] = __('To: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->receiver ];
+			$view['user'] = __( 'To: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->receiver ];
 		} else {
 			// ...otherwise, we are the receiver, so show the amount as
 			// positive and the sender in the to/from field.
 			$view['amount'] = $transaction->amount;
-			$view['user'] = __('From: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->sender ];
+			$view['user'] = __( 'From: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->sender ];
 		}
 
 		$vars['transactions'][] = $view;

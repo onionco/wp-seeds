@@ -35,7 +35,7 @@ if ( $req_user && $req_amount ) {
 }
 ?>
 
-<div class="wrap wps-front-form">
+<div class="wps-front-form">
 	<h2><?php esc_html_e( 'Send Seeds', 'wp-seeds' ); ?></h2>
 	<?php
 		echo wp_kses(

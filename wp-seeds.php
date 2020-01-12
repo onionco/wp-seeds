@@ -195,7 +195,14 @@ if ( ! function_exists( 'is_wpsaccount_page' ) ) {
 	 * @return bool
 	 */
 	function is_wpseeds_page() {
-		$seeds_account = intval( get_query_var( 'wpsaccount' ) );
+		global $post;
+		if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'seeds-account' ) ) {
+			$seeds_account = true;
+			set_query_var( 'wpsaccount', true );
+		} else {
+			$seeds_account = '';
+		}
+		// $seeds_account = intval( get_query_var( 'wpsaccount' ) );
 		$send_seeds = intval( get_query_var( 'wpssend' ) );
 		$request_seeds = intval( get_query_var( 'wpsrequest' ) );
 

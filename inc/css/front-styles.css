@@ -104,10 +104,10 @@ body.wpseeds h1.entry-title {
 }
 
 .seeds-account-navigation li.seeds-account-link {
-    display: block;
-    width: 100%;
-    border: 0 none;
-    margin: 0 0 10px auto;
+	display: block;
+	width: 100%;
+	border: 0 none;
+	margin: 0 0 10px auto;
 }
 
 .seeds-account-navigation li.seeds-account-link.active {
@@ -116,7 +116,7 @@ body.wpseeds h1.entry-title {
 }
 
 .seeds-account-navigation li.seeds-account-link:not(.active) {
-    width: 170px;
+	width: 170px;
 }
 
 .seeds-account-navigation li.seeds-account-link a {
@@ -334,7 +334,53 @@ input.button.button-primary:hover {
 }
 
 
+/* Notices */
+.wps-front-form .notice {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-ms-flex-flow: column nowrap;
+	flex-flow: column nowrap;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	text-align: center;
+	border: 1px solid;
+	margin: 1em;
+	border-radius: 7px;
+	padding: 5px;
+	font-size: 1.1em;
+}
+
+.wps-front-form .notice p {
+	text-align: center;
+	font-weight: bold;
+	margin: 0;
+}
+
+.wps-front-form .notice-error {
+	border-color: #800;
+	color: #800;
+	background-color: #f88;
+}
+
+.wps-front-form .notice-success {
+	border-color: #87a189;
+	color: #326033;
+	background-color: #aff1af;
+}
+
+
 /* Send Seeds */
+.wps-send-form {
+	padding: 0 10px;
+}
+
 form#wps_new_transaction select {
 	font-size: 14px;
 	line-height: 2;
@@ -366,7 +412,11 @@ form#wps_new_transaction input#amount {
 }
 
 
-/* Receive Seeds */
+/* Request Seeds */
+.wps-request-form {
+	padding: 0 10px;
+}
+
 .qr-wrap.wps-front-form {
 	padding: 30px 20px;
 }
@@ -485,44 +535,4 @@ form#wps_new_transaction input#amount {
 		line-height: 1.2;
 		padding: 4px 3px 3px;
 	}
-}
-
-.wps-front-form .notice {
-	display: -webkit-box;
-	display: -ms-flexbox;
-	display: flex;
-	-webkit-box-orient: vertical;
-	-webkit-box-direction: normal;
-	-ms-flex-flow: column nowrap;
-	flex-flow: column nowrap;
-	-webkit-box-pack: center;
-	-ms-flex-pack: center;
-	justify-content: center;
-	-webkit-box-align: center;
-	-ms-flex-align: center;
-	align-items: center;
-	text-align: center;
-	border: 1px solid;
-	margin: 1em;
-	border-radius: 7px;
-	padding: 5px;
-	font-size: 1.1em;
-}
-
-.wps-front-form .notice p {
-	text-align: center;
-	font-weight: bold;
-	margin: 0;
-}
-
-.wps-front-form .notice-error {
-	border-color: #800;
-	color: #800;
-	background-color: #f88;
-}
-
-.wps-front-form .notice-success {
-	border-color: #87a189;
-	color: #326033;
-	background-color: #aff1af;
 }

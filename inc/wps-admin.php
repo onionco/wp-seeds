@@ -11,15 +11,15 @@
  * @license   GPL v2 or later
  */
 
+defined( 'ABSPATH' ) || exit;
+
+
 /**
  * Uniform display of users.
  * Returns an array with the user id as key and the display as value.
  *
  * @return array All users on the site.
  */
-
-defined( 'ABSPATH' ) || exit;
-
 function wps_user_display_by_id() {
 	$users = array();
 
