@@ -3,9 +3,9 @@
  * WP Seeds 🌱
  *
  * @package   wp-seeds/tpl
- * @link      https://github.com/limikael/wp-seeds
- * @author    Mikael Lindqvist & Niels Lange & Derek Smith
- * @copyright 2019 Mikael Lindqvist & Niels Lange & Derek Smith
+ * @link      https://github.com/onionco/wp-seeds
+ * @author    Mikael Lindqvist, Niels Lange & Derek Smith
+ * @copyright 2020 Mikael Lindqvist, Niels Lange & Derek Smith
  * @license   GPL v2 or later
  */
 
@@ -35,7 +35,7 @@ if ( $req_user && $req_amount ) {
 }
 ?>
 
-<div class="wrap wps-front-form">
+<div class="wps-front-form">
 	<h2><?php esc_html_e( 'Send Seeds', 'wp-seeds' ); ?></h2>
 	<?php
 		echo wp_kses(
