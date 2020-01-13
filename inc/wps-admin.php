@@ -292,7 +292,7 @@ function wps_admin_menu() {
 	add_menu_page(
 		'Seeds',
 		'Seeds',
-		'manage_options',
+		'wps_view_all_transactions',
 		'wps_transactions',
 		null,
 		'dashicons-money',
@@ -302,7 +302,7 @@ function wps_admin_menu() {
 		'wps_transactions',
 		'Transactions',
 		'Transactions',
-		'manage_options',
+		'wps_view_all_transactions',
 		'wps_transactions',
 		'wps_transactions_page'
 	);
@@ -310,7 +310,7 @@ function wps_admin_menu() {
 		'wps_transactions',
 		'New Transaction',
 		'New Transaction',
-		'manage_options',
+		'wps_transfer_seeds_universally',
 		'wps_new_transaction',
 		'wps_new_transaction_page'
 	);
@@ -318,7 +318,7 @@ function wps_admin_menu() {
 		'wps_transactions',
 		'Settings',
 		'Settings',
-		'manage_options',
+		'wps_create_burn_seeds',
 		'wps_settings',
 		'wps_settings_page'
 	);
