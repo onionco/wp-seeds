@@ -48,14 +48,85 @@ class Transaction extends WpRecord {
 	}
 
 	/**
-	 * Actually perform the transaction.
+	 * Perform a seeding transaction.
+	 *
+	 * @return void
+	 * @throws WPS_Form_Exception If the transaction can't be performed due to a form error.
+	 * @throws Exception If the transaction can't be performed for an unknown reason.
+	 */
+	public function performCreate() {
+		if ( isset( $this->transaction_id ) && $this->transaction_id ) {
+			throw new Exception( 'This transaction already has an id!' );
+		}
+
+		if ( $this->sender ) {
+			throw new WPS_Form_Exception( 'Seeding transactions should not have a sender.', 'sender' );
+		}
+		if ( ! $this->receiver ) {
+			throw new WPS_Form_Exception( 'Please select receiver.', 'receiver' );
+		}
+
+		$this->transaction_id = 'C' . self::generate_random_id();
+		$this->timestamp = time();
+		$this->amount = intval( $this->amount );
+
+		if ( $this->amount <= 0 ) {
+			throw new WPS_Form_Exception( 'Amount cannot be zero or negative.', 'amount' );
+		}
+
+		$balance = intval( get_user_meta( $this->receiver, 'wps_balance', true ) );
+		$balance += $this->amount;
+		update_user_meta( $this->receiver, 'wps_balance', $balance );
+		$this->save();
+	}
+
+	/**
+	 * Perform a burning transaction.
+	 *
+	 * @return void
+	 * @throws WPS_Form_Exception If the transaction can't be performed due to a form error.
+	 * @throws Exception If the transaction can't be performed for an unknown reason.
+	 */
+	public function performBurn() {
+		if ( isset( $this->transaction_id ) && $this->transaction_id ) {
+			throw new Exception( 'This transaction already has an id!' );
+		}
+
+		if ( ! $this->sender ) {
+			throw new WPS_Form_Exception( 'Please select sender.', 'sender' );
+		}
+		if ( $this->receiver ) {
+			throw new WPS_Form_Exception( 'Burning transactions should have no receiver.', 'receiver' );
+		}
+
+		$this->transaction_id = 'B' . self::generate_random_id();
+		$this->timestamp = time();
+		$this->amount = intval( $this->amount );
+
+		if ( $this->amount <= 0 ) {
+			throw new WPS_Form_Exception( 'Amount cannot be zero or negative.', 'amount' );
+		}
+
+		$balance = intval( get_user_meta( $this->sender, 'wps_balance', true ) );
+		if ( $balance < $this->amount ) {
+			throw new WPS_Form_Exception( 'Insufficient funds on account.', 'amount' );
+		}
+
+		$balance -= $this->amount;
+		update_user_meta( $this->sender, 'wps_balance', $balance );
+		$this->save();
+	}
+
+	/**
+	 * Actually perform the transaction. This function is only for normal transactions,
+	 * i.e. transactions with a sender and a receiver.
 	 *
 	 * @return void
 	 * @throws WPS_Form_Exception If the transaction can't be performed due to a form error.
 	 * @throws Exception If the transaction can't be performed for an unknown reason.
 	 */
 	public function perform() {
-		if ( $this->transaction_id ) {
+		if ( isset( $this->transaction_id ) && $this->transaction_id ) {
 			throw new Exception( 'This transaction already has an id!' );
 		}
 		$from_balance = intval( get_user_meta( $this->sender, 'wps_balance', true ) );
@@ -86,5 +157,28 @@ class Transaction extends WpRecord {
 		update_user_meta( $this->sender, 'wps_balance', $from_balance );
 		update_user_meta( $this->receiver, 'wps_balance', $to_balance );
 		$this->save();
+	}
+
+	/**
+	 * Get the type of transaction.
+	 * Possible values:
+	 *   - normal
+	 *   - create
+	 *   - burn
+	 *
+	 * @return string
+	 */
+	public function getType() {
+		if ( $this->sender && $this->receiver ) {
+			return 'normal';
+		}
+
+		if ( $this->sender ) {
+			return 'burn';
+		}
+
+		if ( $this->receiver ) {
+			return 'create';
+		}
 	}
 }

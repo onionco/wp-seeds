@@ -122,13 +122,18 @@ function wps_transactions_page() {
 	$user_display_by_id = wps_user_display_by_id();
 	$transaction_views = array();
 	foreach ( $transactions as $transaction ) {
-		$link               = get_admin_url( null, 'admin.php?page=wps_transactions&transaction_detail=' . $transaction->id );
+		$link               = get_admin_url(
+			null,
+			'admin.php?page=wps_transactions&transaction_detail=' . $transaction->id
+		);
+
 		$transaction_views[] = array(
 			'id'          => "<a href='$link'>" . $transaction->transaction_id . '</a>',
 			'fromAccount' => $user_display_by_id[ $transaction->sender ],
 			'toAccount'   => $user_display_by_id[ $transaction->receiver ],
-			'amount'      => $transaction->amount,
+			'amount'      => $transaction->amount, // ." ".$icon,
 			'timestamp'   => date( 'Y-m-d H:m:s', $transaction->timestamp ),
+			'__class'     => $transaction->getType(),
 		);
 	}
 	$table->set_title( 'Transactions' );
@@ -144,19 +149,10 @@ function wps_transactions_page() {
  * @throws WPS_Form_Exception If there is an error.
  */
 function wps_create_seeds_save() {
-	$user = get_user_by( 'id', get_req_var( 'receiver' ) );
-	if ( ! $user ) {
-		throw new WPS_Form_Exception( 'Please select a user to receive the created seeds.', 'receiver' );
-	}
-
-	$amount = intval( get_req_var( 'amount' ) );
-	if ( $amount <= 0 ) {
-		throw new WPS_Form_Exception( 'Amount needs to be greater than zero', 'amount' );
-	}
-
-	$balance = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
-	$balance += $amount;
-	update_user_meta( $user->ID, 'wps_balance', $balance );
+	$t = new Transaction();
+	$t->receiver  = get_req_var( 'receiver' );
+	$t->amount    = get_req_var( 'amount' );
+	$t->performCreate();
 }
 
 /**
@@ -166,23 +162,10 @@ function wps_create_seeds_save() {
  * @throws WPS_Form_Exception If there is an error.
  */
 function wps_burn_seeds_save() {
-	$user = get_user_by( 'id', get_req_var( 'sender' ) );
-	if ( ! $user ) {
-		throw new WPS_Form_Exception( 'Please select a user where the seeds should be taken from.', 'sender' );
-	}
-
-	$amount = intval( get_req_var( 'amount' ) );
-	if ( $amount <= 0 ) {
-		throw new WPS_Form_Exception( 'Amount needs to be greater than zero', 'amount' );
-	}
-
-	$balance = intval( get_user_meta( $user->ID, 'wps_balance', true ) );
-	if ( $amount > $balance ) {
-		throw new WPS_Form_Exception( 'Not enough seeds on that account', 'amount' );
-	}
-
-	$balance -= $amount;
-	update_user_meta( $user->ID, 'wps_balance', $balance );
+	$t = new Transaction();
+	$t->sender    = get_req_var( 'sender' );
+	$t->amount    = get_req_var( 'amount' );
+	$t->performBurn();
 }
 
 /**
