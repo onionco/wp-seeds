@@ -3,9 +3,9 @@
  * WP Seeds 🌱
  *
  * @package   wp-seeds
- * @link      https://github.com/limikael/wp-seeds
+ * @link      https://github.com/onionco/wp-seeds
  * @author    Mikael Lindqvist, Niels Lange & Derek Smith
- * @copyright 2019 Mikael Lindqvist, Niels Lange & Derek Smith
+ * @copyright 2020 Mikael Lindqvist, Niels Lange & Derek Smith
  * @license   GPL v2 or later
 
  * Plugin Name:       WP Seeds
@@ -195,7 +195,14 @@ if ( ! function_exists( 'is_wpsaccount_page' ) ) {
 	 * @return bool
 	 */
 	function is_wpseeds_page() {
-		$seeds_account = intval( get_query_var( 'wpsaccount' ) );
+		global $post;
+		if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'seeds-account' ) ) {
+			$seeds_account = true;
+			set_query_var( 'wpsaccount', true );
+		} else {
+			$seeds_account = '';
+		}
+		// $seeds_account = intval( get_query_var( 'wpsaccount' ) );
 		$send_seeds = intval( get_query_var( 'wpssend' ) );
 		$request_seeds = intval( get_query_var( 'wpsrequest' ) );
 
