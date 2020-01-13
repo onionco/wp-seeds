@@ -120,7 +120,7 @@ function wps_transactions_page() {
 	$transaction_views = array();
 	foreach ( $transactions as $transaction ) {
 		$link               = get_admin_url(
-			null, 
+			null,
 			'admin.php?page=wps_transactions&transaction_detail=' . $transaction->id
 		);
 
@@ -128,7 +128,7 @@ function wps_transactions_page() {
 			'id'          => "<a href='$link'>" . $transaction->transaction_id . '</a>',
 			'fromAccount' => $user_display_by_id[ $transaction->sender ],
 			'toAccount'   => $user_display_by_id[ $transaction->receiver ],
-			'amount'      => $transaction->amount, //." ".$icon,
+			'amount'      => $transaction->amount, // ." ".$icon,
 			'timestamp'   => date( 'Y-m-d H:m:s', $transaction->timestamp ),
 			'__class'     => $transaction->getType(),
 		);

@@ -49,9 +49,13 @@ class Transaction extends WpRecord {
 
 	/**
 	 * Perform a seeding transaction.
+	 *
+	 * @return void
+	 * @throws WPS_Form_Exception If the transaction can't be performed due to a form error.
+	 * @throws Exception If the transaction can't be performed for an unknown reason.
 	 */
 	public function performCreate() {
-		if ( isset($this->transaction_id) && $this->transaction_id ) {
+		if ( isset( $this->transaction_id ) && $this->transaction_id ) {
 			throw new Exception( 'This transaction already has an id!' );
 		}
 
@@ -62,7 +66,7 @@ class Transaction extends WpRecord {
 			throw new WPS_Form_Exception( 'Please select receiver.', 'receiver' );
 		}
 
-		$this->transaction_id = "C".self::generate_random_id();
+		$this->transaction_id = 'C' . self::generate_random_id();
 		$this->timestamp = time();
 		$this->amount = intval( $this->amount );
 
@@ -78,9 +82,13 @@ class Transaction extends WpRecord {
 
 	/**
 	 * Perform a burning transaction.
+	 *
+	 * @return void
+	 * @throws WPS_Form_Exception If the transaction can't be performed due to a form error.
+	 * @throws Exception If the transaction can't be performed for an unknown reason.
 	 */
 	public function performBurn() {
-		if ( isset($this->transaction_id) && $this->transaction_id ) {
+		if ( isset( $this->transaction_id ) && $this->transaction_id ) {
 			throw new Exception( 'This transaction already has an id!' );
 		}
 
@@ -91,7 +99,7 @@ class Transaction extends WpRecord {
 			throw new WPS_Form_Exception( 'Burning transactions should have no receiver.', 'receiver' );
 		}
 
-		$this->transaction_id = "B".self::generate_random_id();
+		$this->transaction_id = 'B' . self::generate_random_id();
 		$this->timestamp = time();
 		$this->amount = intval( $this->amount );
 
@@ -118,7 +126,7 @@ class Transaction extends WpRecord {
 	 * @throws Exception If the transaction can't be performed for an unknown reason.
 	 */
 	public function perform() {
-		if ( isset($this->transaction_id) && $this->transaction_id ) {
+		if ( isset( $this->transaction_id ) && $this->transaction_id ) {
 			throw new Exception( 'This transaction already has an id!' );
 		}
 		$from_balance = intval( get_user_meta( $this->sender, 'wps_balance', true ) );
@@ -151,14 +159,26 @@ class Transaction extends WpRecord {
 		$this->save();
 	}
 
-	function getType() {
-		if ($this->sender && $this->receiver)
-			return "normal";
+	/**
+	 * Get the type of transaction.
+	 * Possible values:
+	 *   - normal
+	 *   - create
+	 *   - burn
+	 *
+	 * @return string
+	 */
+	public function getType() {
+		if ( $this->sender && $this->receiver ) {
+			return 'normal';
+		}
 
-		if ($this->sender)
-			return "burn";
+		if ( $this->sender ) {
+			return 'burn';
+		}
 
-		if ($this->receiver)
-			return "create";
+		if ( $this->receiver ) {
+			return 'create';
+		}
 	}
 }

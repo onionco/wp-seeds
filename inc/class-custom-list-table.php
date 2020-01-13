@@ -162,10 +162,12 @@ class Custom_List_Table extends WP_List_Table {
 	/**
 	 * Override the single_row function so we have a chance to add
 	 * stuff to it.
+	 *
+	 * @param array $item The item to render.
 	 */
 	public function single_row( $item ) {
-		if (array_key_exists("__class", $item)) {
-			echo '<tr class="'.esc_attr($item['__class']).'">';
+		if ( array_key_exists( '__class', $item ) ) {
+			echo '<tr class="' . esc_attr( $item['__class'] ) . '">';
 		} else {
 			echo '<tr>';
 		}
