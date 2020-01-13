@@ -87,7 +87,7 @@ function wps_add_roles_on_activation() {
 		array(
 			'read' => true,
 			'edit_posts' => false,
-    		'delete_posts' => false,
+			'delete_posts' => false,
 		)
 	);
 }
@@ -108,15 +108,15 @@ function wps_custom_role_caps() {
 	$admin->add_cap( 'wps_view_all_transactions' );
 
 }
-register_activation_hook( __FILE__, 'wps_custom_role_caps');
+register_activation_hook( __FILE__, 'wps_custom_role_caps' );
 
 
 /**
  * Remove custom role capabilities on deactivation.
  */
 function wps_remove_custom_role() {
-	if( get_role( 'wps_gardener' ) ){
-		remove_role(  'wps_gardener' );
+	if ( get_role( 'wps_gardener' ) ) {
+		remove_role( 'wps_gardener' );
 	}
 
 	$admin = get_role( 'administrator' );
@@ -124,7 +124,7 @@ function wps_remove_custom_role() {
 	$caps = array(
 		'wps_create_burn_seeds',
 		'wps_transfer_seeds_universally',
-		'wps_view_all_transactions'
+		'wps_view_all_transactions',
 	);
 
 	foreach ( $caps as $cap ) {
