@@ -22,7 +22,7 @@ require_once plugin_dir_path( __FILE__ ) . '/../inc/class-wps-form-exception.php
 /**
  * Represents one transaction on the system.
  */
-class Transaction extends WpRecord {
+class WPS_Transaction extends WpRecord {
 	/**
 	 * Initialize. Set up database fields.
 	 *

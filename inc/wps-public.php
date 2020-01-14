@@ -175,7 +175,7 @@ function wps_history_sc( $args ) {
 	$user_display_by_id = wps_user_display_by_id();
 	$vars = array();
 	$vars['transactions'] = array();
-	$transactions         = Transaction::findAllByQuery(
+	$transactions         = WPS_Transaction::findAllByQuery(
 		'SELECT * ' .
 		'FROM   :table ' .
 		'WHERE  sender=%s ' .
