@@ -142,6 +142,7 @@ function wps_transactions_page() {
 	$table->display();
 }
 
+
 /**
  * Handle creation of new seeds.
  *
@@ -154,6 +155,7 @@ function wps_create_seeds_save() {
 	$t->amount    = get_req_var( 'amount' );
 	$t->performCreate();
 }
+
 
 /**
  * Handle burning of seeds.
@@ -168,10 +170,12 @@ function wps_burn_seeds_save() {
 	$t->performBurn();
 }
 
+
 /**
  * Settings.
- */
+ *
 function wps_settings_page() {
+
 	wps_process_form(
 		array(
 			'submit_var' => 'submit-create',
@@ -197,6 +201,7 @@ function wps_settings_page() {
 	display_template( __DIR__ . '/../tpl/wps-admin-settings.tpl.php', $vars );
 }
 
+
 /**
  * Save the transaction.
  */
@@ -207,6 +212,7 @@ function wps_new_transaction_save() {
 	$t->amount    = get_req_var( 'amount' );
 	$t->perform();
 }
+
 
 /**
  * Create the transaction form.
@@ -228,6 +234,7 @@ function wps_new_transaction_page() {
 	display_template( __DIR__ . '/../tpl/wps-admin-new-transaction.tpl.php', $vars );
 }
 
+
 /**
  * Show info on the user profile page.
  *
@@ -246,6 +253,7 @@ function wps_user_profile( $user ) {
 add_action( 'show_user_profile', 'wps_user_profile' );
 add_action( 'edit_user_profile', 'wps_user_profile' );
 
+
 /**
  * Register new column on the user list page.
  *
@@ -257,6 +265,7 @@ function wps_manage_users_columns( $column ) {
 	return $column;
 }
 add_filter( 'manage_users_columns', 'wps_manage_users_columns' );
+
 
 /**
  * Show info in the seeds balance column.
@@ -281,6 +290,14 @@ function wps_manage_users_custom_column( $val, $column_name, $user_id ) {
 	}
 }
 add_filter( 'manage_users_custom_column', 'wps_manage_users_custom_column', 10, 3 );
+
+
+/**
+ * Register settings. Add the settings section, and settings fields
+ */
+add_action('admin_init', 'wps_settings_init_fn' );
+// add_action('admin_menu', 'wps_options_add_page_fn');
+
 
 /**
  * Admin menu hook, add menu.
@@ -316,11 +333,222 @@ function wps_admin_menu() {
 	);
 	add_submenu_page(
 		'wps_transactions',
-		'Settings',
-		'Settings',
+		__( 'Settings', 'wp-seeds' ),
+		__( 'Settings', 'wp-seeds' ),
 		'wps_create_burn_seeds',
 		'wps_settings',
-		'wps_settings_page'
+		'wps_settings_page_fn'
 	);
 }
 add_action( 'admin_menu', 'wps_admin_menu' );
+
+
+// Display the admin options page
+function wps_settings_page_fn() {
+	if ( !current_user_can( 'manage_options' ) )  {
+		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+	}
+
+	wps_process_form(
+		array(
+			'submit_var' => 'submit-create',
+			'process_cb' => 'wps_create_seeds_save',
+			'success_message' => __( 'Seeds Created.', 'wp-seeds' ),
+		)
+	);
+
+	wps_process_form(
+		array(
+			'submit_var' => 'submit-burn',
+			'process_cb' => 'wps_burn_seeds_save',
+			'success_message' => __( 'Seeds Burned.', 'wp-seeds' ),
+		)
+	);
+
+
+	$user_display_by_id = wps_user_display_by_id();
+	$url = admin_url( 'admin.php?page=wps_settings' );
+	$tab = get_req_var( 'tab', 'about' );
+
+	?>
+	
+	<div class="wrap">
+	<h1><?php esc_html_e( 'Seeds Settings', 'wp-seeds' ); ?></h1>
+
+	<h2 class="nav-tab-wrapper">
+		<a href="<?php echo esc_attr( $url . '&tab=about' ); ?>"
+				class="nav-tab 
+				<?php
+				if ( 'about' == $tab ) {
+					echo 'nav-tab-active';}
+				?>
+				">
+			About
+		</a>
+		<a href="<?php echo esc_attr( $url . '&tab=create' ); ?>"
+				class="nav-tab 
+				<?php
+				if ( 'create' == $tab ) {
+					echo 'nav-tab-active';}
+				?>
+				">
+			Create Seeds
+		</a>
+		<a href="<?php echo esc_attr( $url . '&tab=burn' ); ?>"
+				class="nav-tab 
+				<?php
+				if ( 'burn' == $tab ) {
+					echo 'nav-tab-active';}
+				?>
+				">
+			Burn Seeds
+		</a>
+	</h2>
+
+	<?php if ( 'about' == $tab ) { ?>
+
+		<?php $options = get_option( 'wps_settings'); ?>
+		
+		<p>
+			<?php esc_html_e( 'These pages are for creating and burning seeds.', 'wp-seeds' ); ?>
+		</p>
+		<p>
+			<?php esc_html_e( 'This is the equivalent of printing new money, please act responsibly!', 'wp-seeds' ); ?>
+		</p>
+
+		<form method="post" action="options.php">
+			<?php settings_fields('wps_settings_group'); ?>
+			<?php do_settings_sections('wps_settings'); ?>
+			<?php submit_button(); ?>
+		</form>
+
+	<?php } ?>
+
+	<?php if ( 'create' == $tab ) { ?>
+		<form method="post">
+			<div class='wps-admin-form'>
+				<div class='row'>
+					<label for="receiver">Receiver</label>
+					<div class='field'>
+						<select name="receiver">
+							<option value=''><?php esc_html_e( 'Please select', 'wp-seeds' ); ?></option>
+							<?php display_select_options( $user_display_by_id, get_req_var( 'receiver', 0 ) ); ?>
+						</select>
+						<span class="description">
+							<?php esc_html_e( 'Who should receive the newly created seeds?', 'wp-seeds' ); ?>
+						</span>
+					</div>
+				</div>
+				<div class='row'>
+					<label for="receiver">Amount</label>
+					<div class='field'>
+						<input type="text"
+								name="amount"
+								value="<?php echo esc_attr( get_req_var( 'amount', '' ) ); ?>"
+								class='small-text'
+								autocomplete='off'/>
+						<span class="description">
+							<?php esc_html_e( 'How many seeds should be created?', 'wp-seeds' ); ?>
+						</span>
+					</div>
+				</div>
+			</div>
+			<input type="submit"
+					value="<?php esc_attr_e( 'Create Seeds' ); ?>" 
+					name="submit-create"
+					class='button button-primary'/>
+		</form>
+	<?php } ?>
+
+	<?php if ( 'burn' == $tab ) { ?>
+		<form method="post">
+			<div class='wps-admin-form'>
+				<div class='row'>
+					<label for="sender">Sender</label>
+					<div class='field'>
+						<select name="sender">
+							<option value=''><?php esc_html_e( 'Please select', 'wp-seeds' ); ?></option>
+							<?php display_select_options( $user_display_by_id, get_req_var( 'sender', 0 ) ); ?>
+						</select>
+						<span class="description">
+							<?php esc_html_e( 'Where should the seeds be taken from?', 'wp-seeds' ); ?>
+						</span>
+					</div>
+				</div>
+				<div class='row'>
+					<label for="amount">Amount</label>
+					<div class='field'>
+						<input type="text"
+								name="amount"
+								value="<?php echo esc_attr( get_req_var( 'amount', '' ) ); ?>"
+								class='small-text'
+								autocomplete='off'/>
+						<span class="description">
+							<?php esc_html_e( 'How many seeds should be burned?', 'wp-seeds' ); ?>
+						</span>
+					</div>
+				</div>
+			</div>
+			<input type="submit"
+					value="<?php esc_attr_e( 'Burn Seeds' ); ?>" 
+					name="submit-burn"
+					class='button button-primary'/>
+		</form>
+	<?php } ?>
+</div>
+
+<?php
+}
+
+
+/**
+ * Register settings. Add the settings section, and settings fields
+ */
+function wps_settings_init_fn(){
+	register_setting(
+		'wps_settings_group', 
+		'wps_settings'
+	);
+	add_settings_section(
+		'wps_settings_section',
+		'', 
+		'wps_section_fn', 
+		'wps_settings'
+	);
+	add_settings_field(
+		'account_page',
+		'Select Account Page', 
+		'account_dropdown_fn', 
+		'wps_settings', 
+		'wps_settings_section'
+	);
+}
+
+
+/**
+ * Section HTML, displayed before the first option
+ */
+function wps_section_fn() {
+	echo '';
+}
+
+
+/**
+ * Pages dropdown - Name: wps_settings[account_dropdown_fn]
+ */
+function account_dropdown_fn() {
+
+	$options = get_option( 'wps_settings');
+
+	echo "<select name='wps_settings[account_page]' id='account_page'>";
+		echo '<option value="0">' . _e('Select a Page', 'textdomain') .'</option>';
+		$pages = get_pages();
+		foreach( $pages as $page ) {
+			echo '<option value=' . $page->ID . '' . selected( $options['account_page'], $page->ID ) . '>' . $page->post_title . '</option>';
+			$children = get_children( 'post_parent='. $page->ID );
+			foreach( $children as $subpage ) {
+				echo '<option value=' . $subpage->ID . '' . selected( $options['account_page'], $subpage->ID ) . '>' . $subpage->post_title . '</option>';
+			}
+		};
+	echo '</select>';
+}
