@@ -28,7 +28,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.0.0
  */
-require_once plugin_dir_path( __FILE__ ) . '/inc/class-transaction.php';
+require_once plugin_dir_path( __FILE__ ) . '/inc/class-wps-transaction.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-custom-list-table.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/lib.php';
 require_once plugin_dir_path( __FILE__ ) . '/inc/class-wps-form-exception.php';
@@ -42,20 +42,19 @@ require_once plugin_dir_path( __FILE__ ) . '/inc/wps-public.php';
  * @return void
  */
 function wps_activate() {
-	Transaction::install();
+	WPS_Transaction::install();
 }
 register_activation_hook( __FILE__, 'wps_activate' );
 
 /**
- * Handle plugin deactivation.
+ * Handle plugin uninstall.
  *
  * @return void
  */
-function wps_deactivate() {
-	Transaction::uninstall();
+function wps_uninstall() {
+	WPS_Transaction::uninstall();
 }
-register_deactivation_hook( __FILE__, 'wps_deactivate' );
-
+register_uninstall_hook( __FILE__, 'wps_uninstall' );
 
 /**
  * Load styles.
@@ -415,7 +414,7 @@ add_shortcode( 'seeds-request', 'request_seeds_form_shortcode' );
  * @return void
  */
 function wps_send_seeds_form_process() {
-	$t = new Transaction();
+	$t = new WPS_Transaction();
 	$t->sender    = get_current_user_id();
 	$t->receiver  = get_req_var( 'receiver' );
 	$t->amount    = get_req_var( 'amount' );

@@ -41,7 +41,7 @@ function wps_transactions_page() {
 		display_template(
 			__DIR__ . '/../tpl/wps-transaction-detail.tpl.php',
 			array(
-				'transaction' => Transaction::findOne( get_req_var( 'transaction_detail' ) ),
+				'transaction' => WPS_Transaction::findOne( get_req_var( 'transaction_detail' ) ),
 				'user_display_by_id' => wps_user_display_by_id(),
 			)
 		);
@@ -102,7 +102,7 @@ function wps_transactions_page() {
 	}
 
 	if ( is_req_var( 'account' ) && get_req_var( 'account' ) ) {
-		$transactions = Transaction::findAllByQuery(
+		$transactions = WPS_Transaction::findAllByQuery(
 			'SELECT   * ' .
 			'FROM     :table ' .
 			'WHERE    sender=%s ' .
@@ -112,7 +112,7 @@ function wps_transactions_page() {
 			get_req_var( 'account' )
 		);
 	} else {
-		$transactions = Transaction::findAllByQuery(
+		$transactions = WPS_Transaction::findAllByQuery(
 			'SELECT   * ' .
 			'FROM      :table ' .
 			"ORDER BY  $order"
@@ -149,7 +149,7 @@ function wps_transactions_page() {
  * @throws WPS_Form_Exception If there is an error.
  */
 function wps_create_seeds_save() {
-	$t = new Transaction();
+	$t = new WPS_Transaction();
 	$t->receiver  = get_req_var( 'receiver' );
 	$t->amount    = get_req_var( 'amount' );
 	$t->performCreate();
@@ -162,7 +162,7 @@ function wps_create_seeds_save() {
  * @throws WPS_Form_Exception If there is an error.
  */
 function wps_burn_seeds_save() {
-	$t = new Transaction();
+	$t = new WPS_Transaction();
 	$t->sender    = get_req_var( 'sender' );
 	$t->amount    = get_req_var( 'amount' );
 	$t->performBurn();
@@ -201,7 +201,7 @@ function wps_settings_page() {
  * Save the transaction.
  */
 function wps_new_transaction_save() {
-	$t = new Transaction();
+	$t = new WPS_Transaction();
 	$t->sender    = get_req_var( 'sender' );
 	$t->receiver  = get_req_var( 'receiver' );
 	$t->amount    = get_req_var( 'amount' );
