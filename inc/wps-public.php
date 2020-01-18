@@ -226,23 +226,16 @@ function wps_history_sc( $args ) {
 		$view['timestamp'] = date( 'Y-m-d H:m:s', $transaction->timestamp );
 		$view['id'] = $transaction->transaction_id;
 
-		if ( current_user_can( 'manage_options' ) ) {
+		if ( $user->ID == $transaction->sender ) {
 			// If we are the sender, show amount as negative, and the
 			// receiver in the to/from field...
 			$view['amount'] = -$transaction->amount;
-			$view['user'] = __( 'From: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->sender ] . ' >> ' . __( 'To: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->receiver ];
+			$view['user'] = __( 'To: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->receiver ];
 		} else {
-			if ( $user->ID == $transaction->sender ) {
-				// If we are the sender, show amount as negative, and the
-				// receiver in the to/from field...
-				$view['amount'] = -$transaction->amount;
-				$view['user'] = __( 'To: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->receiver ];
-			} else {
-				// ...otherwise, we are the receiver, so show the amount as
-				// positive and the sender in the to/from field.
-				$view['amount'] = $transaction->amount;
-				$view['user'] = __( 'From: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->sender ];
-			}
+			// ...otherwise, we are the receiver, so show the amount as
+			// positive and the sender in the to/from field.
+			$view['amount'] = $transaction->amount;
+			$view['user'] = __( 'From: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->sender ];
 		}
 
 		$vars['transactions'][] = $view;
