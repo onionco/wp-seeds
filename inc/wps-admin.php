@@ -422,6 +422,16 @@ function wps_settings_page_fn() {
 			<?php submit_button(); ?>
 		</form>
 
+		<?php
+		$wps_options = get_option( 'wps_settings');
+		$account_pid = $options['account_page'];
+		if ($account_pid) {
+			$account_file = get_post_meta( $account_pid, '_wp_page_template', true );
+			$account_template = get_template_directory() . get_post_meta( $account_pid, '_wp_page_template', true );
+			print_r($account_template);
+		}
+		?>
+
 	<?php } ?>
 
 	<?php if ( 'create' == $tab ) { ?>
@@ -545,7 +555,7 @@ function account_dropdown_fn() {
 		$pages = get_pages();
 		foreach( $pages as $page ) {
 			echo '<option value=' . $page->ID . '' . selected( $options['account_page'], $page->ID ) . '>' . $page->post_title . '</option>';
-			$children = get_children( 'post_parent='. $page->ID );
+			$children = get_children( 'post_parent=' . $page->ID );
 			foreach( $children as $subpage ) {
 				echo '<option value=' . $subpage->ID . '' . selected( $options['account_page'], $subpage->ID ) . '>' . $subpage->post_title . '</option>';
 			}

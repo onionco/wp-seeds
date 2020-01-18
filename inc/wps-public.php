@@ -82,13 +82,11 @@ add_filter(
 		}
 
 		if ( isset( $query->query_vars['wpssend'] ) ) {
-
 			$title = 'Send Seeds';
 			$content = '[seeds-send]';
 		}
 
 		if ( isset( $query->query_vars['wpsrequest'] ) ) {
-
 			$title = 'Request Seeds';
 			$content = '[seeds-request]';
 		}
@@ -127,6 +125,24 @@ add_filter(
 	2
 );
 
+/**
+ * Return true if page template is being used, else false.
+ *
+ * @param  string $page_template The filename of the template to check against.
+ *                               Example: 'abc-123.php'.
+ *
+ * @return bool                  Whether page template is being used.
+ */
+function wps_is_page_template( $page_template ) {
+	global $post;
+	if ( ! $post ) {
+	   return false;
+	}
+	return $page_template === get_post_meta( $post->ID, '_wp_page_template', true );
+ }
+
+
+
 
 /**
  * Set virtual page variables.
@@ -160,6 +176,39 @@ add_action( 'pre_get_posts', 'wps_account_pages_query', 0, 2 );
 
 
 /**
+ * Template redirects
+ */
+function wps_template_redirects() {
+	global $wp_query;
+
+	if ( get_query_var( 'wpssend' ) || get_query_var( 'wpsrequest' ) ) {
+
+		$wps_options = get_option( 'wps_settings');
+		$account_pid = $options['account_page'];
+		if ($account_pid) {
+			$account_file = get_post_meta( $account_pid, '_wp_page_template', true );
+			$account_template = get_template_directory() . get_post_meta( $account_pid, '_wp_page_template', true );
+		}
+
+		add_filter(
+			'template_include',
+			function() {
+				$template = $account_template;
+				if ( ! file_exists( $template ) ) {
+					$template = get_template_directory() . '/singular.php';
+				}
+				if ( ! file_exists( $template ) ) {
+					$template = get_template_directory() . '/index.php';
+				}
+				return $template;
+			}
+		);
+	}
+}
+add_action( 'template_redirect', 'wps_template_redirects' );
+
+
+/**
  * Show transaction history for the current user.
  *
  * @param array $args The shortcode args.
@@ -175,7 +224,7 @@ function wps_history_sc( $args ) {
 	$user_display_by_id = wps_user_display_by_id();
 	$vars = array();
 	$vars['transactions'] = array();
-	$transactions         = WPS_Transaction::findAllByQuery(
+	$transactions         = Transaction::findAllByQuery(
 		'SELECT * ' .
 		'FROM   :table ' .
 		'WHERE  sender=%s ' .
