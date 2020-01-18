@@ -81,26 +81,30 @@ add_filter(
 			return $posts;
 		}
 
+		$wps_options = get_option( 'wps_settings');
+		$account_pid = $wps_options['account_page'];
+		$account_content = get_the_content( $account_pid );
+
 		if ( isset( $query->query_vars['wpssend'] ) ) {
 			$title = 'Send Seeds';
-			$content = '[seeds-send]';
+			$shortcode = '[seeds-send]';
 		}
 
 		if ( isset( $query->query_vars['wpsrequest'] ) ) {
 			$title = 'Request Seeds';
-			$content = '[seeds-request]';
+			$shortcode = '[seeds-request]';
 		}
 
 		$post = [
-			'ID'             => -100,
+			'ID'             => $account_pid,
 			'post_title'     => $title,
 			'post_name'      => sanitize_title( $title ),
-			'post_content'   => $content,
+			'post_content'   => $account_content . $shortcode,
 			'post_excerpt'   => '',
 			'post_parent'    => 0,
 			'menu_order'     => 0,
 			'post_type'      => 'page',
-			'is-singular'      => true,
+			'is-singular'    => true,
 			'post_status'    => 'publish',
 			'comment_status' => 'closed',
 			'ping_status'    => 'closed',
@@ -125,24 +129,6 @@ add_filter(
 	2
 );
 
-/**
- * Return true if page template is being used, else false.
- *
- * @param  string $page_template The filename of the template to check against.
- *                               Example: 'abc-123.php'.
- *
- * @return bool                  Whether page template is being used.
- */
-function wps_is_page_template( $page_template ) {
-	global $post;
-	if ( ! $post ) {
-	   return false;
-	}
-	return $page_template === get_post_meta( $post->ID, '_wp_page_template', true );
- }
-
-
-
 
 /**
  * Set virtual page variables.
@@ -163,6 +149,7 @@ function wps_account_pages_query( $wp ) {
 			$wp->query_vars['is_single'] = false;
 			$wp->query_vars['is_singular'] = true;
 			$wp->query_vars['is_archive'] = false;
+			$wp->query_vars['posts_per_page'] = 1;
 
 			/* forces the page template. */
 			$wp->is_single = false;
@@ -183,23 +170,25 @@ function wps_template_redirects() {
 
 	if ( get_query_var( 'wpssend' ) || get_query_var( 'wpsrequest' ) ) {
 
-		$wps_options = get_option( 'wps_settings');
-		$account_pid = $options['account_page'];
-		if ($account_pid) {
-			$account_file = get_post_meta( $account_pid, '_wp_page_template', true );
-			$account_template = get_template_directory() . get_post_meta( $account_pid, '_wp_page_template', true );
-		}
-
 		add_filter(
 			'template_include',
 			function() {
-				$template = $account_template;
+				$wps_options = get_option( 'wps_settings');
+				$account_pid = $wps_options['account_page'];
+				$account_template = get_post_meta( $account_pid, '_wp_page_template', true );
+
+				$template = get_template_directory() . '/' . $account_template;
+
+				if ( ! file_exists( $template ) ) {
+					$template = get_template_directory() . '/page.php';
+				}
 				if ( ! file_exists( $template ) ) {
 					$template = get_template_directory() . '/singular.php';
 				}
 				if ( ! file_exists( $template ) ) {
 					$template = get_template_directory() . '/index.php';
 				}
+				
 				return $template;
 			}
 		);
@@ -224,7 +213,7 @@ function wps_history_sc( $args ) {
 	$user_display_by_id = wps_user_display_by_id();
 	$vars = array();
 	$vars['transactions'] = array();
-	$transactions         = Transaction::findAllByQuery(
+	$transactions = WPS_Transaction::findAllByQuery(
 		'SELECT * ' .
 		'FROM   :table ' .
 		'WHERE  sender=%s ' .
@@ -237,16 +226,23 @@ function wps_history_sc( $args ) {
 		$view['timestamp'] = date( 'Y-m-d H:m:s', $transaction->timestamp );
 		$view['id'] = $transaction->transaction_id;
 
-		if ( $user->ID == $transaction->sender ) {
+		if ( current_user_can( 'manage_options' ) ) {
 			// If we are the sender, show amount as negative, and the
 			// receiver in the to/from field...
 			$view['amount'] = -$transaction->amount;
-			$view['user'] = __( 'To: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->receiver ];
+			$view['user'] = __( 'From: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->sender ] . ' >> ' . __( 'To: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->receiver ];
 		} else {
-			// ...otherwise, we are the receiver, so show the amount as
-			// positive and the sender in the to/from field.
-			$view['amount'] = $transaction->amount;
-			$view['user'] = __( 'From: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->sender ];
+			if ( $user->ID == $transaction->sender ) {
+				// If we are the sender, show amount as negative, and the
+				// receiver in the to/from field...
+				$view['amount'] = -$transaction->amount;
+				$view['user'] = __( 'To: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->receiver ];
+			} else {
+				// ...otherwise, we are the receiver, so show the amount as
+				// positive and the sender in the to/from field.
+				$view['amount'] = $transaction->amount;
+				$view['user'] = __( 'From: ', 'wp-seeds' ) . $user_display_by_id[ $transaction->sender ];
+			}
 		}
 
 		$vars['transactions'][] = $view;

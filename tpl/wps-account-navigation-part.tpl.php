@@ -39,7 +39,7 @@ $request = 'request';
 
 <nav class="seeds-account-navigation">
 	<ul>
-		<li class="seeds-account-link 
+		<li class="seeds-account-link account
 		<?php
 		if ( 1 == $active ) {
 			echo 'active';}
@@ -47,7 +47,7 @@ $request = 'request';
 		">
 			<a href="<?php echo esc_attr( get_site_url() . '/' . $account . '/' ); ?>" title="Seeds Account">Seeds <span>Account</span></a>
 		</li>
-		<li class="seeds-account-link 
+		<li class="seeds-account-link send
 		<?php
 		if ( 2 == $active ) {
 			echo 'active';}
@@ -55,7 +55,7 @@ $request = 'request';
 		">
 			<a href="<?php echo esc_attr( get_site_url() . '/' . $account . '/' . $send . '/' ); ?>" title="Send Seeds">Send <span>Seeds</span></a>
 		</li>
-		<li class="seeds-account-link 
+		<li class="seeds-account-link request
 		<?php
 		if ( 3 == $active ) {
 			echo 'active';}

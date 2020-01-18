@@ -383,7 +383,7 @@ function wps_settings_page_fn() {
 					echo 'nav-tab-active';}
 				?>
 				">
-			About
+			Settings
 		</a>
 		<a href="<?php echo esc_attr( $url . '&tab=create' ); ?>"
 				class="nav-tab 
@@ -421,16 +421,6 @@ function wps_settings_page_fn() {
 			<?php do_settings_sections('wps_settings'); ?>
 			<?php submit_button(); ?>
 		</form>
-
-		<?php
-		$wps_options = get_option( 'wps_settings');
-		$account_pid = $options['account_page'];
-		if ($account_pid) {
-			$account_file = get_post_meta( $account_pid, '_wp_page_template', true );
-			$account_template = get_template_directory() . get_post_meta( $account_pid, '_wp_page_template', true );
-			print_r($account_template);
-		}
-		?>
 
 	<?php } ?>
 
