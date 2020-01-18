@@ -81,7 +81,7 @@ add_filter(
 			return $posts;
 		}
 
-		$wps_options = get_option( 'wps_settings');
+		$wps_options = get_option( 'wps_settings' );
 		$account_pid = $wps_options['account_page'];
 		$account_content = get_the_content( $account_pid );
 
@@ -173,7 +173,7 @@ function wps_template_redirects() {
 		add_filter(
 			'template_include',
 			function() {
-				$wps_options = get_option( 'wps_settings');
+				$wps_options = get_option( 'wps_settings' );
 				$account_pid = $wps_options['account_page'];
 				$account_template = get_post_meta( $account_pid, '_wp_page_template', true );
 
@@ -188,7 +188,7 @@ function wps_template_redirects() {
 				if ( ! file_exists( $template ) ) {
 					$template = get_template_directory() . '/index.php';
 				}
-				
+
 				return $template;
 			}
 		);

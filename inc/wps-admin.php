@@ -173,7 +173,7 @@ function wps_burn_seeds_save() {
 
 /**
  * Settings.
- *
+ */
 function wps_settings_page() {
 
 	wps_process_form(
@@ -295,8 +295,7 @@ add_filter( 'manage_users_custom_column', 'wps_manage_users_custom_column', 10, 
 /**
  * Register settings. Add the settings section, and settings fields
  */
-add_action('admin_init', 'wps_settings_init_fn' );
-// add_action('admin_menu', 'wps_options_add_page_fn');
+add_action( 'admin_init', 'wps_settings_init_fn' );
 
 
 /**
@@ -343,9 +342,11 @@ function wps_admin_menu() {
 add_action( 'admin_menu', 'wps_admin_menu' );
 
 
-// Display the admin options page
+/**
+ * Display the admin options page
+ */
 function wps_settings_page_fn() {
-	if ( !current_user_can( 'manage_options' ) )  {
+	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 
@@ -364,7 +365,6 @@ function wps_settings_page_fn() {
 			'success_message' => __( 'Seeds Burned.', 'wp-seeds' ),
 		)
 	);
-
 
 	$user_display_by_id = wps_user_display_by_id();
 	$url = admin_url( 'admin.php?page=wps_settings' );
@@ -407,7 +407,7 @@ function wps_settings_page_fn() {
 
 	<?php if ( 'about' == $tab ) { ?>
 
-		<?php $options = get_option( 'wps_settings'); ?>
+		<?php $options = get_option( 'wps_settings' ); ?>
 		
 		<p>
 			<?php esc_html_e( 'These pages are for creating and burning seeds.', 'wp-seeds' ); ?>
@@ -417,8 +417,8 @@ function wps_settings_page_fn() {
 		</p>
 
 		<form method="post" action="options.php">
-			<?php settings_fields('wps_settings_group'); ?>
-			<?php do_settings_sections('wps_settings'); ?>
+			<?php settings_fields( 'wps_settings_group' ); ?>
+			<?php do_settings_sections( 'wps_settings' ); ?>
 			<?php submit_button(); ?>
 		</form>
 
@@ -497,29 +497,29 @@ function wps_settings_page_fn() {
 	<?php } ?>
 </div>
 
-<?php
+	<?php
 }
 
 
 /**
  * Register settings. Add the settings section, and settings fields
  */
-function wps_settings_init_fn(){
+function wps_settings_init_fn() {
 	register_setting(
-		'wps_settings_group', 
+		'wps_settings_group',
 		'wps_settings'
 	);
 	add_settings_section(
 		'wps_settings_section',
-		'', 
-		'wps_section_fn', 
+		'',
+		'wps_section_fn',
 		'wps_settings'
 	);
 	add_settings_field(
 		'account_page',
-		'Select Account Page', 
-		'account_dropdown_fn', 
-		'wps_settings', 
+		'Select Account Page',
+		'account_dropdown_fn',
+		'wps_settings',
 		'wps_settings_section'
 	);
 }
@@ -538,17 +538,17 @@ function wps_section_fn() {
  */
 function account_dropdown_fn() {
 
-	$options = get_option( 'wps_settings');
+	$options = get_option( 'wps_settings' );
 
 	echo "<select name='wps_settings[account_page]' id='account_page'>";
-		echo '<option value="0">' . _e('Select a Page', 'textdomain') .'</option>';
+		echo '<option value="0">' . _e( 'Select a Page', 'textdomain' ) . '</option>';
 		$pages = get_pages();
-		foreach( $pages as $page ) {
-			echo '<option value=' . $page->ID . '' . selected( $options['account_page'], $page->ID ) . '>' . $page->post_title . '</option>';
-			$children = get_children( 'post_parent=' . $page->ID );
-			foreach( $children as $subpage ) {
-				echo '<option value=' . $subpage->ID . '' . selected( $options['account_page'], $subpage->ID ) . '>' . $subpage->post_title . '</option>';
-			}
-		};
+	foreach ( $pages as $page ) {
+		echo '<option value=' . $page->ID . '' . selected( $options['account_page'], $page->ID ) . '>' . $page->post_title . '</option>';
+		$children = get_children( 'post_parent=' . $page->ID );
+		foreach ( $children as $subpage ) {
+			echo '<option value=' . $subpage->ID . '' . selected( $options['account_page'], $subpage->ID ) . '>' . $subpage->post_title . '</option>';
+		}
+	};
 	echo '</select>';
 }

@@ -14,7 +14,7 @@
 ?>
 
 <?php
-if ( !current_user_can( 'manage_options' ) )  {
+if ( ! current_user_can( 'manage_options' ) ) {
 	wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 }
 ?>
@@ -61,8 +61,8 @@ if ( !current_user_can( 'manage_options' ) )  {
 		</p>
 
 		<form method="post" action="options.php">
-			<?php settings_fields('wps_settings_group'); ?>
-			<?php do_settings_sections('wps_settings_section'); ?>
+			<?php settings_fields( 'wps_settings_group' ); ?>
+			<?php do_settings_sections( 'wps_settings_section' ); ?>
 			<?php submit_button(); ?>
 		</form>
 

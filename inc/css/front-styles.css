@@ -139,17 +139,17 @@ body.wpseeds h1.entry-title {
 }
 
 .seeds-account-navigation li.seeds-account-link.active a {
-    background-color: #f8feff;
-    border-color: #538081;
-    color: #326033;
-    font-size: 1.05em;
-    padding: 7px 10px;
+	background-color: #f8feff;
+	border-color: #538081;
+	color: #326033;
+	font-size: 1.05em;
+	padding: 7px 10px;
 }
 
 .seeds-account-navigation li.seeds-account-link:not(.active) a:hover {
-    border-color: #326033;
-    background-color: #538081;
-    color: #FFF;
+	border-color: #326033;
+	background-color: #538081;
+	color: #FFF;
 }
 
 .wpseeds-account-content {
@@ -217,13 +217,13 @@ body.wpseeds h1.entry-title {
 
 /* Seeds Transactions */
 .wps-history-container {
-    overflow-x: scroll;
+	overflow-x: scroll;
 }
 
 table.wps-history-table {
-    background-color: #FFF;
-    text-align: center;
-    overflow-x: scroll;
+	background-color: #FFF;
+	text-align: center;
+	overflow-x: scroll;
 }
 
 table.wps-history-table thead th {
