@@ -80,7 +80,7 @@ body.wpseeds h1.entry-title {
 	flex: 0 0 180px;
 	position: relative;
 	z-index: 4;
-	margin: 30px 0 0;
+	margin: 50px 0 0;
 }
 
 .seeds-account-navigation ul {
@@ -113,6 +113,7 @@ body.wpseeds h1.entry-title {
 .seeds-account-navigation li.seeds-account-link.active {
 	-webkit-transform: translateX(1px);
 	transform: translateX(1px);
+	order: -1;
 }
 
 .seeds-account-navigation li.seeds-account-link:not(.active) {
@@ -142,11 +143,13 @@ body.wpseeds h1.entry-title {
 	border-color: #538081;
 	color: #326033;
 	font-size: 1.05em;
+	padding: 7px 10px;
 }
 
 .seeds-account-navigation li.seeds-account-link:not(.active) a:hover {
-	color: #326033;
 	border-color: #326033;
+	background-color: #538081;
+	color: #FFF;
 }
 
 .wpseeds-account-content {
@@ -213,9 +216,14 @@ body.wpseeds h1.entry-title {
 
 
 /* Seeds Transactions */
+.wps-history-container {
+	overflow-x: scroll;
+}
+
 table.wps-history-table {
 	background-color: #FFF;
 	text-align: center;
+	overflow-x: scroll;
 }
 
 table.wps-history-table thead th {
@@ -509,7 +517,7 @@ form#wps_new_transaction input#amount {
 	}
 
 	.seeds-account-navigation li.seeds-account-link.active a {
-		padding: 6px 5px 4px;
+		padding: 7px 5px 4px;
 	}
 
 	.wpseeds-account-content {
@@ -532,7 +540,7 @@ form#wps_new_transaction input#amount {
 		-webkit-box-align: center;
 		-ms-flex-align: center;
 		align-items: center;
-		line-height: 1.2;
+		line-height: 1.15;
 		padding: 4px 3px 3px;
 	}
 }

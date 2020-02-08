@@ -12,6 +12,13 @@
  */
 
 ?>
+
+<?php
+if ( ! current_user_can( 'manage_options' ) ) {
+	wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+}
+?>
+
 <div class="wrap">
 	<h1><?php esc_html_e( 'Seeds Settings', 'wp-seeds' ); ?></h1>
 
@@ -52,6 +59,13 @@
 		<p>
 			<?php esc_html_e( 'This is the equivalent of printing new money, please act responsibly!', 'wp-seeds' ); ?>
 		</p>
+
+		<form method="post" action="options.php">
+			<?php settings_fields( 'wps_settings_group' ); ?>
+			<?php do_settings_sections( 'wps_settings_section' ); ?>
+			<?php submit_button(); ?>
+		</form>
+
 	<?php } ?>
 
 	<?php if ( 'create' == $tab ) { ?>

@@ -77,9 +77,66 @@ if ( ! is_admin() ) {
 
 
 /**
- * Activation
+ * Create gardener role on activation.
  */
+function wps_add_roles_on_activation() {
+	add_role(
+		'wps_gardener',
+		'Gardener',
+		array(
+			'read' => true,
+			'edit_posts' => false,
+			'delete_posts' => false,
+		)
+	);
+}
+register_activation_hook( __FILE__, 'wps_add_roles_on_activation' );
 
+/**
+ * Create custom role capabilities on activation.
+ */
+function wps_custom_role_caps() {
+
+	$gardener = get_role( 'wps_gardener' );
+	$gardener->add_cap( 'wps_transfer_seeds_universally' );
+	$gardener->add_cap( 'wps_view_all_transactions' );
+
+	$admin = get_role( 'administrator' );
+	$admin->add_cap( 'wps_create_burn_seeds' );
+	$admin->add_cap( 'wps_transfer_seeds_universally' );
+	$admin->add_cap( 'wps_view_all_transactions' );
+
+}
+register_activation_hook( __FILE__, 'wps_custom_role_caps' );
+
+
+/**
+ * Remove custom role capabilities on deactivation.
+ */
+function wps_remove_custom_role() {
+	if ( get_role( 'wps_gardener' ) ) {
+		remove_role( 'wps_gardener' );
+	}
+
+	$admin = get_role( 'administrator' );
+
+	$caps = array(
+		'wps_create_burn_seeds',
+		'wps_transfer_seeds_universally',
+		'wps_view_all_transactions',
+	);
+
+	foreach ( $caps as $cap ) {
+		$admin->remove_cap( $cap );
+	}
+
+}
+register_deactivation_hook( __FILE__, 'wps_remove_custom_role' );
+
+
+/**
+ * Create account pages on activation
+ */
 define( 'WPSEEDS_PLUGIN_FILE', __FILE__ );
 register_activation_hook( WPSEEDS_PLUGIN_FILE, 'create_account_page' );
 

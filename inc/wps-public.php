@@ -81,28 +81,30 @@ add_filter(
 			return $posts;
 		}
 
-		if ( isset( $query->query_vars['wpssend'] ) ) {
+		$wps_options = get_option( 'wps_settings' );
+		$account_pid = $wps_options['account_page'];
+		$account_content = get_the_content( $account_pid );
 
+		if ( isset( $query->query_vars['wpssend'] ) ) {
 			$title = 'Send Seeds';
-			$content = '[seeds-send]';
+			$shortcode = '[seeds-send]';
 		}
 
 		if ( isset( $query->query_vars['wpsrequest'] ) ) {
-
 			$title = 'Request Seeds';
-			$content = '[seeds-request]';
+			$shortcode = '[seeds-request]';
 		}
 
 		$post = [
-			'ID'             => -100,
+			'ID'             => $account_pid,
 			'post_title'     => $title,
 			'post_name'      => sanitize_title( $title ),
-			'post_content'   => $content,
+			'post_content'   => $account_content . $shortcode,
 			'post_excerpt'   => '',
 			'post_parent'    => 0,
 			'menu_order'     => 0,
 			'post_type'      => 'page',
-			'is-singular'      => true,
+			'is-singular'    => true,
 			'post_status'    => 'publish',
 			'comment_status' => 'closed',
 			'ping_status'    => 'closed',
@@ -147,6 +149,7 @@ function wps_account_pages_query( $wp ) {
 			$wp->query_vars['is_single'] = false;
 			$wp->query_vars['is_singular'] = true;
 			$wp->query_vars['is_archive'] = false;
+			$wp->query_vars['posts_per_page'] = 1;
 
 			/* forces the page template. */
 			$wp->is_single = false;
@@ -157,6 +160,41 @@ function wps_account_pages_query( $wp ) {
 	}
 }
 add_action( 'pre_get_posts', 'wps_account_pages_query', 0, 2 );
+
+
+/**
+ * Template redirects
+ */
+function wps_template_redirects() {
+	global $wp_query;
+
+	if ( get_query_var( 'wpssend' ) || get_query_var( 'wpsrequest' ) ) {
+
+		add_filter(
+			'template_include',
+			function() {
+				$wps_options = get_option( 'wps_settings' );
+				$account_pid = $wps_options['account_page'];
+				$account_template = get_post_meta( $account_pid, '_wp_page_template', true );
+
+				$template = get_template_directory() . '/' . $account_template;
+
+				if ( ! file_exists( $template ) ) {
+					$template = get_template_directory() . '/page.php';
+				}
+				if ( ! file_exists( $template ) ) {
+					$template = get_template_directory() . '/singular.php';
+				}
+				if ( ! file_exists( $template ) ) {
+					$template = get_template_directory() . '/index.php';
+				}
+
+				return $template;
+			}
+		);
+	}
+}
+add_action( 'template_redirect', 'wps_template_redirects' );
 
 
 /**
@@ -175,7 +213,7 @@ function wps_history_sc( $args ) {
 	$user_display_by_id = wps_user_display_by_id();
 	$vars = array();
 	$vars['transactions'] = array();
-	$transactions         = WPS_Transaction::findAllByQuery(
+	$transactions = WPS_Transaction::findAllByQuery(
 		'SELECT * ' .
 		'FROM   :table ' .
 		'WHERE  sender=%s ' .
