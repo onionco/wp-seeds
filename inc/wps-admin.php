@@ -541,14 +541,13 @@ function account_dropdown_fn() {
 	$options = get_option( 'wps_settings' );
 
 	echo "<select name='wps_settings[account_page]' id='account_page'>";
-		echo '<option value="0">' . _e( 'Select a Page', 'textdomain' ) . '</option>';
-		$pages = get_pages();
-	foreach ( $pages as $page ) {
-		echo '<option value=' . $page->ID . '' . selected( $options['account_page'], $page->ID ) . '>' . $page->post_title . '</option>';
-		$children = get_children( 'post_parent=' . $page->ID );
-		foreach ( $children as $subpage ) {
-			echo '<option value=' . $subpage->ID . '' . selected( $options['account_page'], $subpage->ID ) . '>' . $subpage->post_title . '</option>';
+		if( $pages = get_pages() ){
+			foreach ( $pages as $page ) {
+				$option = '<option value=' . $page->ID . '' . selected( $options['account_page'], $page->ID ) . '>';
+				$option .= $page->post_title;
+				$option .= '</option>';
+				echo $option;
+			};
 		}
-	};
 	echo '</select>';
 }
