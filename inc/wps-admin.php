@@ -347,7 +347,7 @@ add_action( 'admin_menu', 'wps_admin_menu' );
  */
 function wps_settings_page_fn() {
 	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+		wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'wp-seeds' ) );
 	}
 
 	wps_process_form(
@@ -541,13 +541,14 @@ function account_dropdown_fn() {
 	$options = get_option( 'wps_settings' );
 
 	echo "<select name='wps_settings[account_page]' id='account_page'>";
-		if( $pages = get_pages() ){
-			foreach ( $pages as $page ) {
-				$option = '<option value=' . $page->ID . '' . selected( $options['account_page'], $page->ID ) . '>';
-				$option .= $page->post_title;
-				$option .= '</option>';
-				echo $option;
-			};
-		}
+	$pages = get_pages();
+	if ( $pages ) {
+		foreach ( $pages as $page ) {
+			$option = '<option value=' . $page->ID . '' . selected( $options['account_page'], $page->ID ) . '>';
+			$option .= $page->post_title;
+			$option .= '</option>';
+			echo esc_attr( $option );
+		};
+	}
 	echo '</select>';
 }
