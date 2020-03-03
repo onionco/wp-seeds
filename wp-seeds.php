@@ -9,7 +9,8 @@
  * @license   GPL v2 or later
 
  * Plugin Name:       WP Seeds
- * Plugin URI:        https://github.com/limikael/wp-seeds
+ * Plugin URI:        https://github.com/onionco/wp-seeds
+ * GitHub Plugin URI: https://github.com/onionco/wp-seeds
  * Description:       Allows users to hold, send and receive tokens named seeds.
  * Version:           3.0
  * Requires at least: 5.2
