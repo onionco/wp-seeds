@@ -171,21 +171,13 @@ function wps_template_redirects() {
 
 		add_filter(
 			'template_include',
-<<<<<<< Updated upstream
 			function() {
-=======
-			function() {		
->>>>>>> Stashed changes
 				$seeds_page_object = get_page_by_path( 'seeds-account', OBJECT, 'page' );
 				$seeds_page_id = $seeds_page_object->ID;
 				$default = array(
 					'account_page' => $seeds_page_id,
 				);
-<<<<<<< Updated upstream
 				$wps_options = get_option( 'wps_settings', $default );
-=======
-				$wps_options = get_option( 'wps_settings', $default);
->>>>>>> Stashed changes
 				$account_pid = $wps_options['account_page'];
 				$account_template = get_post_meta( $account_pid, '_wp_page_template', true );
 
