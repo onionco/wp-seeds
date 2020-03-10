@@ -243,6 +243,13 @@ function wps_create_page( $slug, $option = '', $page_title = '', $page_content =
 }
 
 
+/**
+ * Flush permalinks
+ */
+register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
+register_activation_hook( __FILE__, 'flush_rewrite_rules' );
+
+
 if ( ! function_exists( 'is_wpsaccount_page' ) ) {
 
 	/**
