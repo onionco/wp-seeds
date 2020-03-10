@@ -171,7 +171,7 @@ function wps_template_redirects() {
 
 		add_filter(
 			'template_include',
-			function() {
+			function( $default_template ) {
 				$seeds_page_object = get_page_by_path( 'seeds-account', OBJECT, 'page' );
 				$seeds_page_id = $seeds_page_object->ID;
 				$default = array(
@@ -181,19 +181,20 @@ function wps_template_redirects() {
 				$account_pid = $wps_options['account_page'];
 				$account_template = get_post_meta( $account_pid, '_wp_page_template', true );
 
-				$template = get_template_directory() . '/' . $account_template;
+				if ( $account_template ) {
+					$template = get_template_directory() . '/' . $account_template;
 
-				if ( ! file_exists( $template ) ) {
-					$template = get_template_directory() . '/page.php';
-				}
-				if ( ! file_exists( $template ) ) {
-					$template = get_template_directory() . '/singular.php';
-				}
-				if ( ! file_exists( $template ) ) {
-					$template = get_template_directory() . '/index.php';
+					if ( ! file_exists( $template ) ) {
+						$template = get_template_directory() . '/page.php';
+					}
+					if ( ! file_exists( $template ) ) {
+						$template = get_template_directory() . '/singular.php';
+					}
+
+					return $template;
 				}
 
-				return $template;
+				return $default_template;
 			}
 		);
 	}
