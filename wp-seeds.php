@@ -157,6 +157,8 @@ function create_account_page() {
 	foreach ( $pages as $key => $page ) {
 		wps_create_page( esc_sql( $page['name'] ), 'wpseeds_' . $key . '_page_id', $page['title'], $page['content'], ! empty( $page['parent'] ) ? $page['parent'] : '' );
 	}
+
+	flush_rewrite_rules();
 }
 
 /**
@@ -241,14 +243,6 @@ function wps_create_page( $slug, $option = '', $page_title = '', $page_content =
 
 	return $page_id;
 }
-
-
-/**
- * Flush permalinks
- */
-register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
-register_activation_hook( __FILE__, 'flush_rewrite_rules' );
-
 
 if ( ! function_exists( 'is_wpsaccount_page' ) ) {
 
