@@ -532,23 +532,25 @@ function wps_section_fn() {
 	echo '';
 }
 
-
 /**
  * Pages dropdown - Name: wps_settings[account_dropdown_fn]
  */
 function account_dropdown_fn() {
+	$seeds_page_object = get_page_by_path( 'seeds-account', OBJECT, 'page' );
+	$seeds_page_id = $seeds_page_object->ID;
+	$default = array(
+		'account_page' => $seeds_page_id,
+	);
+	$wps_options = get_option( 'wps_settings', $default );
+	$account_page = $wps_options['account_page'];
 
-	$options = get_option( 'wps_settings' );
-
-	echo "<select name='wps_settings[account_page]' id='account_page'>";
-	$pages = get_pages();
-	if ( $pages ) {
-		foreach ( $pages as $page ) {
-			$option = '<option value=' . $page->ID . '' . selected( $options['account_page'], $page->ID ) . '>';
-			$option .= $page->post_title;
-			$option .= '</option>';
-			echo esc_attr( $option );
-		};
-	}
-	echo '</select>';
+	wp_dropdown_pages(
+		array(
+			'name' => 'wps_settings[account_page]',
+			'echo' => 1,
+			'show_option_none' => esc_attr( '&mdash; Select &mdash;' ),
+			'option_none_value' => '0',
+			'selected' => esc_attr( $account_page ),
+		)
+	);
 }
