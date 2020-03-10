@@ -13,12 +13,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-/**
- * Flush permalinks
- */
-register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
-register_activation_hook( __FILE__, 'flush_rewrite_rules' );
-
 
 /**
  * Rewrite rules
@@ -81,7 +75,12 @@ add_filter(
 			return $posts;
 		}
 
-		$wps_options = get_option( 'wps_settings' );
+		$seeds_page_object = get_page_by_path( 'seeds-account', OBJECT, 'page' );
+		$seeds_page_id = $seeds_page_object->ID;
+		$default = array(
+			'account_page' => $seeds_page_id,
+		);
+		$wps_options = get_option( 'wps_settings', $default );
 		$account_pid = $wps_options['account_page'];
 		$account_content = get_the_content( $account_pid );
 
@@ -172,8 +171,13 @@ function wps_template_redirects() {
 
 		add_filter(
 			'template_include',
-			function() {
-				$wps_options = get_option( 'wps_settings' );
+			function() {		
+				$seeds_page_object = get_page_by_path( 'seeds-account', OBJECT, 'page' );
+				$seeds_page_id = $seeds_page_object->ID;
+				$default = array(
+					'account_page' => $seeds_page_id,
+				);
+				$wps_options = get_option( 'wps_settings', $default);
 				$account_pid = $wps_options['account_page'];
 				$account_template = get_post_meta( $account_pid, '_wp_page_template', true );
 

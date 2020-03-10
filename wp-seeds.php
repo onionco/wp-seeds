@@ -140,12 +140,10 @@ register_deactivation_hook( __FILE__, 'wps_remove_custom_role' );
 define( 'WPSEEDS_PLUGIN_FILE', __FILE__ );
 register_activation_hook( WPSEEDS_PLUGIN_FILE, 'create_account_page' );
 
-
 /**
  * Create pages that the plugin relies on, storing page IDs in variables.
  */
 function create_account_page() {
-
 	$pages = array(
 		'wpsaccount' => array(
 			'name'    => _x( 'seeds-account', 'Page slug', 'wpseeds' ),
@@ -241,6 +239,13 @@ function wps_create_page( $slug, $option = '', $page_title = '', $page_content =
 
 	return $page_id;
 }
+
+
+/**
+ * Flush permalinks
+ */
+register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
+register_activation_hook( __FILE__, 'flush_rewrite_rules' );
 
 
 if ( ! function_exists( 'is_wpsaccount_page' ) ) {
