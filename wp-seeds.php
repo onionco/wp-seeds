@@ -10,6 +10,7 @@
 
  * Plugin Name:       WP Seeds
  * Plugin URI:        https://github.com/limikael/wp-seeds
+ * GitHub Plugin URI: https://github.com/onionco/wp-seeds
  * Description:       Allows users to hold, send and receive tokens named seeds.
  * Version:           3.0
  * Requires at least: 5.2
@@ -144,6 +145,7 @@ register_activation_hook( WPSEEDS_PLUGIN_FILE, 'create_account_page' );
  * Create pages that the plugin relies on, storing page IDs in variables.
  */
 function create_account_page() {
+
 	$pages = array(
 		'wpsaccount' => array(
 			'name'    => _x( 'seeds-account', 'Page slug', 'wpseeds' ),
@@ -239,13 +241,6 @@ function wps_create_page( $slug, $option = '', $page_title = '', $page_content =
 
 	return $page_id;
 }
-
-
-/**
- * Flush permalinks
- */
-register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
-register_activation_hook( __FILE__, 'flush_rewrite_rules' );
 
 
 if ( ! function_exists( 'is_wpsaccount_page' ) ) {
